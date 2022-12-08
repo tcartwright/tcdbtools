@@ -1,2 +1,2 @@
 # tcdbtools
-Collection of powershell tools 
+Collection of powershell tools for SQL Server management.
