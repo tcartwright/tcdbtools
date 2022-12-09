@@ -1,4 +1,4 @@
-function Invoke-DBScriptObjects {
+﻿function Invoke-DBScriptObjects {
     <#
     .SYNOPSIS
         Generate file-per-object scripts of specified server and database.
@@ -17,18 +17,18 @@ function Invoke-DBScriptObjects {
 
     .PARAMETER UserName
         Specifies username to connect to the database with. If supplied, then password must be also. If not supplied then a trusted connection will be used.
-        
+
     .PARAMETER Password
         Specifies the password to connect to the database with.
 
-    .NOTES 
+    .NOTES
         Adapted from http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/
-        Editor: Tim Cartwright: 
-        - Changed to script SB objects. 
+        Editor: Tim Cartwright:
+        - Changed to script SB objects.
         - Also to script into folders, instead of one flat folder
         - Ability to use username and password instead of trusted. Trusted can still be used.
 
-    .LINK 
+    .LINK
         https://github.com/tcartwright/tcdbtools
     #>
 
@@ -42,7 +42,7 @@ function Invoke-DBScriptObjects {
         [Parameter(Mandatory = $true, Position = 3)]
         [string]$SavePath,
         [string]$UserName,
-        [string]$Password
+        [SecureString]$Password
     )
 
     begin {
@@ -85,26 +85,26 @@ function Invoke-DBScriptObjects {
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::Certificate +
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::DatabaseRole +
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::ExtendedStoredProcedure +
-            [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::SqlAssembly + 
+            [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::SqlAssembly +
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::DatabaseScopedConfiguration
-        )        
+        )
     }
 
     process {
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database] 
+            $db = $server.Databases[$Database]
             $dbSavePath = [System.IO.Path]::Combine($SavePath, $Database)
-            
+
             if (!(Test-Path -Path $dbSavePath)) {
                 Write-Verbose "Creating directory at '$dbSavePath'"
                 New-Item $dbSavePath -Type Directory -Force -ErrorAction Stop | Out-Null
-            }        
-    
-            if ($db.Name -ne $Database) { 
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'" 
+            }
+
+            if ($db.Name -ne $Database) {
+                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
                 continue
-            }; 
+            };
 
             #get everything except the information schema, system views, and some other extra items
             $objects = $db.EnumObjects($objectTypeFlags) |
@@ -119,7 +119,7 @@ function Invoke-DBScriptObjects {
                 $_.Name -ine "fn_diagramobjects" -and
                 $_.Name -ine "sysdiagrams" -and
                 $_.Schema -ine "guest" -and
-                $_.Name -ine "guest" 
+                $_.Name -ine "guest"
             }
 
             #and write out each scriptable object as a file in the directory you specify
@@ -135,7 +135,7 @@ function Invoke-DBScriptObjects {
 
             $scripter.Options.Permissions = $false
             # also script out the database definition itself
-            ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath           
+            ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath
         }
     }
 }

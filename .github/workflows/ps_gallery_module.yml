@@ -61,7 +61,7 @@ jobs:
       run: |
         Import-Module PSScriptAnalyzer
         #run the PSScriptAnalyzer and auto fix any issues that can be fixed   
-        $results = Invoke-ScriptAnalyzer -path "${{ github.workspace }}" -Recurse -Fix # -ExcludeRule PSAvoidUsingWriteHost
+        $results = Invoke-ScriptAnalyzer -path "${{ github.workspace }}" -Recurse -Fix -ExcludeRule "PSUseSingularNouns"
         #write out any violations if they exist
         Write-Output $results
         #search for warnings or errors that cant be auto fixed. if we find any throw an exception and bail. To require them to be fixed.
