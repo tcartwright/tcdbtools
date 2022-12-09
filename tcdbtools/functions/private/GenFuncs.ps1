@@ -1,4 +1,4 @@
-﻿function InitSqlConnection($ServerInstance, $UserName, $Password){
+﻿function InitSqlConnection($ServerInstance, $UserName, [SecureString] $Password){
     # these sql cmd arguments will be used to splat the Invoke-SqlCmd arguments
     $SqlCmdArguments = @{
         ServerInstance = $ServerInstance
@@ -18,8 +18,8 @@
     }
 
     $server = New-Object Microsoft.SqlServer.Management.Smo.Server($serverConnection)
-    if ($server.Version -eq  $null ) { 
-        throw "Unable to connect to: $ServerInstance" 
+    if ($null -eq $server.Version ) {
+        throw "Unable to connect to: $ServerInstance"
         exit 1
     }
 
@@ -34,16 +34,16 @@ function GetConnectionString {
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
-        [string]$Database, 
-        [string]$UserName, 
-        [string]$Password,
+        [string]$Database,
+        [string]$UserName,
+        [SecureString]$Password,
         [string]$AppName = "tcdbtools"
     )
 
     # in powershell you cannot use the propery names of the builder, you have to use the dictionary keys
     $builder = [System.Data.SqlClient.SqlConnectionStringBuilder]::new()
     $builder["Data Source"] = $ServerInstance
-    $builder["Initial Catalog"] = $Database 
+    $builder["Initial Catalog"] = $Database
     if ($AppName) {
         $builder["Application Name"] = $AppName
     }
@@ -62,9 +62,9 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
     # especially if some of the tables do not have indexes in the fromFG
 
     $sql = "
-        SELECT OBJECT_SCHEMA_NAME(i.[object_id]) AS [schema_name], 
+        SELECT OBJECT_SCHEMA_NAME(i.[object_id]) AS [schema_name],
 	        OBJECT_NAME(i.[object_id]) AS [object_name]
-            ,i.[index_id] 
+            ,i.[index_id]
             ,i.[name] AS [index_name]
             ,i.[type_desc] AS [index_type]
         FROM [$($db.Name)].[sys].[indexes] i
@@ -80,7 +80,7 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
     $indexCounter = 0
     $indexCountTotal = $indexes.Count
     $activity = "MOVING ($indexCountTotal) INDEXES FROM FILEGROUP [$fromFG] TO FILEGROUP [$toFG] FOR DATABASE: [$($db.Name)]"
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] $activity" 
+    Write-Information "[$($sw.Elapsed.ToString($swFormat))] $activity"
 
     foreach ($tbl in ($indexes | Group-Object -Property schema_name,object_name)) {
         $table = $db.Tables.Item($tbl.Group[0].object_name, $tbl.Group[0].schema_name)
@@ -90,8 +90,8 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
 
         # the table is a heap so we have to basically create a non-unique clustered index to move it..... then drop the index
         if (-not $table.HasClusteredIndex) {
-            $firstColumn = $table.Columns | Select-Object -First 1  
-            $indexName =  "PK_$([Guid]::NewGuid().ToString("N"))" 
+            $firstColumn = $table.Columns | Select-Object -First 1
+            $indexName =  "PK_$([Guid]::NewGuid().ToString("N"))"
             $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($($firstColumn.Name)) WITH (DATA_COMPRESSION = PAGE) ON [$toFG];
                 DROP INDEX $indexName ON $tableName"
 
@@ -112,7 +112,7 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
                     # set the new filegroup, and the dropexisting property so the script will generate properly
                     $index.FileGroup = $toFG
                     $index.DropExistingIndex = $true
-                    $sql = $index.Script() 
+                    $sql = $index.Script()
                     Write-Verbose "$sql"
                     Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
             }

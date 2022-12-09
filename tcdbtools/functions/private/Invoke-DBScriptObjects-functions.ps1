@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Function Script Out Database Object
 #
 # Function that accepts a Smo.Database-related object or an object with a valid
@@ -22,7 +22,7 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath) {
     }
 
     $ignore = $null
-    # a regex variable be defined external to this script to allow ignoring types with matching names. EX: $ignoreSchemas = ".*?_" 
+    # a regex variable be defined external to this script to allow ignoring types with matching names. EX: $ignoreSchemas = ".*?_"
     $ignore = Get-Variable -Name "ignore$typeName" -ValueOnly -ErrorAction SilentlyContinue
 
     if ($ignore -and $dbObj.Name -imatch $ignore) {

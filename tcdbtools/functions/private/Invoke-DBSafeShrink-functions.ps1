@@ -1,9 +1,9 @@
-function GetFreeSpace($SqlCmdArguments, $Database) {
+﻿function GetFreeSpace($SqlCmdArguments, $Database) {
     $sql = "
         SELECT DB_NAME() AS db_name,
 	        df.[name] AS file_name,
 	        fn.[size] AS current_size_mb,
-	        fn.[space_used] AS used_space_mb, 
+	        fn.[space_used] AS used_space_mb,
 	        fn.[size] - fn.[space_used] AS free_space_mb
         FROM [$Database].sys.database_files df
         CROSS APPLY (
@@ -12,13 +12,13 @@ function GetFreeSpace($SqlCmdArguments, $Database) {
 
         ) fn
         WHERE [df].[type_desc] = 'ROWS';"
-    
+
     Write-Verbose $sql
     return Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -OutputAs DataRows
 }
 
 function PeformFileOperation($SqlCmdArguments, $sql) {
-    # A t-log backup could be occuring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error 
+    # A t-log backup could be occuring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error
     # https://blog.sqlauthority.com/2014/11/09/sql-server-fix-error-msg-3023-level-16-state-2-backup-file-manipulation-operations-such-as-alter-database-add-file-and-encryption-changes-on-a-database-must-be-serialized/
     $tryAgain = $false
     $tryAgainCount = 0
@@ -29,7 +29,7 @@ function PeformFileOperation($SqlCmdArguments, $sql) {
         $tryAgain = $false
         try {
             Write-Verbose "$sql"
-            Invoke-Sqlcmd @SqlCmdArguments -Query $sql -ErrorAction Stop 
+            Invoke-Sqlcmd @SqlCmdArguments -Query $sql -ErrorAction Stop
         } catch {
             $msg = $_.Exception.GetBaseException().Message
             if (++$tryAgainCount -lt $tryAgainCountMax -and $msg -imatch "Backup,\s+file\s+manipulation\s+operations\s+\(such\s+as .*?\)\s+and\s+encryption\s+changes\s+on\s+a\s+database\s+must\s+be\s+serialized\.") {
@@ -51,20 +51,20 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
 
     if ($shrinkIncrement -lt 50 -or $shrinkIncrement -gt 10000) {
         switch ($size) {
-            {$_ -le 10000 } { 
+            {$_ -le 10000 } {
                 $shrinkIncrement = 1000 # < 10 gb
-            } 
-            {$_ -gt 10000 -and $_ -le 100000 } { 
+            }
+            {$_ -gt 10000 -and $_ -le 100000 } {
                 $shrinkIncrement = 2500 # 10 gb - 100 gb
-            } 
-            {$_ -gt 100000 -and $_ -le 1000000 } { 
+            }
+            {$_ -gt 100000 -and $_ -le 1000000 } {
                 $shrinkIncrement = 5000 # 100 gb - 1 tb
-            } 
-            {$_ -gt 1000000 } { 
+            }
+            {$_ -gt 1000000 } {
                 $shrinkIncrement = 7500 # > 1 tb
-            } 
-            default { 
-                $shrinkIncrement = 5000 
+            }
+            default {
+                $shrinkIncrement = 5000
             }
         }
     }

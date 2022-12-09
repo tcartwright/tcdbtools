@@ -1,7 +1,7 @@
-function Invoke-DBMoveIndexes {
+﻿function Invoke-DBMoveIndexes {
     <#
         .SYNOPSIS
-            Moves indexes from one file group to another including heaps. 
+            Moves indexes from one file group to another including heaps.
 
         .DESCRIPTION
             Moves indexes from one file group to another. Both file groups must exist, neither
@@ -11,11 +11,11 @@ function Invoke-DBMoveIndexes {
             The sql server instance to connect to.
 
         .PARAMETER Databases
-            The databases to shrink. A string array. 
+            The databases to shrink. A string array.
 
         .PARAMETER UserName
-            The sql user to connect as. 
-        
+            The sql user to connect as.
+
             NOTES: If UserName or Password are missing, then trusted connections will be used.
 
         .PARAMETER Password
@@ -31,7 +31,7 @@ function Invoke-DBMoveIndexes {
 
         .PARAMETER IndexMoveTimeout
             The amount of time that controls how long a index move can run before timing out.
-        
+
             NOTES: This timeout is in minutes.
 
         .INPUTS
@@ -58,9 +58,9 @@ function Invoke-DBMoveIndexes {
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
-        [string[]]$Databases, 
-        [string]$UserName, 
-        [string]$Password, 
+        [string[]]$Databases,
+        [string]$UserName,
+        [SecureString]$Password,
         [Parameter(Mandatory=$true)]
         [string]$SourceFileGroupName = "PRIMARY",
         [Parameter(Mandatory=$true)]
@@ -77,16 +77,16 @@ function Invoke-DBMoveIndexes {
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING" 
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING"
     }
 
     process {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database] 
+            $db = $server.Databases[$Database]
 
-            if ($db.Name -ne $Database) { 
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'" 
+            if ($db.Name -ne $Database) {
+                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
                 continue
             };
 
@@ -96,7 +96,7 @@ function Invoke-DBMoveIndexes {
 
     end {
         $sw.Stop()
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED" 
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED"
     }
 }
 

@@ -1,4 +1,4 @@
-function Invoke-DBExtractCLRDLL {
+﻿function Invoke-DBExtractCLRDLL {
     <#
     .SYNOPSIS
         Will extract all user CLR assemblies from a SQL SERVER database as DLL files, and or PDB files.
@@ -10,7 +10,7 @@ function Invoke-DBExtractCLRDLL {
         The sql server instance to connect to.
 
     .PARAMETER Database
-        The database containing the CLR dlls. 
+        The database containing the CLR dlls.
 
     .PARAMETER SavePath
         Specifies the directory where you want to store the generated dll object.
@@ -28,10 +28,10 @@ function Invoke-DBExtractCLRDLL {
         Returns the list of files that were extracted.
 
     .EXAMPLE
-        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012" 
+        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012"
 
     .EXAMPLE
-        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" 
+        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -47,23 +47,23 @@ function Invoke-DBExtractCLRDLL {
         [string]$Database,
         [System.IO.DirectoryInfo]$SavePath,
         [string]$UserName,
-        [string]$Password
-    )    
+        [SecureString]$Password
+    )
 
     begin {
         if (-not $SavePath) {
             $path = [System.IO.Path]::Combine($env:TEMP, $database)
         } else {
-            $path = $SavePath.FullName    
+            $path = $SavePath.FullName
         }
 
         $query = "
         SELECT a.name, af.content, af.file_id, af.name AS [file_name], a.clr_name, a.permission_set_desc, a.create_date, a.modify_date
-        FROM sys.assemblies a 
-        INNER JOIN sys.assembly_files af 
-            ON a.assembly_id = af.assembly_id 
+        FROM sys.assemblies a
+        INNER JOIN sys.assembly_files af
+            ON a.assembly_id = af.assembly_id
         WHERE a.is_user_defined = 1"
-    
+
         $connectionString = GetConnectionString -ServerInstance $ServerInstance -Database $Database -UserName $UserName -Password $Password
         $assemblies = New-Object System.Collections.ArrayList
         $connection = New-Object System.Data.SqlClient.SqlConnection($connectionString);
@@ -72,7 +72,7 @@ function Invoke-DBExtractCLRDLL {
     process {
         try {
             # using an old style reader here as the data sizes can exceed the capabilities of Invoke-SqlCmd
-            $connection.Open();        
+            $connection.Open();
             $command = $connection.CreateCommand()
             $command.CommandType = "Text";
             $command.CommandText = $query;
@@ -83,31 +83,31 @@ function Invoke-DBExtractCLRDLL {
                 if (!(Test-Path -Path $path -PathType Container)) {
                     New-Item -Path $path -ItemType Directory | Out-Null
                 }
-        
+
                 # get the ordinals of the fields as an object to use in retrieving data from the reader
                 $fields = [PSCustomObject]@{}
                 for ($i = 0; $i -le ($reader.FieldCount - 1); $i++){
                     $fields | Add-Member -MemberType NoteProperty $reader.GetName($i) -Value $i
                 }
-        
+
                 while ($reader.Read()) {
                     # determine what type of file we are dealing with, 1 == dll, 2 == ??? something else
                     $fileId = $reader.GetInt32($fields.file_id)
-                    
+
                     if ($fileId -eq 1) {
                         $fileName = "$($reader.GetString($fields.name)).dll"
                     } elseif ($fileId -ge 2) {
                         # get the original file name and extension from the data
                         $fileName = [System.Io.Path]::GetFileName("$($reader.GetString($fields.file_name))")
                     }
-        
+
                     $fileName = [System.IO.Path]::Combine($path, $fileName)
                     # extract the bytes from a column into an arry
                     [byte[]]$bytes = $reader.GetSqlBytes($fields.content).Buffer
                     # write the byte array to a file
                     Write-Verbose "Writing file: $fileName"
                     [System.Io.File]::WriteAllBytes($fileName, $bytes)
-        
+
                     $temp = New-Object System.Object
                     $temp | Add-Member -MemberType NoteProperty -Name "name" -Value $reader.GetString($fields.name)
                     $temp | Add-Member -MemberType NoteProperty -Name "file_id" -Value $reader.GetInt32($fields.file_id)
@@ -118,13 +118,13 @@ function Invoke-DBExtractCLRDLL {
                     $temp | Add-Member -MemberType NoteProperty -Name "modify_date" -Value $reader.GetDateTime($fields.modify_date)
                     $assemblies.Add($temp) | Out-Null
                 }
-        
-                $assemblies | Export-Csv -Path "$path\Assemblies.csv" -Force -Encoding ASCII -NoTypeInformation  
-        
+
+                $assemblies | Export-Csv -Path "$path\Assemblies.csv" -Force -Encoding ASCII -NoTypeInformation
+
                 # open up explorer, highlighting the first file name we found
                 # Invoke-Expression "explorer.exe '/select,$path\Assemblies.csv'"
             } else {
-                Write-Warning "No assemblies found to export" 
+                Write-Warning "No assemblies found to export"
             }
         } catch {
             throw

@@ -1,4 +1,4 @@
-function CompareSettings([PSObject] $setting, $propertyNames) {
+﻿function CompareSettings([PSObject] $setting, $propertyNames) {
     $prop1 = $setting.PsObject.Properties[$propertyNames[0]].Value
 
     for ($num = 1 ; $num -le ($propertyNames.Count - 1); $num++) {
@@ -6,7 +6,7 @@ function CompareSettings([PSObject] $setting, $propertyNames) {
 
         if ($prop1 -ine $prop2) {
             return 1
-        }    
+        }
         $prop1 = $prop2
     }
 
