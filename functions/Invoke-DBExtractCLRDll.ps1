@@ -34,7 +34,7 @@ function Invoke-DBExtractCLRDLL {
         PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" 
 
     .LINK
-        Links to further documentation.
+        https://github.com/tcartwright/tcdbtools
 
     .NOTES
         Author: Tim Cartwright

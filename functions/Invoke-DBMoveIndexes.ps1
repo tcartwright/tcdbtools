@@ -47,7 +47,7 @@ function Invoke-DBMoveIndexes {
             PS> .\Invoke-DBMoveIndexes -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" -SourceFileGroupName PRIMARY -TargetFileGroupName SHRINK_DATA_TEMP
 
         .LINK
-            Links to further documentation.
+            https://github.com/tcartwright/tcdbtools
 
         .NOTES
             Author: Tim Cartwright

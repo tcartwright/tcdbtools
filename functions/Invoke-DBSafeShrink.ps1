@@ -110,7 +110,7 @@
         PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -MinimumFreeSpaceMB 1 -NewFileDirectory "D:\sqltemp\" 
 
     .LINK
-        Links to further documentation.
+        https://github.com/tcartwright/tcdbtools
 
     .NOTES
         Author: Tim Cartwright

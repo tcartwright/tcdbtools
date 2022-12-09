@@ -21,6 +21,9 @@ function Invoke-DBScriptObjects {
         - Changed to script SB objects. 
         - Also to script into folders, instead of one flat folder
         - Ability to use username and password instead of trusted. Trusted can still be used.
+
+    .LINK 
+        https://github.com/tcartwright/tcdbtools
     #>
 
     #>
