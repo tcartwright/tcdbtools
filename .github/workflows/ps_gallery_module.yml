@@ -1,0 +1,94 @@
+name: Powershell Analyze and Publish 
+
+on:
+  workflow_dispatch:
+    inputs:
+      ModuleVersion:
+        description: 'Module Version'     
+        required: true
+        default: ''
+
+jobs:
+  build:
+    runs-on: windows-latest  
+    
+    steps:
+    - name: SplitRepoName
+      shell: powershell
+      run: echo "MY_REPO=$("${{github.repository}}" -split '/', 2 | Select-Object -Last 1)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      
+    - name: Validate Version Input
+      shell: powershell
+      run: |
+        $version, $suffix = "${{ github.event.inputs.ModuleVersion }}" -split "-", 2
+        #cast the version they pass in to the version object. It will verify that the version is valid.
+        [Version]$version
+    
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Update PSD1 Version and ReleaseNotes 
+      shell: powershell
+      run: |
+        #the manifest filename we will pull the contents from and make modifications to 
+        $fileName = "${{ github.workspace }}\${{ env.MY_REPO }}\${{ env.MY_REPO }}.psd1"
+        $inputsVersion = "${{ github.event.inputs.ModuleVersion }}"
+        $manifestContents =  Get-Content $fileName -raw
+        $regexoptions = [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline
+        #pull the contents of the release notes so we can verify the release notes have been updated with the new release version and update the manifest with them
+        if (Test-Path "${{ github.workspace }}\${{ env.MY_REPO }}\RELEASE_NOTES") {
+            # ignore this if we dont have release notes
+            $releaseNotes = Get-Content "${{ github.workspace }}\${{ env.MY_REPO }}\RELEASE_NOTES" -raw
+            if ($releaseNotes -notmatch ([Regex]::Escape($inputsVersion))) {
+                throw "You must add release notes for the version ($inputsVersion) being pushed. Add the release notes to here: https://github.com/${{github.repository}}/blob/main/${{ env.MY_REPO }}/RELEASE_NOTES"
+                exit 1
+            }
+            $manifestContents = [Regex]::Replace($manifestContents, '(^.*?ReleaseNotes\s*=\s*@'')[\w\W]*?(''@.*$)', "`${1}`r`n$releaseNotes`r`n`${2}", $regexoptions)
+        }
+        #extract the existing version out of the psd1, into seperate parts
+        $matches = [Regex]::Matches($manifestContents, '(ModuleVersion\s*=\s*'')(.*?)(''.*$)', $regexoptions)
+        Write-Output "Changing version from $($matches.Groups[2].Value) to $inputsVersion for '$fileName'"
+        #update the version the contents of the $manifestContents with the new version
+        $manifestContents = [Regex]::Replace($manifestContents, '(ModuleVersion\s*=\s*'')(.*?)(''.*$)', "`${1}$inputsVersion`${3}", $regexoptions)
+        Write-Output "Updated ManifestContents = $manifestContents"
+        #write the updated? $manifestContents back out into the psd1 file
+        [System.IO.File]::WriteAllText($fileName, $manifestContents)
+    
+    - name: Run PSScriptAnalyzer
+      shell: powershell
+      run: |
+        Import-Module PSScriptAnalyzer
+        #run the PSScriptAnalyzer and auto fix any issues that can be fixed
+        $results = Invoke-ScriptAnalyzer -path "${{ github.workspace }}" -Recurse -Fix 
+        #write out any violations if they exist
+        Write-Output $results
+        #search for warnings or errors that cant be auto fixed. if we find any throw an exception and bail. To require them to be fixed.
+        $errors = $results | Where-Object { $_.Severity -ieq "Warning" -or $_.Severity -ieq "Error" } 
+        if ($errors -and $errors.Count -gt 0) {
+          throw "Problems were found in the powershell scripts. Please fix before running this build again."
+          exit 1
+        }
+    
+    - name: Publish Module to PowerShell Gallery
+      shell: powershell
+      env:
+        #this needs to be a repository secret
+        PSGALLERY_APIKEY: "${{ secrets.POWERSHELL_GALLERY_APIKEY }}"
+      run: |
+        Publish-Module -Path "${{ github.workspace }}\${{ env.MY_REPO }}\" -NuGetApiKey "$env:PSGALLERY_APIKEY" -Verbose
+      
+    - name: Commit changes  
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff-index --quiet HEAD || git commit -m "Updating changes made by build"   
+    
+    - name: Push changes  
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.HEAD_REF }}
+        force: true
