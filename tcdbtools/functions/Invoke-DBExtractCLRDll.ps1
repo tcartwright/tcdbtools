@@ -15,11 +15,8 @@
     .PARAMETER SavePath
         Specifies the directory where you want to store the generated dll object.
 
-    .PARAMETER UserName
-        Specifies username to connect to the database with. If supplied, then password must be also. If not supplied then a trusted connection will be used.
-
-    .PARAMETER Password
-        Specifies the password to connect to the database with.
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
     .INPUTS
         None. You cannot pipe objects to this script.
@@ -46,8 +43,7 @@
         [Parameter(Mandatory=$true)]
         [string]$Database,
         [System.IO.DirectoryInfo]$SavePath,
-        [string]$UserName,
-        [SecureString]$Password
+        [pscredential]$Credentials
     )
 
     begin {
@@ -64,9 +60,8 @@
             ON a.assembly_id = af.assembly_id
         WHERE a.is_user_defined = 1"
 
-        $connectionString = GetConnectionString -ServerInstance $ServerInstance -Database $Database -UserName $UserName -Password $Password
         $assemblies = New-Object System.Collections.ArrayList
-        $connection = New-Object System.Data.SqlClient.SqlConnection($connectionString);
+        $connection = GetSQLConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
     }
 
     process {
@@ -139,3 +134,4 @@
         return $assemblies
     }
 }
+

@@ -9,15 +9,8 @@
         .PARAMETER ServerInstances
             The sql server instances to connect to and compare.
 
-        .PARAMETER UserName
-            The sql user to connect as.
-
-            NOTES: If UserName or Password are missing, then trusted connections will be used.
-
-        .PARAMETER Password
-            The password for the sql user.
-
-            NOTES: If UserName or Password are missing, then trusted connections will be used.
+        .PARAMETER Credentials
+            Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
         .INPUTS
             None. You cannot pipe objects to this script.
@@ -43,12 +36,11 @@
         [Parameter(Mandatory=$true)]
         [ValidateCount(2,999)]
         [string[]]$ServerInstances,
-        [string]$UserName,
-        [SecureString]$Password
+        [pscredential]$Credentials
     )
 
     begin {
-        $sqlCon = InitSqlConnection -ServerInstance $ServerInstances[0] -UserName $UserName -Password $Password
+        $sqlCon = InitSqlConnection -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
 
         $compareServers =  $ServerInstances | ForEach-Object { ($_).ToUpper() }
@@ -90,6 +82,3 @@
         return $results
     }
 }
-
-
-

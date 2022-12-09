@@ -36,15 +36,8 @@
     .PARAMETER Databases
         The databases to shrink. A string array.
 
-    .PARAMETER UserName
-        The sql user to connect as.
-
-        NOTES: If UserName or Password are missing, then trusted connections will be used.
-
-    .PARAMETER Password
-        The password for the sql user.
-
-        NOTES: If UserName or Password are missing, then trusted connections will be used.
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
     .PARAMETER FileGroupName
         The file group name to shrink. Defaults to PRIMARY. It does not matter if there are
@@ -122,8 +115,7 @@
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
         [string[]]$Databases,
-        [string]$UserName,
-        [SecureString]$Password,
+        [pscredential]$Credentials,
         [string]$FileGroupName = "PRIMARY",
         [System.IO.DirectoryInfo]$NewFileDirectory,
         [ValidateSet("oneway", "twoway")]
@@ -137,7 +129,7 @@
     )
 
     begin {
-        $sqlCon = InitSqlConnection -ServerInstance $ServerInstance -UserName $UserName -Password $Password
+        $sqlCon = InitSqlConnection -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 

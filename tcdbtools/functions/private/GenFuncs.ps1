@@ -1,20 +1,19 @@
-﻿function InitSqlConnection($ServerInstance, $UserName, [SecureString] $Password){
+﻿function InitSqlConnection($ServerInstance, [pscredential]$Credentials) {
     # these sql cmd arguments will be used to splat the Invoke-SqlCmd arguments
     $SqlCmdArguments = @{
         ServerInstance = $ServerInstance
         Database = "master"
     }
-    if($UserName -and $Password) {
-        $SqlCmdArguments.Add("UserName", $UserName) | Out-Null
-        $SqlCmdArguments.Add("Password", $Password) | Out-Null
+    if($Credentials) {
+        $SqlCmdArguments.Add("Credential", $Credentials) | Out-Null
     }
 
     $serverConnection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
     $serverConnection.ServerInstance = $ServerInstance
-    if($UserName -and $Password) {
+    if ($Credentials) {
         $serverConnection.LoginSecure = $false
-        $serverConnection.Login = $UserName
-        $serverConnection.Password = $Password
+        $serverConnection.Login = $Credentials.UserName
+        $serverConnection.SecurePassword = $Credentials.Password
     }
 
     $server = New-Object Microsoft.SqlServer.Management.Smo.Server($serverConnection)
@@ -29,14 +28,13 @@
     }
 }
 
-function GetConnectionString {
+function GetSQLConnection {
     param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
         [string]$Database,
-        [string]$UserName,
-        [SecureString]$Password,
+        [pscredential]$Credentials,
         [string]$AppName = "tcdbtools"
     )
 
@@ -44,17 +42,14 @@ function GetConnectionString {
     $builder = [System.Data.SqlClient.SqlConnectionStringBuilder]::new()
     $builder["Data Source"] = $ServerInstance
     $builder["Initial Catalog"] = $Database
-    if ($AppName) {
-        $builder["Application Name"] = $AppName
+    $builder["Application Name"] = $AppName
+    $builder["Integrated Security"] = -not $Credentials
+
+    $connection = New-Object System.Data.SqlClient.SqlConnection($builder.ConnectionString);
+    if ($Credentials) {
+        $connection.Credential = $Credentials
     }
-    if ($UserName -and $Password) {
-        $builder["Integrated Security"] = $false
-        $builder["User ID"] = $UserName
-        $builder["Password"] = $Password
-    } else {
-        $builder["Integrated Security"] = $true
-    }
-    return $builder.ConnectionString
+    return $connection
 }
 
 function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeout) {

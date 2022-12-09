@@ -15,11 +15,8 @@
     .PARAMETER SavePath
         Specifies the directory where you want to store the generated scripts.
 
-    .PARAMETER UserName
-        Specifies username to connect to the database with. If supplied, then password must be also. If not supplied then a trusted connection will be used.
-
-    .PARAMETER Password
-        Specifies the password to connect to the database with.
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
     .NOTES
         Adapted from http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/
@@ -41,17 +38,16 @@
         [string[]]$Databases,
         [Parameter(Mandatory = $true, Position = 3)]
         [string]$SavePath,
-        [string]$UserName,
-        [SecureString]$Password
+        [pscredential]$Credentials
     )
 
     begin {
-        $sqlCon = InitSqlConnection -ServerInstance $ServerInstance -UserName $UserName -Password $Password
+        $sqlCon = InitSqlConnection -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 
         # create scripter object (used by the function ScriptOutDbObj())
-        $scripter = New-Object [Microsoft.SqlServer.Management.Smo.Scripter] $server #create the scripter
+        $scripter = New-Object "Microsoft.SqlServer.Management.Smo.Scripter" $server #create the scripter
 
         # https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.management.smo.scriptingoptions?view=sql-smo-160
         $scripter.Options.AllowSystemObjects = $false
@@ -59,7 +55,7 @@
         $scripter.Options.AnsiPadding = $false # true = SET ANSI_PADDING statements
         $scripter.Options.Default = $true
         $scripter.Options.DriAll = $true
-        $scripter.Options.Encoding = New-Object [System.Text.ASCIIEncoding]
+        $scripter.Options.Encoding = New-Object "System.Text.ASCIIEncoding"
         $scripter.Options.ExtendedProperties = $true
         $scripter.Options.IncludeDatabaseContext = $false # true = USE <databasename> statements
         $scripter.Options.IncludeHeaders = $false
