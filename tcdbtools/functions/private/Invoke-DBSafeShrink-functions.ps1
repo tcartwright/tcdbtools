@@ -78,7 +78,7 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
             for($x = $size; $x -gt $targetSize; $x -= $shrinkIncrement) {
                 $size = $x
                 $sql = $rawsql -f $x
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING: $sql" 
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING: $sql"
                 Write-Verbose $sql
                 Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
             }
@@ -86,7 +86,7 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
     }
 
     $sql = $rawsql -f $targetSize
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING FINAL SHRINK: $sql" 
+    Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING FINAL SHRINK: $sql"
     Write-Verbose $sql
     Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
 }
