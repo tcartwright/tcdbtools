@@ -138,9 +138,5 @@ function Invoke-DBScriptObjects {
             ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath           
         }
     }
-
-    end {
-
-    }
-} 
+}
 
