@@ -33,7 +33,7 @@ jobs:
       shell: powershell
       run: |
         #the manifest filename we will pull the contents from and make modifications to 
-        $fileName = "${{ github.workspace }}\${{ env.MY_REPO }}.psd1"
+        $fileName = "${{ github.workspace }}\${{ env.MY_REPO }}\${{ env.MY_REPO }}.psd1"
         $inputsVersion = "${{ github.event.inputs.ModuleVersion }}"
         $manifestContents =  Get-Content $fileName -raw
         $regexoptions = [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline
