@@ -1,44 +1,44 @@
 ﻿function Invoke-DBSafeShrink {
     <#
     .SYNOPSIS
-        Shrinks a Sql Server mdf database file without fragmenting the indexes. 
+        Shrinks a Sql Server mdf database file without fragmenting the indexes.
 
     .DESCRIPTION
-        Shrinks a Sql Server mdf database file without fragmenting the indexes. Can be 
-        used to migrate indexes to a new filegroup, or just shrink and move the indexes 
+        Shrinks a Sql Server mdf database file without fragmenting the indexes. Can be
+        used to migrate indexes to a new filegroup, or just shrink and move the indexes
         back to the original filegroup after the shrink is done. Typically runs faster than
         a normal shrink operation.
 
         IMPORTANT: The second file that gets created will match the used size of the original
         filegroup. You must have enough disk space to support this.
 
-        Wrote this after I read this post by Paul Randal: 
+        Wrote this after I read this post by Paul Randal:
             https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/
-        
-        I always knew shrinking was very bad, but until I read these comments by 
+
+        I always knew shrinking was very bad, but until I read these comments by
         Paul my brain never clicked that there could be a better way:
-        
+
         QUOTE (Paul Randal):
             The method I like to recommend is as follows:
 
             - Create a new filegroup
-            - Move all affected tables and indexes into the new filegroup using the 
-                CREATE INDEX … WITH (DROP_EXISTING = ON) ON syntax, to move the tables 
+            - Move all affected tables and indexes into the new filegroup using the
+                CREATE INDEX … WITH (DROP_EXISTING = ON) ON syntax, to move the tables
                 and remove fragmentation from them at the same time
-            - Drop the old filegroup that you were going to shrink anyway (or 
+            - Drop the old filegroup that you were going to shrink anyway (or
                 shrink it way down if its the primary filegroup)
-        
+
         This script automates those steps so you don't have to.
 
     .PARAMETER ServerInstance
         The sql server instance to connect to.
 
     .PARAMETER Databases
-        The databases to shrink. A string array. 
+        The databases to shrink. A string array.
 
     .PARAMETER UserName
-        The sql user to connect as. 
-        
+        The sql user to connect as.
+
         NOTES: If UserName or Password are missing, then trusted connections will be used.
 
     .PARAMETER Password
@@ -47,13 +47,13 @@
         NOTES: If UserName or Password are missing, then trusted connections will be used.
 
     .PARAMETER FileGroupName
-        The file group name to shrink. Defaults to PRIMARY. It does not matter if there are 
+        The file group name to shrink. Defaults to PRIMARY. It does not matter if there are
         multiple mdf or ldf files assigned.
 
     .PARAMETER NewFileDirectory
         If passed, then this will be the directory that the new temprory file will be created in.
-        Otherwise it will default to the same directory as the primary file. This directory will 
-        be created if it does not exist. If it already exists, then nothing happens. If the path 
+        Otherwise it will default to the same directory as the primary file. This directory will
+        be created if it does not exist. If it already exists, then nothing happens. If the path
         is a local path, then the directory will be created on the server using xp_create_subdir.
 
         NOTES:
@@ -61,18 +61,18 @@
             - The SQL Server account must have write access to the target folder, else an exception will occur
 
     .PARAMETER Direction
-        If the direction is twoway then the the indexes are moved to the temporary file and back 
-        after the orginal file is shrunk. If the direction is oneway, then the indexes are moved 
+        If the direction is twoway then the the indexes are moved to the temporary file and back
+        after the orginal file is shrunk. If the direction is oneway, then the indexes are moved
         to the temporary file, and the process will be complete.
 
     .PARAMETER AdjustRecovery
-        If this switch is enabled then the recovery model of the database will be temporarily changed 
-        to SIMPLE, then put back to the original recovery model. If the switch is missing, then the 
+        If this switch is enabled then the recovery model of the database will be temporarily changed
+        to SIMPLE, then put back to the original recovery model. If the switch is missing, then the
         recovery model will not be changed.
 
     .PARAMETER ShrinkTimeout
-        If the original requires shrinking in a twoway operation, then the shrinks will occur 
-        in very small chunks at a time. This timeout will control how long that operation can 
+        If the original requires shrinking in a twoway operation, then the shrinks will occur
+        in very small chunks at a time. This timeout will control how long that operation can
         run before timing out.
 
         NOTES: This timeout is in minutes.
@@ -83,7 +83,7 @@
 
     .PARAMETER IndexMoveTimeout
         The amount of time that controls how long a index move can run before timing out.
-        
+
         NOTES: This timeout is in minutes.
 
     .PARAMETER MinimumFreeSpaceMB
@@ -91,7 +91,7 @@
         operation will write out a warning and skip the shrink operation for this file.
 
     .PARAMETER TlogBackupJobName
-        The name of a TLOG back up job name. If passed in, then the job will be temporarily 
+        The name of a TLOG back up job name. If passed in, then the job will be temporarily
         disabled until the process finishes as TLOG backups will interfere with the file operations.
 
     .INPUTS
@@ -101,13 +101,13 @@
         Generates a table of records detailing before and after sizes for each filegroup shrunk.
 
     .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" 
+        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012"
 
     .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" 
+        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
 
     .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -MinimumFreeSpaceMB 1 -NewFileDirectory "D:\sqltemp\" 
+        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -MinimumFreeSpaceMB 1 -NewFileDirectory "D:\sqltemp\"
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -121,9 +121,9 @@
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
-        [string[]]$Databases, 
-        [string]$UserName, 
-        [string]$Password, 
+        [string[]]$Databases,
+        [string]$UserName,
+        [SecureString]$Password,
         [string]$FileGroupName = "PRIMARY",
         [System.IO.DirectoryInfo]$NewFileDirectory,
         [ValidateSet("oneway", "twoway")]
@@ -133,7 +133,7 @@
         [int]$ShrinkIncrementMB = 0,
         [int]$IndexMoveTimeout = 5,
         [int]$MinimumFreeSpaceMB = 250,
-        [string]$TlogBackupJobName 
+        [string]$TlogBackupJobName
     )
 
     begin {
@@ -159,7 +159,7 @@
                     Write-Verbose $sql
                     Invoke-Sqlcmd @SqlCmdArguments -query $sql
                 } catch {
-                    throw 
+                    throw
                     exit 1
                 }
             }
@@ -170,9 +170,9 @@
         #>
         if ($TlogBackupJobName) {
             # lets disable the job. We must ensure to re-enable it at the end
-            $sql = "EXEC msdb.dbo.sp_update_job  
-                @job_name = N'$TlogBackupJobName',  
-                @enabled = 0 ;" 
+            $sql = "EXEC msdb.dbo.sp_update_job
+                @job_name = N'$TlogBackupJobName',
+                @enabled = 0 ;"
             Write-Verbose $sql
             Invoke-Sqlcmd @SqlCmdArguments -query $sql
 
@@ -195,7 +195,7 @@
 	                WHERE [activity].[run_requested_date] IS NOT NULL
 		                AND [activity].[stop_execution_date] IS NULL
 		                AND [job].[name] = '$TlogBackupJobName') BEGIN
-		            
+
                     -- wait at max 2 minutes
 	                SET @sanityCounter += 1
 	                IF @sanityCounter > 24 BREAK
@@ -208,24 +208,24 @@
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
         $ret = @{}
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING" 
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING"
 
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database] 
+            $db = $server.Databases[$Database]
 
-            if ($db.Name -ne $Database) { 
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'" 
+            if ($db.Name -ne $Database) {
+                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
                 continue
             };
             <#
             # ADJUST THE RECOVERY IF REQUESTED, IF WE ARE ALREADY NOT IN SIMPLE
             #>
             if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING DATABASE RECOVERY TO SIMPLE" 
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING DATABASE RECOVERY TO SIMPLE"
                 $sql = "ALTER DATABASE [$Database] SET RECOVERY SIMPLE"
                 Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" 
+                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql"
             }
         }
     }
@@ -233,10 +233,10 @@
     process {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database] 
+            $db = $server.Databases[$Database]
 
-            if ($db.Name -ne $Database) { 
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'" 
+            if ($db.Name -ne $Database) {
+                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
                 continue
             };
 
@@ -264,7 +264,7 @@
 
             $originalFile = $originalFG.Files | Where-Object { $_.IsPrimaryFile } | Select-Object -First 1
             # capture this before moving any indexes as the values will be different after
-            $originalFiles = $originalFG.Files | ForEach-Object { 
+            $originalFiles = $originalFG.Files | ForEach-Object {
                 [PSCustomObject] @{
                     Database = $Database
                     Name = [string]$_.Name
@@ -272,13 +272,13 @@
                 }
             }
 
-            if (-not ($freeSpace | Where-Object { $_.free_space_mb -ge $MinimumFreeSpaceMB })) {  
+            if (-not ($freeSpace | Where-Object { $_.free_space_mb -ge $MinimumFreeSpaceMB })) {
                 Write-Warning "Databasse [$Database] does not have any files with the minimum required free space of $MinimumFreeSpaceMB MB for this operation to continue."
                 continue
             }
             $fi = [System.IO.FileInfo]$originalFile.FileName
             $newFileName = "$($fi.DirectoryName)\$($fi.BaseName)_SHRINK_DATA_TEMP$($fi.Extension)"
-        
+
             if ($NewFileDirectory) {
                 $newFileName = [System.IO.Path]::Combine($NewFileDirectory.FullName, ([System.IO.FileInfo]$newFileName).Name)
             }
@@ -286,18 +286,18 @@
             $totals = $freeSpace | Measure-Object -Property used_space_mb -Sum -Minimum
             $usedMinSize = $totals.Minimum
             $usedTotalSize = $totals.Sum
-            $originalRecovery = $db.RecoveryModel 
+            $originalRecovery = $db.RecoveryModel
 
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" 
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n"
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME UNLESS IT ALREADY EXISTS
             #>
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP" 
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP"
             $sql = "
                 IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
                     ALTER DATABASE [$Database] ADD FILEGROUP SHRINK_DATA_TEMP
-                END 
+                END
                 IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
                     ALTER DATABASE [$Database]
                         ADD FILE (
@@ -309,7 +309,7 @@
                     TO FILEGROUP SHRINK_DATA_TEMP
                 END
                 DBCC SHRINKFILE([SHRINK_DATA_TEMP], TRUNCATEONLY) WITH NO_INFOMSGS;
-            "    
+            "
             try {
                 PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
             } catch {
@@ -329,11 +329,11 @@
                 <#
                 # SHRINK THE OLD FILE GROUP DOWN A SMALL AMOUNT AT A TIME UNTIL WE REACH THE SMALLEST SIZE
                 #>
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" 
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName"
                 foreach($file in $originalFiles) {
                     # shrink each file a percentage at a time to keep from possibly timing out the shrink. cause even EMPTY files take a long time to shrink. WTF.
                     $fileName = $file.Name
-                    [int]$size = $file.Size 
+                    [int]$size = $file.Size
 
                     Write-Verbose "LOOPING SHRINKFILE"
                     $size = ShrinkFile -SqlCmdArguments $SqlCmdArguments -size $size -fileName $fileName -targetSizeMB $usedMinSize -timeout $ShrinkTimeout -ShrinkIncrementMB $ShrinkIncrementMB | Select-Object -Last 1
@@ -344,9 +344,9 @@
                 # there have been occasions when an error occurred saying the file was not empty, until an empty file was issued. even though all of the indexes had been moved back
                 $sql = "DBCC SHRINKFILE(SHRINK_DATA_TEMP, 'EMPTYFILE') WITH NO_INFOMSGS;"
                 Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut    
+                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
 
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE" 
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE"
                 $sql = "
                     IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
 	                    ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILE [SHRINK_DATA_TEMP]
@@ -355,13 +355,13 @@
                     IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
 	                    ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILEGROUP [SHRINK_DATA_TEMP]
                     END"
-                PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"            
+                PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
             }
 
             <#
             # PERFORM ONE LAST TRUNCATEONLY SHRINK
             #>
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG [$fileGroupName] WITH TRUNCATEONLY" 
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG [$fileGroupName] WITH TRUNCATEONLY"
             foreach($file in $originalFiles) {
                 $fileName = $file.Name
                 $sql = "DBCC SHRINKFILE($fileName, TRUNCATEONLY) WITH NO_INFOMSGS"
@@ -373,7 +373,7 @@
             # RECORD THE CHANGES AFTER THE OPERATION HAS COMPLETED FOR THE FILES
             #>
             $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database
-            $freeSpace | ForEach-Object { 
+            $freeSpace | ForEach-Object {
                 $obj = $ret["$Database-$($_.file_name)"]
                 if ($obj) {
                     $obj.SizeAfter = [int]$_.current_size_mb
@@ -381,37 +381,37 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" 
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n"
         }
     }
 
     end {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database] 
+            $db = $server.Databases[$Database]
 
-            if ($db.Name -ne $Database) { 
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'" 
+            if ($db.Name -ne $Database) {
+                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
                 continue
             };
             <#
             # SET THE RECOVERY BACK TO THE ORIGINAL RECOVERY IF REQUESTED AND THE ORIGINAL WAS NOT SIMPLE
             #>
             if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] RESETTING DATABASE RECOVERY MODE TO '$($originalRecovery.ToString().ToUpper())'" 
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] RESETTING DATABASE RECOVERY MODE TO '$($originalRecovery.ToString().ToUpper())'"
                 $sql = "ALTER DATABASE [$Database] SET RECOVERY $originalRecovery"
                 Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut 
+                Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut
             }
         }
 
         $sw.Stop()
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED" 
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED"
 
         if ($TlogBackupJobName) {
-            $sql = "EXEC msdb.dbo.sp_update_job  
-                @job_name = N'$TlogBackupJobName',  
-                @enabled = 1 ;" 
+            $sql = "EXEC msdb.dbo.sp_update_job
+                @job_name = N'$TlogBackupJobName',
+                @enabled = 1 ;"
             Write-Verbose $sql
             Invoke-Sqlcmd @SqlCmdArguments -query $sql
         }
