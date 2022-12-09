@@ -208,7 +208,7 @@
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
         $ret = @{}
-        Write-Host "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING" 
 
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
@@ -222,7 +222,7 @@
             # ADJUST THE RECOVERY IF REQUESTED, IF WE ARE ALREADY NOT IN SIMPLE
             #>
             if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Host "[$($sw.Elapsed.ToString($swFormat))] SETTING DATABASE RECOVERY TO SIMPLE" -ForegroundColor Yellow
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING DATABASE RECOVERY TO SIMPLE" 
                 $sql = "ALTER DATABASE [$Database] SET RECOVERY SIMPLE"
                 Write-Verbose $sql
                 Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" 
@@ -288,12 +288,12 @@
             $usedTotalSize = $totals.Sum
             $originalRecovery = $db.RecoveryModel 
 
-            Write-Host "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" 
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME UNLESS IT ALREADY EXISTS
             #>
-            Write-Host "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP" -ForegroundColor Yellow
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP" 
             $sql = "
                 IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
                     ALTER DATABASE [$Database] ADD FILEGROUP SHRINK_DATA_TEMP
@@ -329,7 +329,7 @@
                 <#
                 # SHRINK THE OLD FILE GROUP DOWN A SMALL AMOUNT AT A TIME UNTIL WE REACH THE SMALLEST SIZE
                 #>
-                Write-Host "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Yellow
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" 
                 foreach($file in $originalFiles) {
                     # shrink each file a percentage at a time to keep from possibly timing out the shrink. cause even EMPTY files take a long time to shrink. WTF.
                     $fileName = $file.Name
@@ -346,7 +346,7 @@
                 Write-Verbose $sql
                 Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut    
 
-                Write-Host "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE" -ForegroundColor Yellow
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE" 
                 $sql = "
                     IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
 	                    ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILE [SHRINK_DATA_TEMP]
@@ -361,7 +361,7 @@
             <#
             # PERFORM ONE LAST TRUNCATEONLY SHRINK
             #>
-            Write-Host "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG [$fileGroupName] WITH TRUNCATEONLY" -ForegroundColor Yellow
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG [$fileGroupName] WITH TRUNCATEONLY" 
             foreach($file in $originalFiles) {
                 $fileName = $file.Name
                 $sql = "DBCC SHRINKFILE($fileName, TRUNCATEONLY) WITH NO_INFOMSGS"
@@ -381,7 +381,7 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-Host "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" 
         }
     }
 
@@ -398,7 +398,7 @@
             # SET THE RECOVERY BACK TO THE ORIGINAL RECOVERY IF REQUESTED AND THE ORIGINAL WAS NOT SIMPLE
             #>
             if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Host "[$($sw.Elapsed.ToString($swFormat))] RESETTING DATABASE RECOVERY MODE TO '$($originalRecovery.ToString().ToUpper())'" -ForegroundColor Yellow
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] RESETTING DATABASE RECOVERY MODE TO '$($originalRecovery.ToString().ToUpper())'" 
                 $sql = "ALTER DATABASE [$Database] SET RECOVERY $originalRecovery"
                 Write-Verbose $sql
                 Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut 
@@ -406,7 +406,7 @@
         }
 
         $sw.Stop()
-        Write-Host "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED" 
 
         if ($TlogBackupJobName) {
             $sql = "EXEC msdb.dbo.sp_update_job  

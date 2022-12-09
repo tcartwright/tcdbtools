@@ -80,13 +80,13 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
     $indexCounter = 0
     $indexCountTotal = $indexes.Count
     $activity = "MOVING ($indexCountTotal) INDEXES FROM FILEGROUP [$fromFG] TO FILEGROUP [$toFG] FOR DATABASE: [$($db.Name)]"
-    Write-Host "[$($sw.Elapsed.ToString($swFormat))] $activity" -ForegroundColor Yellow
+    Write-Information "[$($sw.Elapsed.ToString($swFormat))] $activity" 
 
     foreach ($tbl in ($indexes | Group-Object -Property schema_name,object_name)) {
         $table = $db.Tables.Item($tbl.Group[0].object_name, $tbl.Group[0].schema_name)
         $tableName = "[$($table.Schema)].[$($table.Name)]"
 
-        Write-Host "[$($sw.Elapsed.ToString($swFormat))] `tTABLE: $tableName $indicator"
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] `tTABLE: $tableName $indicator"
 
         # the table is a heap so we have to basically create a non-unique clustered index to move it..... then drop the index
         if (-not $table.HasClusteredIndex) {
@@ -107,7 +107,7 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
                     -Status “Moving index $indexCounter of $indexCountTotal [$($index.Name)] ” `
                     -PercentComplete (([decimal]$indexCounter / [decimal]$indexCountTotal) * 100.00)
 
-                    Write-Host "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
+                    Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 
                     # set the new filegroup, and the dropexisting property so the script will generate properly
                     $index.FileGroup = $toFG

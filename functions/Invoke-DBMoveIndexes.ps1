@@ -77,7 +77,7 @@ function Invoke-DBMoveIndexes {
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
-        Write-Host "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING" 
     }
 
     process {
@@ -96,7 +96,7 @@ function Invoke-DBMoveIndexes {
 
     end {
         $sw.Stop()
-        Write-Host "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED" 
     }
 }
 

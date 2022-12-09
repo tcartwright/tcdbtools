@@ -28,7 +28,7 @@ function Invoke-DBScriptObjects {
 
     #>
     [CmdletBinding()]
-    Param(
+    Param (
         [Parameter(Mandatory = $true, Position = 1)]
         [string]$ServerInstance,
         [Parameter(Mandatory = $true, Position = 2)]
@@ -90,8 +90,7 @@ function Invoke-DBScriptObjects {
             $db = $server.Databases[$Database] 
             $dbSavePath = [System.IO.Path]::Combine($SavePath, $Database)
             
-            if (!(Test-Path -Path $dbSavePath))
-            {
+            if (!(Test-Path -Path $dbSavePath)) {
                 Write-Verbose "Creating directory at '$dbSavePath'"
                 New-Item $dbSavePath -Type Directory -Force -ErrorAction Stop | Out-Null
             }        
