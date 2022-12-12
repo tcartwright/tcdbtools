@@ -105,7 +105,7 @@
                     } else {
                         # the original list does not have this setting yet, so add it
                         $setting = [PSCustomObject] @{
-                            NAME = $r.Name 
+                            NAME = $r.Name
                             DIFFS = ""
                         }
                         $list.Add($setting) | Out-Null

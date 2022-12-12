@@ -117,7 +117,7 @@
                 $_.Schema -ine "guest" -and
                 $_.Name -ine "guest"
             }
-            
+
             $cnt = 0
             $total = $objects.Count + $db.Triggers.Count + 1
             $activity = "SCRIPTING DATABASE: [$($db.Name)]"
@@ -137,7 +137,7 @@
             # also script out the database definition itself
             $cnt = ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
 
-            Write-Progress -Activity $activity -Completed 
+            Write-Progress -Activity $activity -Completed
         }
     }
 }
