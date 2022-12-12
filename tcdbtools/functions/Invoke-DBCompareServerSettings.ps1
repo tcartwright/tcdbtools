@@ -96,7 +96,7 @@
             for ($i = 0; $i -le ($compareServers.Count - 1); $i++) {
                 $srvrName = $compareServers[$i]
                 $SqlCmdArguments.ServerInstance = $srvrName
-                $results =  Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ConnectionTimeout 10 -ErrorAction Stop
+                $results =  Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ErrorAction Stop
 
                 foreach ($r in $results) {
                     $setting = $list | Where-Object { $_.Name -ieq $r.Name }
