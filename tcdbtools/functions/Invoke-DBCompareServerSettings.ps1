@@ -48,14 +48,14 @@
     DECLARE @options TABLE ([name] nvarchar(35), [minimum] int, [maximum] int, [config_value] int, [run_value] int)
     DECLARE @optionsCheck TABLE([id] int NOT NULL IDENTITY, [setting_name] varchar(128))
     DECLARE @current_value INT;
-    
+
     INSERT INTO @options ([name], [minimum], [maximum], [config_value], [run_value])
     EXEC sp_configure 'user_options';
-    
+
     SELECT @current_value = [config_value] FROM @options;
-    
-    INSERT INTO @optionsCheck 
-        ([setting_name]) 
+
+    INSERT INTO @optionsCheck
+        ([setting_name])
     VALUES
         ('DISABLE_DEF_CNST_CHK'),
         ('IMPLICIT_TRANSACTIONS'),
@@ -72,24 +72,24 @@
         ('CONCAT_NULL_YIELDS_NULL'),
         ('NUMERIC_ROUNDABORT'),
         ('XACT_ABORT')
-    
+
     ;WITH settings AS (
-        SELECT 
-            [name], [value] 
+        SELECT
+            [name], [value]
         FROM sys.configurations c
         ORDER BY [name]
         OFFSET 0 ROWS
     )
-    
-    SELECT * 
+
+    SELECT *
     FROM [settings]
         UNION ALL
-    SELECT CONCAT(oc.[setting_name], ' (options)'),   
+    SELECT CONCAT(oc.[setting_name], ' (options)'),
         [server_option] = CASE WHEN (@current_value & fn.[value]) = fn.[value] THEN 1 ELSE 0 END
     FROM @optionsCheck oc
     CROSS APPLY (
         SELECT [value] = CASE WHEN oc.id > 1 THEN POWER(2, oc.id - 1) ELSE 1 END
-    ) fn        
+    ) fn
         "
     }
 
