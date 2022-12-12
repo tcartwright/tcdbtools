@@ -9,7 +9,7 @@
 #                    method) or a database object with a Urn property (i.e. Table,
 #                    StoredProcedure, etc)
 ################################################################################
-function ScriptOutDbObj($scripter, $dbObj, $SavePath) {
+function ScriptOutDbObj($scripter, $dbObj, $SavePath, $WriteProgressActivity, $WriteProgressCount, $WriteProgressTotal ) {
     # Create a single element URN array
     $UrnCollection = New-Object ("Microsoft.SqlServer.Management.Smo.UrnCollection")
     $UrnCollection.Add($dbObj.Urn)
@@ -47,6 +47,12 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath) {
     ## tell the scripter object where to write it
     $scripter.Options.Filename = $tempPath
 
+    $WriteProgressCount++
+    $partialPath = $scripter.Options.FileName -ireplace [regex]::escape($SavePath), "."
+    Write-Progress -Activity $WriteProgressActivity `
+        -Status “Scripting file $WriteProgressCount of $WriteProgressTotal [$($partialPath)] ” `
+        -PercentComplete (([decimal]$WriteProgressCount / [decimal]$WriteProgressTotal) * 100.00)
+
     # a bit of progress reporting...
     Write-Information $scripter.Options.FileName
 
@@ -61,6 +67,7 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath) {
     if ((Get-Item $scripter.Options.Filename).length -le 0kb) {
         Remove-Item $scripter.Options.Filename -Verbose:$VerbosePreference
     }
+    return $WriteProgressCount
 }
 # End of Function ScriptOutDbObj
 ################################################################################

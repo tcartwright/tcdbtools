@@ -11,20 +11,20 @@
 
 #>
 
-$PsIniModuleHome = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
+$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
 # public functions
-. "$PsIniModuleHome\functions\Invoke-DBMoveIndexes.ps1"
-. "$PsIniModuleHome\functions\Invoke-DBSafeShrink.ps1"
-. "$PsIniModuleHome\functions\Invoke-DBScriptObjects.ps1"
-. "$PsIniModuleHome\functions\Invoke-DBExtractCLRDLL.ps1"
-. "$PsIniModuleHome\functions\Invoke-DBCompareServerSettings.ps1"
+. "$scriptDir\functions\Invoke-DBMoveIndexes.ps1"
+. "$scriptDir\functions\Invoke-DBSafeShrink.ps1"
+. "$scriptDir\functions\Invoke-DBScriptObjects.ps1"
+. "$scriptDir\functions\Invoke-DBExtractCLRDLL.ps1"
+. "$scriptDir\functions\Invoke-DBCompareServerSettings.ps1"
 
 # private functions
-. "$PsIniModuleHome\functions\private\Invoke-DBSafeShrink-functions.ps1"
-. "$PsIniModuleHome\functions\private\Invoke-DBScriptObjects-functions.ps1"
-. "$PsIniModuleHome\functions\private\Invoke-DBCompareServerSettings-functions.ps1"
-. "$PsIniModuleHome\functions\private\GenFuncs.ps1"
+. "$scriptDir\functions\private\Invoke-DBSafeShrink-privates.ps1"
+. "$scriptDir\functions\private\Invoke-DBScriptObjects-privates.ps1"
+. "$scriptDir\functions\private\Invoke-DBCompareServerSettings-privates.ps1"
+. "$scriptDir\functions\private\GenFuncs.ps1"
 
 Export-ModuleMember -Function Invoke-DBCompareServerSettings
 Export-ModuleMember -Function Invoke-DBExtractCLRDLL

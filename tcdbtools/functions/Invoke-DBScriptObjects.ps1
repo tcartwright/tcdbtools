@@ -117,22 +117,27 @@
                 $_.Schema -ine "guest" -and
                 $_.Name -ine "guest"
             }
+            
+            $cnt = 0
+            $total = $objects.Count + $db.Triggers.Count + 1
+            $activity = "SCRIPTING DATABASE: [$($db.Name)]"
 
-            #and write out each scriptable object as a file in the directory you specify
+            #  write out each scriptable object as a file in the directory you specify
             $objects | ForEach-Object {
                 #for every object we have in the datatable.
-                ScriptOutDbObj -scripter $scripter -dbObj $_ -SavePath $dbSavePath
+                $cnt = ScriptOutDbObj -scripter $scripter -dbObj $_ -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
             }
 
             # Next, script out Database Triggers (DatabaseDdlTrigger) separately because they are not returned by Database.EnumObjects()
             foreach ($trigger in $db.Triggers) {
-                ScriptOutDbObj -scripter $scripter -dbObj $trigger -SavePath $dbSavePath
+                $cnt = ScriptOutDbObj -scripter $scripter -dbObj $trigger -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
             }
 
             $scripter.Options.Permissions = $false
             # also script out the database definition itself
-            ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath
+            $cnt = ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
+
+            Write-Progress -Activity $activity -Completed 
         }
     }
 }
-
