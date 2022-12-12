@@ -11,9 +11,9 @@
 
         .PARAMETER Credentials
             Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
-        
+
         .PARAMETER IgnoreVersionDifferences
-            If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is 
+            If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is
             present, then any setting value with a dash will no be considers a difference.
 
         .INPUTS
@@ -101,16 +101,16 @@
 
                 foreach ($r in $results) {
                     $setting = $list | Where-Object { $_.Name -ieq $r.Name }
-                    if ($setting) {         
-                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value 
+                    if ($setting) {
+                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value
                     } else {
-                        # the original list does not have this setting yet, so add it 
+                        # the original list does not have this setting yet, so add it
                         $setting = [PSCustomObject] @{
-                            Name = $r.Name 
+                            Name = $r.Name
                             Diffs = ""
                         }
                         $list.Add($setting) | Out-Null
-                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value 
+                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value
                     }
                 }
             }
@@ -125,7 +125,7 @@
         foreach ($item in $list) {
             foreach ( $srvr in $compareServers ) {
                 if (-not (Get-Member -inputobject $item -name $srvr -Membertype Properties)) {
-                    $item | Add-Member -MemberType NoteProperty -Name $srvr -Value "-" 
+                    $item | Add-Member -MemberType NoteProperty -Name $srvr -Value "-"
                 }
             }
         }
