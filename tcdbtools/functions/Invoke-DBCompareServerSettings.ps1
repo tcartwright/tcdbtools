@@ -141,6 +141,3 @@
         return $list
     }
 }
-
-
-Invoke-DBCompareServerSettings -ServerInstances @("evergreen.qa.ptssql.com", "aggressive.qa.ptssql.com", "traders.development.ptssql.com\qa", "tclab.silvervine.it") | Format-Table
