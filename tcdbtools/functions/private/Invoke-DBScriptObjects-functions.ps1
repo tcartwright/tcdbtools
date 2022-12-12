@@ -48,7 +48,7 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath) {
     $scripter.Options.Filename = $tempPath
 
     # a bit of progress reporting...
-    Write-Verbose $scripter.Options.FileName
+    Write-Information $scripter.Options.FileName
 
     try {
         #and write out the object to the specified file
