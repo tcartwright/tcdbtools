@@ -47,6 +47,7 @@
     begin {
         $sqlCon = InitSqlConnection -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
+        $list = [System.Collections.ArrayList]::new()
 
         $compareServers =  $ServerInstances | ForEach-Object { ($_).ToUpper() }
         $query = "
@@ -92,8 +93,6 @@
 
     process {
         try {
-            $list = [System.Collections.ArrayList]::new()
-
             for ($i = 0; $i -le ($compareServers.Count - 1); $i++) {
                 $srvrName = $compareServers[$i]
                 $SqlCmdArguments.ServerInstance = $srvrName
@@ -106,8 +105,8 @@
                     } else {
                         # the original list does not have this setting yet, so add it 
                         $setting = [PSCustomObject] @{
-                            Name = $r.Name 
-                            Diffs = ""
+                            NAME = $r.Name 
+                            DIFFS = ""
                         }
                         $list.Add($setting) | Out-Null
                         $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value 
@@ -132,7 +131,7 @@
 
         foreach($result in $list) {
             $isDiff = CompareSettings -setting $result -propertyNames $compareServers -IgnoreVersionDifferences:$IgnoreVersionDifferences.IsPresent
-            $result.Diffs = $isDiff
+            $result.DIFFS = $isDiff
         }
 
     }
