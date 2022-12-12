@@ -11,6 +11,10 @@
 
         .PARAMETER Credentials
             Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        
+        .PARAMETER IgnoreVersionDifferences
+            If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is 
+            present, then any setting value with a dash will no be considers a difference.
 
         .INPUTS
             None. You cannot pipe objects to this script.
@@ -36,7 +40,8 @@
         [Parameter(Mandatory=$true)]
         [ValidateCount(2,999)]
         [string[]]$ServerInstances,
-        [pscredential]$Credentials
+        [pscredential]$Credentials,
+        [switch]$IgnoreVersionDifferences
     )
 
     begin {
@@ -73,16 +78,8 @@
         ('NUMERIC_ROUNDABORT'),
         ('XACT_ABORT')
 
-    ;WITH settings AS (
-        SELECT
-            [name], [value]
-        FROM sys.configurations c
-        ORDER BY [name]
-        OFFSET 0 ROWS
-    )
-
-    SELECT *
-    FROM [settings]
+    SELECT [name], [value]
+    FROM sys.configurations c
         UNION ALL
     SELECT CONCAT(oc.[setting_name], ' (options)'),
         [server_option] = CASE WHEN (@current_value & fn.[value]) = fn.[value] THEN 1 ELSE 0 END
@@ -95,21 +92,26 @@
 
     process {
         try {
-            $results =  Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ConnectionTimeout 10 -ErrorAction Stop | `
-                Select-Object -prop Name, `
-                    @{ Name = "Diffs"; Expression = "-"}, `
-                    @{ Name = "$($compareServers[0])"; Expression = { $_.Value }}
+            $list = [System.Collections.ArrayList]::new()
 
+            for ($i = 0; $i -le ($compareServers.Count - 1); $i++) {
+                $srvrName = $compareServers[$i]
+                $SqlCmdArguments.ServerInstance = $srvrName
+                $results =  Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ConnectionTimeout 10 -ErrorAction Stop
 
-            for ($num = 1; $num -le ($ServerInstances.Count - 1); $num++) {
-                $SqlCmdArguments.ServerInstance = $ServerInstances[$num]
-                $results1 =  Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ConnectionTimeout 10 -ErrorAction Stop
-                $srvName = $compareServers[$num]
-
-                foreach($result in $results) {
-                    $setting = $results1 | Where-Object { $_.Name -ieq $result.Name }
-                    if ( $setting ) { $value = $setting.Value } else { $value = "-" }
-                    $result | Add-Member -MemberType NoteProperty -Name $srvName -Value $value
+                foreach ($r in $results) {
+                    $setting = $list | Where-Object { $_.Name -ieq $r.Name }
+                    if ($setting) {         
+                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value 
+                    } else {
+                        # the original list does not have this setting yet, so add it 
+                        $setting = [PSCustomObject] @{
+                            Name = $r.Name 
+                            Diffs = ""
+                        }
+                        $list.Add($setting) | Out-Null
+                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value 
+                    }
                 }
             }
         } catch {
@@ -117,14 +119,28 @@
             return
         }
 
-        foreach($result in $results) {
-            $isDiff = CompareSettings -setting $result -propertyNames $compareServers
+        $list = $list | Sort-Object Name
+
+        # add the missing settings for older servers that do not support some settings
+        foreach ($item in $list) {
+            foreach ( $srvr in $compareServers ) {
+                if (-not (Get-Member -inputobject $item -name $srvr -Membertype Properties)) {
+                    $item | Add-Member -MemberType NoteProperty -Name $srvr -Value "-" 
+                }
+            }
+        }
+
+        foreach($result in $list) {
+            $isDiff = CompareSettings -setting $result -propertyNames $compareServers -IgnoreVersionDifferences:$IgnoreVersionDifferences.IsPresent
             $result.Diffs = $isDiff
         }
 
     }
 
     end {
-        return $results
+        return $list
     }
 }
+
+
+Invoke-DBCompareServerSettings -ServerInstances @("evergreen.qa.ptssql.com", "aggressive.qa.ptssql.com", "traders.development.ptssql.com\qa", "tclab.silvervine.it") | Format-Table
