@@ -128,7 +128,7 @@
             }
         }
 
-        # now that all the servers have values for each of the fields, lets compare all the values         
+        # now that all the servers have values for each of the fields, lets compare all the values
         foreach ($result in $list) {
             $isDiff = CompareSettings -setting $result -propertyNames $compareServers -IgnoreVersionDifferences:$IgnoreVersionDifferences.IsPresent
             $result.DIFFS = $isDiff

@@ -14,7 +14,7 @@ Function Write-InformationColored {
             will _always_ treats $InformationPreference as 'Continue', so the caller
             cannot use other options to the preference variable as intended.
 
-        .LINK 
+        .LINK
             https://blog.kieranties.com/2018/03/26/write-information-with-colours
     #>
     [CmdletBinding()]
@@ -93,7 +93,7 @@ function GetSQLConnection {
 # If the script has a hard time finding SMO, you can install the dbatools module and import it. Which ensures that SMO can be found.
 if (Get-Module -ListAvailable -Name dbatools) {
     Write-Verbose "Importing dbatools"
-    Import-Module dbatools 
+    Import-Module dbatools
 }
 
 # load up SMO by default for all scripts.... hopefully. MSFT recently changed SMO to a nuget package which really jacks with finding it, or downloading it automatically
