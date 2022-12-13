@@ -122,6 +122,8 @@
             $total = $objects.Count + $db.Triggers.Count + 1
             $activity = "SCRIPTING DATABASE: [$($db.Name)]"
 
+            Write-InformationColored "$activity" -ForegroundColor Yellow
+
             #  write out each scriptable object as a file in the directory you specify
             $objects | ForEach-Object {
                 #for every object we have in the datatable.
@@ -138,6 +140,7 @@
             $cnt = ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
 
             Write-Progress -Activity $activity -Completed
+            Write-InformationColored "FINISHED $activity" -ForegroundColor Yellow
         }
     }
 }

@@ -31,3 +31,4 @@ Export-ModuleMember -Function Invoke-DBExtractCLRDLL
 Export-ModuleMember -Function Invoke-DBScriptObjects
 Export-ModuleMember -Function Invoke-DBMoveIndexes
 Export-ModuleMember -Function Invoke-DBSafeShrink
+Export-ModuleMember -Function Write-InformationColored

@@ -200,7 +200,7 @@
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
         $ret = @{}
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] STARTING"
+        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
 
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
@@ -280,7 +280,7 @@
             $usedTotalSize = $totals.Sum
             $originalRecovery = $db.RecoveryModel
 
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n"
+            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME UNLESS IT ALREADY EXISTS
@@ -321,7 +321,7 @@
                 <#
                 # SHRINK THE OLD FILE GROUP DOWN A SMALL AMOUNT AT A TIME UNTIL WE REACH THE SMALLEST SIZE
                 #>
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName"
+                Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
                 foreach($file in $originalFiles) {
                     # shrink each file a percentage at a time to keep from possibly timing out the shrink. cause even EMPTY files take a long time to shrink. WTF.
                     $fileName = $file.Name
@@ -330,6 +330,7 @@
                     Write-Verbose "LOOPING SHRINKFILE"
                     $size = ShrinkFile -SqlCmdArguments $SqlCmdArguments -size $size -fileName $fileName -targetSizeMB $usedMinSize -timeout $ShrinkTimeout -ShrinkIncrementMB $ShrinkIncrementMB | Select-Object -Last 1
                 }
+                Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
 
                 MoveIndexes -db $db -fromFG "SHRINK_DATA_TEMP" -toFG $fileGroupName -indicator "<--" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
 
@@ -373,7 +374,7 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n"
+            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
         }
     }
 
@@ -398,7 +399,7 @@
         }
 
         $sw.Stop()
-        Write-Information "[$($sw.Elapsed.ToString($swFormat))] FINISHED"
+        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
 
         if ($TlogBackupJobName) {
             $sql = "EXEC msdb.dbo.sp_update_job

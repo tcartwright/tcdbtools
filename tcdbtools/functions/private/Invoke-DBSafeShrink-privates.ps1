@@ -67,7 +67,7 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
     $indexCounter = 0
     $indexCountTotal = $indexes.Count
     $activity = "MOVING ($indexCountTotal) INDEXES FROM FILEGROUP [$fromFG] TO FILEGROUP [$toFG] FOR DATABASE: [$($db.Name)]"
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] $activity"
+    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] $activity" -ForegroundColor Green
 
     foreach ($tbl in ($indexes | Group-Object -Property schema_name,object_name)) {
         $table = $db.Tables.Item($tbl.Group[0].object_name, $tbl.Group[0].schema_name)
@@ -106,6 +106,7 @@ function MoveIndexes ($SqlCmdArguments, $db, $fromFG, $toFG, $indicator, $timeou
         }
     }
     Write-Progress -Activity $activity -Completed
+    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED $activity" -ForegroundColor Green
 }
 
 

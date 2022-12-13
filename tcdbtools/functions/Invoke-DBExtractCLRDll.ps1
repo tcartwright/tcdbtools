@@ -100,7 +100,7 @@
                     # extract the bytes from a column into an arry
                     [byte[]]$bytes = $reader.GetSqlBytes($fields.content).Buffer
                     # write the byte array to a file
-                    Write-Verbose "Writing file: $fileName"
+                    Write-Information "Writing file: $fileName"
                     [System.Io.File]::WriteAllBytes($fileName, $bytes)
 
                     $temp = New-Object System.Object
