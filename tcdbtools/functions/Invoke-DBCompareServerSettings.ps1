@@ -45,7 +45,7 @@
     )
 
     begin {
-        $sqlCon = InitSqlConnection -ServerInstance $ServerInstances[0] -Credentials $Credentials
+        $sqlCon = InitSqlObjects -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $list = [System.Collections.ArrayList]::new()
 
@@ -100,17 +100,15 @@
 
                 foreach ($r in $results) {
                     $setting = $list | Where-Object { $_.Name -ieq $r.Name }
-                    if ($setting) {
-                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value
-                    } else {
+                    if (-not $setting) {
                         # the original list does not have this setting yet, so add it
                         $setting = [PSCustomObject] @{
                             NAME = $r.Name
                             DIFFS = ""
                         }
                         $list.Add($setting) | Out-Null
-                        $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value
                     }
+                    $setting | Add-Member -MemberType NoteProperty -Name $srvrName -Value $r.Value
                 }
             }
         } catch {
@@ -118,6 +116,7 @@
             return
         }
 
+        # lets sort the list now that we have all the properties added
         $list = $list | Sort-Object Name
 
         # add the missing settings for older servers that do not support some settings
@@ -129,11 +128,11 @@
             }
         }
 
-        foreach($result in $list) {
+        # now that all the servers have values for each of the fields, lets compare all the values         
+        foreach ($result in $list) {
             $isDiff = CompareSettings -setting $result -propertyNames $compareServers -IgnoreVersionDifferences:$IgnoreVersionDifferences.IsPresent
             $result.DIFFS = $isDiff
         }
-
     }
 
     end {

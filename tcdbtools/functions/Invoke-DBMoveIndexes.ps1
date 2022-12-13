@@ -61,7 +61,7 @@
     )
 
     begin {
-        $sqlCon = InitSqlConnection -ServerInstance $ServerInstance -Credentials $Credentials
+        $sqlCon = InitSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 

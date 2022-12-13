@@ -24,7 +24,7 @@ GUID = 'f2c130b2-f9e0-43b8-b082-074be44628bb'
 Author = 'Tim Cartwright'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Tim Cartwright'
 
 # Copyright statement for this module
 Copyright = '(c) 2022 Tim Cartwright. All rights reserved.'
@@ -95,13 +95,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("sqlserver", "sql", "dba", "sql", "databases", "database", "smo")
 
         # A URL to the license for this module.
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/tcartwright/tcdbtools'
 
         # A URL to an icon representing this module.
         # IconUri = ''
