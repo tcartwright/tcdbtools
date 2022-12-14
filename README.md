@@ -1,13 +1,28 @@
-# tcdbtools
+# TCDbTools 
 
-Collection of powershell tools for SQL Server management.
+## Table of Contents
 
-- Invoke-DBSafeShrink : Can be used to shrink an mdf file without causing any index fragmentation increase.
-    
-- Invoke-DBMoveIndexes : Moves all indexes from one file group to another, including heaps.
+* [Description](#description) 
+* [Installation](#installation)
+* [Functions](#functions)
 
-- Invoke-DBCompareServerSettings : Compares the server settings between two or more servers.
+##  Description
 
-- Invoke-DBExtractCLRDLL : Extracts all user defined CLR dlls from a SQL server.
+Collection of Powershell tools for SQL Server management. 
 
-- Invoke-DBScriptObjects : Scripts all objects from a database to individual files per object.
+## Installation
+
+TCDbTools is published to the [Powershell Gallery](https://www.powershellgallery.com/packages/tcdbtools)
+and can be installed as follows:
+
+```powershell
+Install-Module tcdbtools
+```
+
+## Functions
+
+* [Invoke-DBSafeShrink](docs/Invoke-DBSafeShrink.md) : Can be used to shrink an mdf file and rebuild all indexes at the same time. Typically faster then a normal shrink.
+* [Invoke-DBMoveIndexes](docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps.
+* [Invoke-DBCompareServerSettings](docs/Invoke-DBCompareServerSettings.md) : Compares the server settings between two or more servers.
+* [Invoke-DBExtractCLRDLL](docs/Invoke-DBExtractCLRDLL.md) : Extracts all user defined CLR dlls from a SQL server.
+* [Invoke-DBScriptObjects](docs/Invoke-DBScriptObjects.md) : Scripts all objects from a database to individual files per object.
