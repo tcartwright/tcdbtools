@@ -44,10 +44,10 @@
         multiple mdf or ldf files assigned.
 
     .PARAMETER NewFileDirectory
-        If passed, then this will be the directory that the new temprory file will be created in.
+        If passed, then this will be the directory that the new temporary file will be created in.
         Otherwise it will default to the same directory as the primary file. This directory will
         be created if it does not exist. If it already exists, then nothing happens. If the path
-        is a local path, then the directory will be created on the server using xp_create_subdir.
+        is a local path, then the directory will be created on the server using xp_create_sub directory.
 
         NOTES:
             - The drive must exist, else an exception will occur
@@ -55,7 +55,7 @@
 
     .PARAMETER Direction
         If the direction is twoway then the the indexes are moved to the temporary file and back
-        after the orginal file is shrunk. If the direction is oneway, then the indexes are moved
+        after the original file is shrunk. If the direction is oneway, then the indexes are moved
         to the temporary file, and the process will be complete.
 
     .PARAMETER AdjustRecovery
