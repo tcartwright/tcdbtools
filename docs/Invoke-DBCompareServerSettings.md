@@ -1,38 +1,25 @@
-# Invoke-DBMoveIndexes
+# Invoke-DBCompareServerSettings
 **Author** Tim Cartwright
 
 ## Synopsis
-Moves indexes from one file group to another including heaps.
+Compares all server settings for each instance passed in to generate a report showing differences. The user options are also compared individually. Any user option will have its name suffixed with (options).
 
 ## Description
-Moves indexes from one file group to another. Both file groups must exist, neither
-will be created for you.
+Compares all server settings for each instance passed in to generate a report showing differences.
 
 ## Syntax
-    Invoke-DBMoveIndexes 
-        [-ServerInstance] <String> 
-        [-Databases] <String[]> 
-        [[-Credentials] <PSCredential>] 
-        [-SourceFileGroupName] <String> 
-        [-TargetFileGroupName] <String> 
-        [[-IndexMoveTimeout] <Int32>] 
-        [<CommonParameters>]
+    Invoke-DBCompareServerSettings 
+    [-ServerInstances] <String[]> 
+    [[-Credentials] <PSCredential>] 
+    [-IgnoreVersionDifferences ] 
+    [<CommonParameters>]
 
 ## Parameters
-    -ServerInstance <String>
-        The sql server instance to connect to.
+    -ServerInstances <String[]>
+        The sql server instances to connect to and compare.  At least two servers must be passed in.
 
         Required?                    true
         Position?                    1
-        Default value                
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-    -Databases <String[]>
-        The databases to shrink. A string array.
-
-        Required?                    true
-        Position?                    2
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
@@ -41,39 +28,19 @@ will be created for you.
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
         Required?                    false
-        Position?                    3
+        Position?                    2
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
-    -SourceFileGroupName <String>
-        The file group name to move indexes from.
-
-        Required?                    true
-        Position?                    4
-        Default value                PRIMARY
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-    -TargetFileGroupName <String>
-        The file group where the indexes will be moved to.
-
-        Required?                    true
-        Position?                    5
-        Default value                
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-    -IndexMoveTimeout <Int32>
-        The amount of time that controls how long a index move can run before timing out.
-        
-        NOTES: This timeout is in minutes.
+    -IgnoreVersionDifferences <SwitchParameter>
+        If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is
+        present, then any setting value with a dash will not be considered a difference.
 
         Required?                    false
-        Position?                    6
-        Default value                5
+        Position?                    named
+        Default value                False
         Accept pipeline input?       false
         Accept wildcard characters?  false
-
 
 [Back](/README.md)

@@ -1,20 +1,21 @@
 ﻿function Invoke-DBCompareServerSettings {
     <#
         .SYNOPSIS
-            Compares all server settings for each instance passed in to generate a report showing differences.
+            Compares all server settings for each instance passed in to generate a report showing differences. The user options are also compared 
+            individually. Any user option will have its name suffixed with (options).
 
         .DESCRIPTION
             Compares all server settings for each instance passed in to generate a report showing differences.
 
         .PARAMETER ServerInstances
-            The sql server instances to connect to and compare.
+            The sql server instances to connect to and compare. At least two servers must be passed in.
 
         .PARAMETER Credentials
             Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
         .PARAMETER IgnoreVersionDifferences
             If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is
-            present, then any setting value with a dash will no be considers a difference.
+            present, then any setting value with a dash will not be considered a difference.
 
         .INPUTS
             None. You cannot pipe objects to this script.
