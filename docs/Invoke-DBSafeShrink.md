@@ -25,7 +25,7 @@ QUOTE (Paul Randal):
 
 1. Create a new filegroup
 2. Move all affected tables and indexes into the new filegroup using the
-    CREATE INDEX … WITH (DROP_EXISTING = ON) ON syntax, to move the tables
+    CREATE INDEX … WITH ([DROP_EXISTING = ON](https://learn.microsoft.com/en-us/sql/t-sql/statements/create-index-transact-sql?view=sql-server-ver16#drop_existing---on--off-)) ON syntax, to move the tables
     and remove fragmentation from them at the same time
 3. Drop the old filegroup that you were going to shrink anyway (or
     shrink it way down if its the primary filegroup)
