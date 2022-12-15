@@ -1,11 +1,37 @@
 # Invoke-DBScriptObjects
-**Author** Tim Cartwright
+**Author** Phil Factor
+
+**Edited By** Tim Cartwright
 
 ## Synopsis
 Generate file-per-object scripts of specified server and database.
 
 ## Description
 Generate file-per-object scripts of specified server and database to specified directory. Attempts to create specified directory if not found.
+
+## NOTES
+Adapted from [Automated Script-generation with Powershell and SMO](http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/)
+
+Editor: Tim Cartwright:
+- Changed to script Service Broker objects.
+- Script into folders per object type and schema, instead of one flat folder
+- Ability to use username and password instead of trusted. Trusted can still be used.
+
+        Example directory structure created:
+            ├───dbo
+            │   ├───StoredProcedures
+            │   │       dbo.proc1.sql
+            │   │       dbo.proc2.sql
+            │   │		...
+            │   ├───Tables
+            │   │       dbo.table1.sql
+            │   │       dbo.table2.sql
+            │   │       ...
+            │   └───Views
+            │   │       dbo.view1.sql
+            │   │       dbo.view2.sql
+            │   │       ...
+
 
 ## Syntax
     Invoke-DBScriptObjects 

@@ -25,6 +25,22 @@
         - Also to script into folders, instead of one flat folder
         - Ability to use username and password instead of trusted. Trusted can still be used.
 
+        Example directory structure:
+            ├───dbo
+            │   ├───StoredProcedures
+            │   │       dbo.proc1.sql
+            │   │       dbo.proc2.sql
+            │   │		...
+            │   ├───Tables
+            │   │       dbo.table1.sql
+            │   │       dbo.table2.sql
+            │   │       ...
+            │   └───Views
+            │   │       dbo.view1.sql
+            │   │       dbo.view2.sql
+            │   │       ...
+
+
     .LINK
         https://github.com/tcartwright/tcdbtools
     #>
