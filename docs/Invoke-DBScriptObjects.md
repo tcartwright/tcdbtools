@@ -1,7 +1,7 @@
 # Invoke-DBScriptObjects
 **Author** Phil Factor
 
-**Edited By** Tim Cartwright
+**Edits By** Tim Cartwright
 
 ## Synopsis
 Generate file-per-object scripts of specified server and database.

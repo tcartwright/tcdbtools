@@ -19,13 +19,14 @@
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
     .NOTES
+        Author: Phil Factor
         Adapted from http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/
-        Editor: Tim Cartwright:
-        - Changed to script SB objects.
-        - Also to script into folders, instead of one flat folder
-        - Ability to use username and password instead of trusted. Trusted can still be used.
+        Edits By: Tim Cartwright:
+            - Changed to script Service Broker objects.
+            - Script into folders per object type and schema, instead of one flat folder
+            - Ability to use username and password instead of trusted. Trusted can still be used.
 
-        Example directory structure:
+        Example directory structure created:
             ├───dbo
             │   ├───StoredProcedures
             │   │       dbo.proc1.sql
