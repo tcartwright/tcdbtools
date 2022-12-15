@@ -2,10 +2,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-    Generate file-per-object scripts of specified server and database.
+Generate file-per-object scripts of specified server and database.
 
 ## Description
-    Generate file-per-object scripts of specified server and database to specified directory. Attempts to create specified directory if not found.
+Generate file-per-object scripts of specified server and database to specified directory. Attempts to create specified directory if not found.
 
 ## Syntax
     Invoke-DBScriptObjects 

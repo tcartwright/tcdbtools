@@ -2,10 +2,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-    Will extract all user defined file types from SQL SERVER database as DLL files, and or PDB files. 
+Will extract all user defined file types from SQL SERVER database as DLL files, and or PDB files. 
 
 ## Description
-    Will extract all user defined file types from SQL SERVER database as DLL files, and or PDB files. 
+Will extract all user defined file types from SQL SERVER database as DLL files, and or PDB files. 
 
 ## Syntax
     Invoke-DBExtractCLRDLL 

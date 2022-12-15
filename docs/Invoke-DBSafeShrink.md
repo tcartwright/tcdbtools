@@ -3,34 +3,35 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-    Shrinks a Sql Server mdf database file while also rebuilding the indexes.
+Shrinks a Sql Server mdf database file while also rebuilding the indexes.
 
 ## Description
-    Shrinks a Sql Server mdf database file while also rebuilding the indexes. Can be
-    used to migrate indexes to a new filegroup, or just shrink and move the indexes
-    back to the original filegroup after the shrink is done. Typically runs faster than
-    a normal shrink operation.
+Shrinks a Sql Server mdf database file while also rebuilding the indexes. Can be
+used to migrate indexes to a new filegroup, or just shrink and move the indexes
+back to the original filegroup after the shrink is done. Typically runs faster than
+a normal shrink operation.
+
+IMPORTANT: The second file that gets created will match the used size of the original
+filegroup. You must have enough disk space to support this.
+
+## More Information     
+Wrote this after I read this post by Paul Randal: [Why you should not shrink your data files](https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/) 
     
-    IMPORTANT: The second file that gets created will match the used size of the original
-    filegroup. You must have enough disk space to support this.
-    
-    Wrote this after I read this post by Paul Randal: [Why you should not shrink your data files](https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/)
-    
-    I always knew shrinking was very bad, but until I read these comments by
-    Paul my brain never clicked that there could be a better way:
-    
-    QUOTE (Paul Randal):
-        The method I like to recommend is as follows:
-    
-        1. Create a new filegroup
-        2. Move all affected tables and indexes into the new filegroup using the
-            CREATE INDEX … WITH (DROP_EXISTING = ON) ON syntax, to move the tables
-            and remove fragmentation from them at the same time
-        3. Drop the old filegroup that you were going to shrink anyway (or
-            shrink it way down if its the primary filegroup)
-        4. Move the indexes back to the original filegroup if desired
-    
-    This script automates those steps so you don't have to.
+I always knew shrinking was very bad, but until I read these comments by
+Paul my brain never clicked that there could be a better way:
+
+QUOTE (Paul Randal):
+    The method I like to recommend is as follows:
+
+1. Create a new filegroup
+2. Move all affected tables and indexes into the new filegroup using the
+    CREATE INDEX … WITH (DROP_EXISTING = ON) ON syntax, to move the tables
+    and remove fragmentation from them at the same time
+3. Drop the old filegroup that you were going to shrink anyway (or
+    shrink it way down if its the primary filegroup)
+4. Move the indexes back to the original filegroup if desired
+
+This script automates those steps so you don't have to.
 
 ## Syntax
     Invoke-DBSafeShrink 
