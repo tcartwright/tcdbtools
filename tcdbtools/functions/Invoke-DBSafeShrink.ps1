@@ -27,6 +27,7 @@
                 and remove fragmentation from them at the same time
             - Drop the old filegroup that you were going to shrink anyway (or
                 shrink it way down if its the primary filegroup)
+            - Move the indexes back to the original filegroup if desired
 
         This script automates those steps so you don't have to.
 
