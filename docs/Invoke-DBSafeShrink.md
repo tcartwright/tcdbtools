@@ -14,8 +14,8 @@
     IMPORTANT: The second file that gets created will match the used size of the original
     filegroup. You must have enough disk space to support this.
     
-    Wrote this after I read this post by Paul Randal: <a href="https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/" target="_blank">Why you should not shrink your data files</a>
-
+    Wrote this after I read this post by Paul Randal: [Why you should not shrink your data files](https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/)
+    
     I always knew shrinking was very bad, but until I read these comments by
     Paul my brain never clicked that there could be a better way:
     
