@@ -11,7 +11,7 @@ used to migrate indexes to a new filegroup, or just shrink and move the indexes
 back to the original filegroup after the shrink is done. Typically runs faster than
 a normal shrink operation.
 
-IMPORTANT: The second file that gets created will match the used size of the original
+**IMPORTANT**: The second file that gets created will match the used size of the original
 filegroup. You must have enough disk space to support this.
 
 ## More Information     
@@ -23,13 +23,14 @@ Paul my brain never clicked that there could be a better way:
 QUOTE (Paul Randal):
     The method I like to recommend is as follows:
 
-1. Create a new filegroup
-2. Move all affected tables and indexes into the new filegroup using the
-    CREATE INDEX … WITH (<a href="https://learn.microsoft.com/en-us/sql/t-sql/statements/create-index-transact-sql?view=sql-server-ver16#drop_existing---on--off-" target="_blank">DROP_EXISTING = ON</a>) syntax, to move the tables
-    and remove fragmentation from them at the same time
-3. Drop the old filegroup that you were going to shrink anyway (or
-    shrink it way down if its the primary filegroup)
-4. Move the indexes back to the original filegroup if desired
+> 1. Create a new filegroup
+> 2. Move all affected tables and indexes into the new filegroup using the
+> CREATE INDEX … WITH (<a href="https://learn.microsoft.com/en-us/sql/t-sql/statements/create-index-transact-sql?view=sql-server-ver16#drop_existing---on--off-" target="_blank">DROP_EXISTING = ON</a>) syntax, to move the tables
+> and remove fragmentation from them at the same time
+> 3. Drop the old filegroup that you were going to shrink anyway (or
+> shrink it way down if its the primary filegroup)
+> 4. Move the indexes back to the original filegroup if desired
+
 
 This script automates those steps so you don't have to.
 
