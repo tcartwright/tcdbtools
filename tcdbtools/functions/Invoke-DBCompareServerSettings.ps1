@@ -1,10 +1,10 @@
 ﻿function Invoke-DBCompareServerSettings {
     <#
         .SYNOPSIS
-            Compares all server settings for each intstance passed in to generate a report showing differences.
+            Compares all server settings for each instance passed in to generate a report showing differences.
 
         .DESCRIPTION
-            Compares all server settings for each intstance passed in to generate a report showing differences.
+            Compares all server settings for each instance passed in to generate a report showing differences.
 
         .PARAMETER ServerInstances
             The sql server instances to connect to and compare.
