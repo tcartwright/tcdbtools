@@ -21,8 +21,9 @@ I always knew shrinking was very bad, but until I read these comments by
 Paul my brain never clicked that there could be a better way:
 
 QUOTE (Paul Randal):
-    The method I like to recommend is as follows:
-
+    
+>    The method I like to recommend is as follows:
+>
 > 1. Create a new filegroup
 > 2. Move all affected tables and indexes into the new filegroup using the
 > CREATE INDEX … WITH (<a href="https://learn.microsoft.com/en-us/sql/t-sql/statements/create-index-transact-sql?view=sql-server-ver16#drop_existing---on--off-" target="_blank">DROP_EXISTING = ON</a>) syntax, to move the tables
