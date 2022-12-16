@@ -68,9 +68,9 @@ function Invoke-DBRenameConstraints {
         This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned.
 
         EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
-        
+
         The method signature is as follows: function GetObjectName($newName, $renames)
-        
+
         The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
 
     .EXAMPLE
@@ -266,7 +266,7 @@ function Invoke-DBRenameConstraints {
                             }
                         }
                     }
-                    
+
                     # unless force is present, do not rename this, as it already matches our desired name
                     if (-not $Force.IsPresent -and $newName -ieq $grp.object_name) {
                         # store this, so the numbers will work properly in the for loop above
