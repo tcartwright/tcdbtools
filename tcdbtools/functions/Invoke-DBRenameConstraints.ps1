@@ -1,12 +1,12 @@
-#Requires -Modules Invoke-SqlCmd2
+﻿#Requires -Modules Invoke-SqlCmd2
 
 function Invoke-DBRenameConstraints {
     <#
     .SYNOPSIS
-        Will rename all indexes and constraints to match naming conventions. 
+        Will rename all indexes and constraints to match naming conventions.
 
     .DESCRIPTION
-        Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected 
+        Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected
         naming convention will be skipped.
 
     .PARAMETER ServerInstance
@@ -35,25 +35,25 @@ function Invoke-DBRenameConstraints {
             schema_name: The schema name of the object
             table_name: The name of the view or table parent object
             object_name: The name of the constraint or index.
-            details1: 
+            details1:
                 C       : The column name used or null if the column could not be determined
                 D       : The column name used or null if the column could not be determined
                 FK      : The schema of the remote table name
                 Index   : The first column used in the index key
                 PK      : The first column used in the index key
-            details2: 
+            details2:
                 C       : NULL
                 D       : NULL
                 FK      : The table name of the remote table name
                 Index   : A full list of the columns used in the index comma delimited
                 PK      : A full list of the columns used in the index comma delimited
-            details3: 
+            details3:
                 C       : NULL
                 D       : NULL
                 FK      : NULL
                 Index   : The detailed type of the index
                 PK      : The detailed type of the index
-            type: The type of object       
+            type: The type of object
 
     .EXAMPLE
         PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
@@ -97,10 +97,10 @@ function Invoke-DBRenameConstraints {
                    [t].[details3],
                    RTRIM([t].[type]) AS [type]
             FROM (
-	            SELECT 
-                        [schema_name]		= SCHEMA_NAME(fk.[schema_id]), 
-                        [table_name]		= OBJECT_NAME(fk.[parent_object_id]), 
-                        [object_name]		= fk.[name], 
+	            SELECT
+                        [schema_name]		= SCHEMA_NAME(fk.[schema_id]),
+                        [table_name]		= OBJECT_NAME(fk.[parent_object_id]),
+                        [object_name]		= fk.[name],
                         [details1]			= OBJECT_SCHEMA_NAME(fk.[referenced_object_id]),
                         [details2]			= OBJECT_NAME(fk.[referenced_object_id]),
                         [details3]			= NULL,
@@ -108,16 +108,16 @@ function Invoke-DBRenameConstraints {
                     FROM sys.[foreign_keys] fk
                     INNER JOIN sys.[objects] o ON fk.[object_id] = o.[object_id]
                     WHERE OBJECTPROPERTY(fk.[parent_object_id], 'IsMSShipped') = 0
-            
+
                     UNION ALL
-            
-                    SELECT 
-                        [schema_name]		= SCHEMA_NAME(o.[schema_id]), 
-                        [table_name]		= OBJECT_NAME(i.[object_id]), 
-                        [object_name]		= i.[name], 
+
+                    SELECT
+                        [schema_name]		= SCHEMA_NAME(o.[schema_id]),
+                        [table_name]		= OBJECT_NAME(i.[object_id]),
+                        [object_name]		= i.[name],
                         [details1]			= COL_NAME(i.[object_id], ic.[column_id]),
                         [details2]			= fn.[names],
-                        [details3]			= CASE 
+                        [details3]			= CASE
                                                     WHEN i.[type] = 1 THEN 'Clustered index'
                                                     WHEN i.[type] = 2 THEN 'Nonclustered unique index'
                                                     WHEN i.[type] = 3 THEN 'XML index'
@@ -126,7 +126,7 @@ function Invoke-DBRenameConstraints {
                                                     WHEN i.[type] = 6 THEN 'Nonclustered columnstore index'
                                                     WHEN i.[type] = 7 THEN 'Nonclustered hash index'
                                                 END,
-                        [type]				=	CASE 
+                        [type]				=	CASE
                                                     WHEN i.[is_unique_constraint] = 1 THEN 'UQ'
                                                     WHEN i.[is_primary_key] = 1 THEN 'PK'
                                                     WHEN i.[is_unique_constraint] = 1 THEN 'UX'
@@ -134,13 +134,13 @@ function Invoke-DBRenameConstraints {
                                                 END
                     FROM  sys.[indexes] i
                     INNER JOIN sys.[objects] o ON i.[object_id] = o.[object_id]
-                    INNER JOIN sys.[index_columns] AS [ic] 
+                    INNER JOIN sys.[index_columns] AS [ic]
                         ON [ic].[object_id] = [i].[object_id]
                             AND [ic].[index_id] = [i].[index_id]
                             AND ic.[index_column_id] = 1
                     CROSS APPLY (
                         SELECT STUFF((
-                            SELECT CONCAT(', ', COL_NAME(i.[object_id], ic2.[column_id])) 
+                            SELECT CONCAT(', ', COL_NAME(i.[object_id], ic2.[column_id]))
                             FROM sys.[index_columns] AS [ic2]
                                 WHERE [ic2].[object_id] = [i].[object_id]
                                 AND [ic2].[index_id] = [i].[index_id]
@@ -151,13 +151,13 @@ function Invoke-DBRenameConstraints {
                         AND OBJECTPROPERTY(o.[object_id], 'IsMSShipped') = 0
                         AND OBJECTPROPERTYEX(o.[object_id], 'BaseType') <> 'TT' -- ignore table types as their constraints cannot be named
 
-            
+
                     UNION ALL
-            
-                    SELECT 
-                        [schema_name]		= SCHEMA_NAME(o.[schema_id]), 
-                        [table_name]		= OBJECT_NAME(s.[id]), 
-                        [object_name]		= o.[name], 
+
+                    SELECT
+                        [schema_name]		= SCHEMA_NAME(o.[schema_id]),
+                        [table_name]		= OBJECT_NAME(s.[id]),
+                        [object_name]		= o.[name],
                         [details1]			= COL_NAME(s.[id], s.[colid]),
                         [details2]			= NULL,
                         [details3]			= NULL,
@@ -167,9 +167,9 @@ function Invoke-DBRenameConstraints {
                     WHERE o.type NOT IN ('F', 'PK', 'UQ')
                         AND OBJECTPROPERTY(s.[id], 'IsMSShipped') = 0
                         AND OBJECTPROPERTYEX(s.[id], 'BaseType') <> 'TT' -- ignore table types as their constraints cannot be named
-            ) t 
-            ORDER BY [t].[schema_name], 
-	            [t].[table_name], 
+            ) t
+            ORDER BY [t].[schema_name],
+	            [t].[table_name],
 	            [t].[object_name]"
 
         $sql = "EXEC sys.sp_rename @objname=N'{0}', @newname=N'{1}', @objtype=N'{2}';`r`n"
@@ -193,7 +193,7 @@ function Invoke-DBRenameConstraints {
                     if (-not $CustomGetObjectName) {
                         $newName = GetObjectName -obj $grp -IncludeSchemaInNames:$IncludeSchemaInNames.IsPresent
                     } else {
-                        $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent)        
+                        $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent)
                     }
 
                     if ($renames.ContainsKey($newName)) {
@@ -213,12 +213,12 @@ function Invoke-DBRenameConstraints {
                         # store this, so the numbers will work properly in the for loop above
                         $renames.Add($newName, "") | Out-Null
                         continue
-                    }   
+                    }
 
                     $tempName = "tmp_$([Guid]::NewGuid().ToString("N"))"
                     # handle the crappy case where their old name had brackets in it. :|
                     $oldName = $grp.object_name -replace "\[", "\[\[" -replace "\]", "\]\]"
-                    
+
                     # we must first rename the constraints to some super generic name to avoid name collisions, then immediately rename it back
                     if ($grp.type.Trim() -ine "NC") {
                         $tempSql = $sql -f "[$($grp.schema_name)].[$oldName]", "$tempName", "OBJECT"
@@ -260,9 +260,9 @@ $($renames.Values)"
 
                     $ErrorActionPreference = "Stop"
                     try {
-                        Write-Information $renameSql 
-                        $command.CommandText = $renameSql;                        
-                        $command.ExecuteNonQuery() | Out-Null 
+                        Write-Information $renameSql
+                        $command.CommandText = $renameSql;
+                        $command.ExecuteNonQuery() | Out-Null
                     } catch {
                         Write-InformationColored $_.Exception.Message -ForegroundColor Red
                     }
@@ -276,7 +276,7 @@ $($renames.Values)"
 
     end {
         if ($command) { $command.Dispose() }
-        if ($connection) { $connection.Dispose() }        
+        if ($connection) { $connection.Dispose() }
         return $output | Sort-Object Database, ObjectName, NewConstraintName
     }
 }

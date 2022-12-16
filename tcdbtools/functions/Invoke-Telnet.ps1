@@ -1,4 +1,4 @@
-Function Invoke-Telnet {
+﻿Function Invoke-Telnet {
     <#
     .SYNOPSIS
         A powershell telnet client alternative.
@@ -31,7 +31,7 @@ Function Invoke-Telnet {
         This command will take all the computernames from a text file and pipe each computername to Telnet Cmdlet to report if all the computers are accessible on Port 80.
 
     .NOTES
-        Original sources: 
+        Original sources:
             - https://www.techtutsonline.com/powershell-alternative-telnet-command/
             - https://www.leeholmes.com/blog/2009/10/28/scripting-network-tcp-connections-in-powershell/
 
@@ -70,7 +70,7 @@ Function Invoke-Telnet {
             try {
                 $tcp = New-Object System.Net.Sockets.TcpClient
                 $connection = $tcp.BeginConnect($Computer, $Port, $null, $null)
-                $connection.AsyncWaitHandle.WaitOne($timeout,$false)  | Out-Null 
+                $connection.AsyncWaitHandle.WaitOne($timeout,$false)  | Out-Null
 
 
                 if ($tcp.Connected) {
@@ -96,9 +96,9 @@ Function Invoke-Telnet {
                                         $foundmore = $true
                                         $outputBuffer += ($encoding.GetString($buffer, 0, $read))
                                     }
-                                } catch { 
-                                    $foundMore = $false; 
-                                    $read = 0 
+                                } catch {
+                                    $foundMore = $false;
+                                    $read = 0
                                 }
                             } while ($read -gt 0)
                         } while ($foundmore)
@@ -112,16 +112,16 @@ Function Invoke-Telnet {
                         $command = ""
                         if ($Commands.Count -eq 0) {
                             # prompt the user for the command to send
-                            $command = Read-Host -Prompt "Command" 
+                            $command = Read-Host -Prompt "Command"
                         } else {
                             # we got a command array, lets select the command out, and get ready to pick the next one
                             if ($commandPosition -ge $commandCount) { break; }
-                            $command = $commands[$commandPosition];                            
+                            $command = $commands[$commandPosition];
                             $commandPosition++;
                             # clean up the command so we can write it out
                             $cmd = $command -replace "`r|`n", " "
                             if ($cmd.Length -ge 80) { $cmd = $cmd.SubString(0, 80) + "..." }
-                            Write-InformationColored "Sending: $cmd" -ForegroundColor Yellow 
+                            Write-InformationColored "Sending: $cmd" -ForegroundColor Yellow
                         }
 
                         # write the command back to the remote host
@@ -136,11 +136,11 @@ Function Invoke-Telnet {
             } catch {
                 Write-InformationColored "Unknown Error: $($_)" -ForegroundColor Red
             } finally {
-                if ($writer -ne $null) { $writer.Dispose(); }
-                if ($tcp -ne $null) { $tcp.Dispose(); }
+                if ($null -ne $writer) { $writer.Dispose(); }
+                if ($null -ne $tcp) { $tcp.Dispose(); }
             }
         }
-    
+
     }
     End {}
 }
