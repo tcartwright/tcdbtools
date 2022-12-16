@@ -6,8 +6,7 @@ function Invoke-DBRenameConstraints {
         Will rename all indexes and constraints to match naming conventions.
 
     .DESCRIPTION
-        Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected
-        naming convention will be skipped.
+        Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected naming convention will be skipped.
 
     .PARAMETER ServerInstance
         The sql server instance to connect to.
@@ -25,7 +24,7 @@ function Invoke-DBRenameConstraints {
         If enabled then all constraint names will be renamed even if they match the expected naming conventions.
 
     .PARAMETER CustomGetObjectName
-        This script block can be passed in to override the naming convention used.
+        This script block can be passed in to override the naming convention used. The name of the object should be returned.
 
         The method signature is as follows: function GetObjectName($obj, [switch]$IncludeSchemaInNames)
 
@@ -54,6 +53,15 @@ function Invoke-DBRenameConstraints {
                 Index   : The detailed type of the index
                 PK      : The detailed type of the index
             type: The type of object
+    
+    .PARAMETER NameExistsFunction
+        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned. 
+        
+        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
+        
+        The method signature is as follows: function GetObjectName($renames)
+        
+        The parameter $renames will be a collection of names that have already been assigned to the table.
 
     .EXAMPLE
         PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
@@ -61,6 +69,39 @@ function Invoke-DBRenameConstraints {
     .EXAMPLE
         PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
 
+    .EXAMPLE
+        Using a custom naming function: 
+        
+        $GetObjectName = {
+            Param($obj, [switch]$IncludeSchemaInNames)
+
+            $ret = ""
+            $details = ""
+            $schemaNamePart = ""
+            # check constraints may or may not have a column name, depending on what they did in the CK
+            if ($obj.details1) {
+                $details = "_$($obj.details1)"
+            }
+            if ($IncludeSchemaInNames.IsPresent) {
+                $schemaNamePart = "_$($obj.schema_name)"
+            }
+
+            switch ($obj.type.Trim()) {
+                { $_ -ieq "D" } { $ret = "DF$($schemaNamePart)_$($obj.table_name)$details" }
+                { $_ -ieq "C" } { $ret = "CK$($schemaNamePart)_$($obj.table_name)$details" }
+                { $_ -ieq "F" } { $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($obj.details2)" }
+                { $_ -ieq "PK" } { $ret = "PK$($schemaNamePart)_$($obj.table_name)" }
+                { $_ -ieq "UQ" } { $ret = "UQ$($schemaNamePart)_$($obj.table_name)$details" }
+                { $_ -ieq "UX" } { $ret = "UX$($schemaNamePart)_$($obj.table_name)$details" }
+                { $_ -ieq "NC" } { $ret = "IX$($schemaNamePart)_$($obj.table_name)$details" }
+                default { Write-Error "Unable to get constraint name for $($_)" }
+            }
+
+            return $ret
+        }
+
+        Invoke-DBRenameConstraints -ServerInstance "server_name" -Databases "db1", "db2" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
+        
     .LINK
         https://github.com/tcartwright/tcdbtools
 
@@ -76,7 +117,8 @@ function Invoke-DBRenameConstraints {
         [pscredential]$Credentials,
         [switch]$IncludeSchemaInNames,
         [switch]$Force,
-        [scriptblock]$CustomGetObjectName
+        [scriptblock]$CustomGetObjectName,
+        [scriptblock]$NameExistsFunction
     )
 
     begin {
@@ -193,21 +235,27 @@ function Invoke-DBRenameConstraints {
                     if (-not $CustomGetObjectName) {
                         $newName = GetObjectName -obj $grp -IncludeSchemaInNames:$IncludeSchemaInNames.IsPresent
                     } else {
-                        $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent)
+                        $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent) | Select-Object -Last 1
                     }
 
-                    if ($renames.ContainsKey($newName)) {
-                        for ($i = 1; $i -lt 1000; $i++) {
-                            $suffix = "000$i"
-                            $suffix = $suffix.Substring($suffix.Length - 3)
-                            $tmpName = "$($newName)_$suffix"
-                            if (-not $renames.ContainsKey($tmpName)) {
-                                $newName = $tmpName
-                                break;
+                    if (-not $NameExistsFunction) {
+                        if ($renames.ContainsKey($newName)) {
+                            for ($i = 1; $i -lt 1000; $i++) {
+                                $suffix = "000$i"
+                                $suffix = $suffix.Substring($suffix.Length - 4)
+                                $tmpName = "$($newName)_$suffix"
+                                if (-not $renames.ContainsKey($tmpName)) {
+                                    $newName = $tmpName
+                                    break;
+                                }
                             }
                         }
-                    }
-
+                    } else {
+                        $newName = $NameExistsFunction.Invoke($renames) | Select-Object -Last 1
+                        if ($renames.ContainsKey($newName)) {
+                            throw "The $newName name returned by the custom name exists function is not unique and already exists."
+                        }        
+                    }        
                     # unless force is present, do not rename this, as it already matches our desired name
                     if (-not $Force.IsPresent -and $newName -ieq $grp.object_name) {
                         # store this, so the numbers will work properly in the for loop above

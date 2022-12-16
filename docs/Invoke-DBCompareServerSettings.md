@@ -9,10 +9,10 @@ Compares all server settings for each instance passed in to generate a report sh
 
 ## Syntax
     Invoke-DBCompareServerSettings 
-    [-ServerInstances] <String[]> 
-    [[-Credentials] <PSCredential>] 
-    [-IgnoreVersionDifferences ] 
-    [<CommonParameters>]
+        [-ServerInstances] <String[]> 
+        [[-Credentials] <PSCredential>] 
+        [-IgnoreVersionDifferences ] 
+        [<CommonParameters>]
 
 ## Parameters
     -ServerInstances <String[]>

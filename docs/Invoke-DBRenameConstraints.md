@@ -6,8 +6,7 @@ Will rename all indexes and constraints to match naming conventions.
 
 
 ## Description
-Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected 
-convention will be skipped. Custom naming conventions can be used.
+Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected convention will be skipped. Custom naming conventions can be used.
 
 ## Syntax
     Invoke-DBRenameConstraints 
@@ -102,5 +101,64 @@ convention will be skipped. Custom naming conventions can be used.
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
+
+    -NameExistsFunction <ScriptBlock>
+        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned. 
+        
+        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
+        
+        The method signature is as follows: function GetObjectName($renames)
+        
+        The parameter $renames will be a collection of names that have already been assigned to the table.
+
+        Required?                    false
+        Position?                    5
+        Default value                
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+## Examples
+
+### Example 1
+Rename all the constraints in the AdventureWorks2012 database
+    
+```powershell
+Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
+```
+
+### Example 2
+Rename all the constraints in the AdventureWorks2012 database using a custom naming function.
+
+```powershell
+$GetObjectName = {
+    Param($obj, [switch]$IncludeSchemaInNames)
+
+    $ret = ""
+    $details = ""
+    $schemaNamePart = ""
+    # check constraints may or may not have a column name, depending on what they did in the CK
+    if ($obj.details1) {
+        $details = "_$($obj.details1)"
+    }
+    if ($IncludeSchemaInNames.IsPresent) {
+        $schemaNamePart = "_$($obj.schema_name)"
+    }
+
+    switch ($obj.type.Trim()) {
+        { $_ -ieq "D" } { $ret = "DF$($schemaNamePart)_$($obj.table_name)$details" }
+        { $_ -ieq "C" } { $ret = "CK$($schemaNamePart)_$($obj.table_name)$details" }
+        { $_ -ieq "F" } { $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($obj.details2)" }
+        { $_ -ieq "PK" } { $ret = "PK$($schemaNamePart)_$($obj.table_name)" }
+        { $_ -ieq "UQ" } { $ret = "UQ$($schemaNamePart)_$($obj.table_name)$details" }
+        { $_ -ieq "UX" } { $ret = "UX$($schemaNamePart)_$($obj.table_name)$details" }
+        { $_ -ieq "NC" } { $ret = "IX$($schemaNamePart)_$($obj.table_name)$details" }
+        default { Write-Error "Unable to get constraint name for $($_)" }
+    }
+
+    return $ret
+}
+
+Invoke-DBRenameConstraints -ServerInstance "servername" -Databases "AdventureWorks2012" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
+```
 
 [Back](/README.md)
