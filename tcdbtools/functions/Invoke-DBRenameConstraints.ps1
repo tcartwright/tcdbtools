@@ -53,14 +53,14 @@ function Invoke-DBRenameConstraints {
                 Index   : The detailed type of the index
                 PK      : The detailed type of the index
             type: The type of object
-    
+
     .PARAMETER NameExistsFunction
-        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned. 
-        
+        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned.
+
         EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
-        
+
         The method signature is as follows: function GetObjectName($renames)
-        
+
         The parameter $renames will be a collection of names that have already been assigned to the table.
 
     .EXAMPLE
@@ -70,8 +70,8 @@ function Invoke-DBRenameConstraints {
         PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
 
     .EXAMPLE
-        Using a custom naming function: 
-        
+        Using a custom naming function:
+
         $GetObjectName = {
             Param($obj, [switch]$IncludeSchemaInNames)
 
@@ -101,7 +101,7 @@ function Invoke-DBRenameConstraints {
         }
 
         Invoke-DBRenameConstraints -ServerInstance "server_name" -Databases "db1", "db2" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
-        
+
     .LINK
         https://github.com/tcartwright/tcdbtools
 
@@ -254,8 +254,8 @@ function Invoke-DBRenameConstraints {
                         $newName = $NameExistsFunction.Invoke($renames) | Select-Object -Last 1
                         if ($renames.ContainsKey($newName)) {
                             throw "The $newName name returned by the custom name exists function is not unique and already exists."
-                        }        
-                    }        
+                        }
+                    }
                     # unless force is present, do not rename this, as it already matches our desired name
                     if (-not $Force.IsPresent -and $newName -ieq $grp.object_name) {
                         # store this, so the numbers will work properly in the for loop above
