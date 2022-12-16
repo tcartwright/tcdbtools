@@ -53,9 +53,11 @@ Description = 'A collection of SQL Server automation functionality'
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(@{
     ModuleName = "SqlServer";
+    ModuleVersion =  "1.0";
     Guid = "97C3B589-6545-4107-A061-3FE23A4E9195"
    }, @{
     ModuleName = "Invoke-SqlCmd2";
+    ModuleVersion =  "1.0";
     Guid = "688f05ef-8460-496c-8600-87c53090634c"
    })
 
