@@ -107,9 +107,9 @@ Will rename all indexes and constraints to match naming conventions. Any constra
         
         EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
         
-        The method signature is as follows: function GetObjectName($renames)
+        The method signature is as follows: function GetObjectName($newName, $renames)
         
-        The parameter $renames will be a collection of names that have already been assigned to the table.
+        The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
 
         Required?                    false
         Position?                    5
