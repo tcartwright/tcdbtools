@@ -8,6 +8,16 @@ function Invoke-DBRenameConstraints {
     .DESCRIPTION
         Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected naming convention will be skipped.
 
+        The default naming conventions are as follows:
+
+        * "D"  = "DF_table_name_columnname"
+        * "C"  = "CK_table_name_columnname"
+        * "F"  = "FK_table_name_remote_table_name"
+        * "PK" = "PK_table_name"
+        * "UQ" = "UQ_table_name_columnname"
+        * "UX" = "UX_table_name_columnname"
+        * "NC" = "IX_table_name_columnname"
+
     .PARAMETER ServerInstance
         The sql server instance to connect to.
 
@@ -58,9 +68,9 @@ function Invoke-DBRenameConstraints {
         This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned.
 
         EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
-
+        
         The method signature is as follows: function GetObjectName($newName, $renames)
-
+        
         The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
 
     .EXAMPLE
@@ -238,8 +248,8 @@ function Invoke-DBRenameConstraints {
                         $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent) | Select-Object -Last 1
                     }
 
-                    if (-not $NameExistsFunction) {
-                        if ($renames.ContainsKey($newName)) {
+                    if ($renames.ContainsKey($newName)) {
+                        if (-not $NameExistsFunction) {
                             for ($i = 1; $i -lt 1000; $i++) {
                                 $suffix = "000$i"
                                 $suffix = $suffix.Substring($suffix.Length - 4)
@@ -249,13 +259,14 @@ function Invoke-DBRenameConstraints {
                                     break;
                                 }
                             }
-                        }
-                    } else {
-                        $newName = $NameExistsFunction.Invoke($newName, $renames) | Select-Object -Last 1
-                        if ($renames.ContainsKey($newName)) {
-                            throw "The $newName name returned by the custom name exists function is not unique and already exists."
+                        } else {
+                            $newName = $NameExistsFunction.Invoke($newName, $renames) | Select-Object -Last 1
+                            if ($renames.ContainsKey($newName)) {
+                                throw "The $newName name returned by the custom name exists function is not unique and already exists."
+                            }
                         }
                     }
+                    
                     # unless force is present, do not rename this, as it already matches our desired name
                     if (-not $Force.IsPresent -and $newName -ieq $grp.object_name) {
                         # store this, so the numbers will work properly in the for loop above
@@ -265,7 +276,7 @@ function Invoke-DBRenameConstraints {
 
                     $tempName = "tmp_$([Guid]::NewGuid().ToString("N"))"
                     # handle the crappy case where their old name had brackets in it. :|
-                    $oldName = $grp.object_name -replace "\[", "\[\[" -replace "\]", "\]\]"
+                    $oldName = (($grp.object_name -replace "\[", "\[\[") -replace "\]", "\]\]")
 
                     # we must first rename the constraints to some super generic name to avoid name collisions, then immediately rename it back
                     if ($grp.type.Trim() -ine "NC") {
@@ -328,4 +339,3 @@ $($renames.Values)"
         return $output | Sort-Object Database, ObjectName, NewConstraintName
     }
 }
-

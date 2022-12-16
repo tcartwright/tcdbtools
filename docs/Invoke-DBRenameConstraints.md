@@ -8,6 +8,16 @@ Will rename all indexes and constraints to match naming conventions.
 ## Description
 Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected convention will be skipped. Custom naming conventions can be used.
 
+The default naming conventions are as follows:
+
+* "D"  = "DF_table_name_columnname"
+* "C"  = "CK_table_name_columnname"
+* "F"  = "FK_table_name_remote_table_name"
+* "PK" = "PK_table_name"
+* "UQ" = "UQ_table_name_columnname"
+* "UX" = "UX_table_name_columnname"
+* "NC" = "IX_table_name_columnname"
+
 ## Syntax
     Invoke-DBRenameConstraints 
         [-ServerInstance] <String> 
