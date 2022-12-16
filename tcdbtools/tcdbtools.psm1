@@ -19,11 +19,14 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\Invoke-DBScriptObjects.ps1"
 . "$scriptDir\functions\Invoke-DBExtractCLRDLL.ps1"
 . "$scriptDir\functions\Invoke-DBCompareServerSettings.ps1"
+. "$scriptDir\functions\Invoke-DBRenameConstraints.ps1"
+. "$scriptDir\functions\Invoke-Telnet.ps1"
 
 # private functions
 . "$scriptDir\functions\private\Invoke-DBSafeShrink-privates.ps1"
 . "$scriptDir\functions\private\Invoke-DBScriptObjects-privates.ps1"
 . "$scriptDir\functions\private\Invoke-DBCompareServerSettings-privates.ps1"
+. "$scriptDir\functions\private\Invoke-DBRenameConstraints-privates.ps1"
 . "$scriptDir\functions\private\GenFuncs.ps1"
 
 Export-ModuleMember -Function Invoke-DBCompareServerSettings
@@ -32,3 +35,5 @@ Export-ModuleMember -Function Invoke-DBScriptObjects
 Export-ModuleMember -Function Invoke-DBMoveIndexes
 Export-ModuleMember -Function Invoke-DBSafeShrink
 Export-ModuleMember -Function Write-InformationColored
+Export-ModuleMember -Function Invoke-DBRenameConstraints
+#Export-ModuleMember -Function Invoke-Telnet

@@ -26,3 +26,4 @@ Install-Module tcdbtools
 * [Invoke-DBCompareServerSettings](docs/Invoke-DBCompareServerSettings.md) : Compares the server settings between two or more servers.
 * [Invoke-DBExtractCLRDLL](docs/Invoke-DBExtractCLRDLL.md) : Extracts all user defined CLR dlls from a SQL server.
 * [Invoke-DBScriptObjects](docs/Invoke-DBScriptObjects.md) : Scripts all objects from a database to individual files per object.
+* [Invoke-DBRenameConstraints](docs/Invoke-DBRenameConstraints.md) : Will rename all indexes and constraints to match naming conventions. 

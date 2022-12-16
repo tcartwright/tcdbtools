@@ -51,7 +51,7 @@ Description = 'A collection of SQL Server automation functionality'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @("SqlServer", "Invoke-SqlCmd2")
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -69,7 +69,15 @@ Description = 'A collection of SQL Server automation functionality'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @("Invoke-DBCompareServerSettings", "Invoke-DBExtractCLRDLL", "Invoke-DBScriptObjects", "Invoke-DBMoveIndexes", "Invoke-DBSafeShrink", "Write-InformationColored")
+FunctionsToExport = @(
+    "Invoke-DBCompareServerSettings", 
+    "Invoke-DBExtractCLRDLL", 
+    "Invoke-DBScriptObjects", 
+    "Invoke-DBMoveIndexes", 
+    "Invoke-DBSafeShrink", 
+    "Write-InformationColored", 
+    "Invoke-DBRenameConstraints"
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
