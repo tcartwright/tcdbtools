@@ -44,7 +44,7 @@ Function Invoke-Telnet {
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [Alias ('HostName','cn','Host','Computer')]
-        [String]$ComputerName='localhost',
+        [String]$ComputerName,
         [Parameter(Mandatory=$true,
             ValueFromPipeline=$true,
             ValueFromPipelineByPropertyName=$true)]
@@ -74,7 +74,7 @@ Function Invoke-Telnet {
 
 
                 if ($tcp.Connected) {
-                    Write-Host  "Successfully connected to Host: `"$Computer`" on Port: `"$Port`"" -ForegroundColor Green
+                    Write-InformationColored "Successfully connected to Host: `"$Computer`" on Port: `"$Port`"" -ForegroundColor Green
 
                     $tcpStream = $tcp.GetStream()
                     $tcpStream.ReadTimeout = 1000
@@ -106,7 +106,7 @@ Function Invoke-Telnet {
                         # write the recieved data out to the host
                         if (!([string]::IsNullOrWhiteSpace($outputBuffer))) {
                             # remove the last LF char, and write the output out to the host
-                            Write-Host $outputBuffer.TrimEnd("`n")
+                            Write-Information $outputBuffer.TrimEnd("`n")
                         }
 
                         $command = ""
@@ -121,7 +121,7 @@ Function Invoke-Telnet {
                             # clean up the command so we can write it out
                             $cmd = $command -replace "`r|`n", " "
                             if ($cmd.Length -ge 80) { $cmd = $cmd.SubString(0, 80) + "..." }
-                            Write-Host "Sending: $cmd" -ForegroundColor Yellow 
+                            Write-InformationColored "Sending: $cmd" -ForegroundColor Yellow 
                         }
 
                         # write the command back to the remote host
@@ -129,12 +129,12 @@ Function Invoke-Telnet {
                             $writer.WriteLine($command);
                         }
                     }
-                    Write-Host "`r`nDone." -ForegroundColor Yellow
+                    Write-InformationColored "`r`nDone." -ForegroundColor Yellow
                 } else {
-                    Write-Host "Could not connect to Host: `"$Computer `" on Port: `"$Port`"" -ForegroundColor Red
+                    Write-InformationColored "Could not connect to Host: `"$Computer `" on Port: `"$Port`"" -ForegroundColor Red
                 }
             } catch {
-                Write-Host "Unknown Error: $($_)" -ForegroundColor Red
+                Write-InformationColored "Unknown Error: $($_)" -ForegroundColor Red
             } finally {
                 if ($writer -ne $null) { $writer.Dispose(); }
                 if ($tcp -ne $null) { $tcp.Dispose(); }
