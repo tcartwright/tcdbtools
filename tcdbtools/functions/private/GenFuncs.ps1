@@ -91,7 +91,7 @@ function GetSQLConnection {
 }
 
 # If the script has a hard time finding SMO, you can install the dbatools module and import it. Which ensures that SMO can be found.
-if (Get-Module -ListAvailable -Name dbatools) {
+if (-not (Get-Module -Name dbatools) -and (Get-Module -ListAvailable -Name dbatools)) {
     Write-Verbose "Importing dbatools"
     Import-Module dbatools
 }
