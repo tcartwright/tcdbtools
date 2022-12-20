@@ -10,13 +10,15 @@ Will rename all indexes and constraints to match naming conventions. Any constra
 
 The default naming conventions are as follows:
 
-* "D"  = "DF_table_name_columnname"
-* "C"  = "CK_table_name_columnname"
-* "F"  = "FK_table_name_remote_table_name"
-* "PK" = "PK_table_name"
-* "UQ" = "UQ_table_name_columnname"
-* "UX" = "UX_table_name_columnname"
-* "NC" = "IX_table_name_columnname"
+* Default Constraint = "DF_**TableName**_**ColumnName**"
+* Check Constraint = "CK_**TableName**_**ColumnName**"
+* Foreign Key = "FK_**TableName**_**RemoteTableName**"
+* Primary Key = "PK_**TableName**"
+* Unique Constraint = "UQ_**TableName**_**ColumnName**"
+* Unique Index = "UX_**TableName**_**ColumnName**"
+* Non-Clustered Index = "IX_**TableName**_**ColumnName**"
+
+The column name picked will be the first column name used. With complex predicates and or the use of functions in check constraints the column name sometimes cannot be determined by SQL Server and will return null.
 
 ## Syntax
     Invoke-DBRenameConstraints 
@@ -60,7 +62,17 @@ The default naming conventions are as follows:
 
     -IncludeSchemaInNames <SwitchParameter>
         If enabled then all names will include the schema as part of the name.
+    
+        The default naming conventions are as follows when this switch is enabled:
 
+        * Default Constraint = "DF_SchemaName_TableName_ColumnName"
+        * Check Constraint = "CK_SchemaName_TableName_ColumnName"
+        * Foreign Key = "FK_SchemaName_TableName_RemoteSchemaName_RemoteTableName"
+        * Primary Key = "PK_SchemaName_TableName"
+        * Unique Constraint = "UQ_SchemaName_TableName_ColumnName"
+        * Unique Index = "UX_SchemaName_TableName_ColumnName"
+        * Non-Clustered Index = "IX_SchemaName_TableName_ColumnName"     
+    
         Required?                    false
         Position?                    named
         Default value                False

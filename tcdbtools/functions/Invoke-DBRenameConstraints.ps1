@@ -10,13 +10,13 @@ function Invoke-DBRenameConstraints {
 
         The default naming conventions are as follows:
 
-        * "D"  = "DF_table_name_columnname"
-        * "C"  = "CK_table_name_columnname"
-        * "F"  = "FK_table_name_remote_table_name"
-        * "PK" = "PK_table_name"
-        * "UQ" = "UQ_table_name_columnname"
-        * "UX" = "UX_table_name_columnname"
-        * "NC" = "IX_table_name_columnname"
+        * Default Constraint = "DF_TableName_ColumnName"
+        * Check Constraint = "CK_TableName_ColumnName"
+        * Foreign Key = "FK_TableName_RemoteTableName"
+        * Primary Key = "PK_TableName"
+        * Unique Constraint = "UQ_TableName_ColumnName"
+        * Unique Index = "UX_TableName_ColumnName"
+        * Non-Clustered Index = "IX_TableName_ColumnName"
 
     .PARAMETER ServerInstance
         The sql server instance to connect to.
@@ -30,6 +30,16 @@ function Invoke-DBRenameConstraints {
     .PARAMETER IncludeSchemaInNames
         If enabled then all names will include the schema as part of the name.
 
+        The default naming conventions are as follows when this switch is enabled:
+
+        * Default Constraint = "DF_SchemaName_TableName_ColumnName"
+        * Check Constraint = "CK_SchemaName_TableName_ColumnName"
+        * Foreign Key = "FK_SchemaName_TableName_RemoteSchemaName_RemoteTableName"
+        * Primary Key = "PK_SchemaName_TableName"
+        * Unique Constraint = "UQ_SchemaName_TableName_ColumnName"
+        * Unique Index = "UX_SchemaName_TableName_ColumnName"
+        * Non-Clustered Index = "IX_SchemaName_TableName_ColumnName"  
+                
     .PARAMETER Force
         If enabled then all constraint names will be renamed even if they match the expected naming conventions.
 
