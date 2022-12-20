@@ -26,6 +26,7 @@ The default naming conventions are as follows:
         [-IncludeSchemaInNames ] 
         [-Force ] 
         [[-CustomGetObjectName] <ScriptBlock>] 
+        [[-NameExistsFunction] <ScriptBlock>] 
         [<CommonParameters>]
 
 
