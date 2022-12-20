@@ -1,4 +1,4 @@
-function GetObjectName($obj, [switch]$IncludeSchemaInNames){
+﻿function GetObjectName($obj, [switch]$IncludeSchemaInNames){
     $ret = ""
     $details = ""
     $schemaNamePart = ""
@@ -14,12 +14,12 @@ function GetObjectName($obj, [switch]$IncludeSchemaInNames){
     switch ($obj.type.Trim()) {
         { $_ -ieq "D" } { $ret = "DF$($schemaNamePart)_$($obj.table_name)$details" }
         { $_ -ieq "C" } { $ret = "CK$($schemaNamePart)_$($obj.table_name)$details" }
-        { $_ -ieq "F" } { 
+        { $_ -ieq "F" } {
             $remoteTable = "_$($obj.details2)"
             if ($IncludeSchemaInNames.IsPresent) {
                 $remoteTable = "_$($obj.details1)_$($obj.details2)"
             }
-            $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($remoteTable)" 
+            $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($remoteTable)"
         }
         { $_ -ieq "PK" } { $ret = "PK$($schemaNamePart)_$($obj.table_name)" }
         { $_ -ieq "UQ" } { $ret = "UQ$($schemaNamePart)_$($obj.table_name)$details" }
@@ -27,7 +27,7 @@ function GetObjectName($obj, [switch]$IncludeSchemaInNames){
         { $_ -ieq "NC" } { $ret = "IX$($schemaNamePart)_$($obj.table_name)$details" }
         default { Write-Error "Unable to get constraint name for $($_)" }
     }
-   
+
     return $ret
 }
 
