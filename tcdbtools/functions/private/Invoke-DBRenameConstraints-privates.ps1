@@ -19,7 +19,7 @@
             if ($IncludeSchemaInNames.IsPresent) {
                 $remoteTable = "_$($obj.details1)_$($obj.details2)"
             }
-            $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($remoteTable)"
+            $ret = "FK$($schemaNamePart)_$($obj.table_name)$($remoteTable)"
         }
         { $_ -ieq "PK" } { $ret = "PK$($schemaNamePart)_$($obj.table_name)" }
         { $_ -ieq "UQ" } { $ret = "UQ$($schemaNamePart)_$($obj.table_name)$details" }

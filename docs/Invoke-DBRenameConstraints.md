@@ -94,7 +94,7 @@ The default naming conventions are as follows:
                 Index   : The first column used in the index key
                 PK      : The first column used in the index key
             details2: 
-                C       : NULL
+                C       : The check constraint definition
                 D       : NULL
                 FK      : The table name of the remote table name
                 Index   : A full list of the columns used in the index comma delimited
@@ -148,7 +148,7 @@ $GetObjectName = {
     $details = ""
     $schemaNamePart = ""
     # check constraints may or may not have a column name, depending on what they did in the CK
-    if ($obj.details1) {
+    if (-not [string]::IsNullOrWhiteSpace($obj.details1)) {
         $details = "_$($obj.details1)"
     }
     if ($IncludeSchemaInNames.IsPresent) {
@@ -158,7 +158,13 @@ $GetObjectName = {
     switch ($obj.type.Trim()) {
         { $_ -ieq "D" } { $ret = "DF$($schemaNamePart)_$($obj.table_name)$details" }
         { $_ -ieq "C" } { $ret = "CK$($schemaNamePart)_$($obj.table_name)$details" }
-        { $_ -ieq "F" } { $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($obj.details2)" }
+        { $_ -ieq "F" } {
+            $remoteTable = "_$($obj.details2)"
+            if ($IncludeSchemaInNames.IsPresent) {
+                $remoteTable = "_$($obj.details1)_$($obj.details2)"
+            }
+            $ret = "FK$($schemaNamePart)_$($obj.table_name)_$($remoteTable)"
+        }        
         { $_ -ieq "PK" } { $ret = "PK$($schemaNamePart)_$($obj.table_name)" }
         { $_ -ieq "UQ" } { $ret = "UQ$($schemaNamePart)_$($obj.table_name)$details" }
         { $_ -ieq "UX" } { $ret = "UX$($schemaNamePart)_$($obj.table_name)$details" }
