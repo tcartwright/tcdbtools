@@ -126,9 +126,9 @@ The column name picked will be the first column name used. With complex predicat
         Accept wildcard characters?  false
 
     -NameExistsFunction <ScriptBlock>
-        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned. 
+        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 000. Starting with 001. A unique name for this object should be returned. 
         
-        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
+        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_001 will be tried, then 002 and so on until a unique name can be found.
         
         The method signature is as follows: function GetObjectName($newName, $renames)
         

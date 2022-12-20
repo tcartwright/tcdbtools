@@ -1,6 +1,4 @@
-﻿#Requires -Modules Invoke-SqlCmd2
-
-function Invoke-DBRenameConstraints {
+﻿function Invoke-DBRenameConstraints {
     <#
     .SYNOPSIS
         Will rename all indexes and constraints to match naming conventions.
@@ -39,7 +37,7 @@ function Invoke-DBRenameConstraints {
         * Unique Constraint = "UQ_SchemaName_TableName_ColumnName"
         * Unique Index = "UX_SchemaName_TableName_ColumnName"
         * Non-Clustered Index = "IX_SchemaName_TableName_ColumnName"  
-                
+
     .PARAMETER Force
         If enabled then all constraint names will be renamed even if they match the expected naming conventions.
 
@@ -277,8 +275,8 @@ function Invoke-DBRenameConstraints {
                     if ($renames.ContainsKey($newName)) {
                         if (-not $NameExistsFunction) {
                             for ($i = 1; $i -lt 1000; $i++) {
-                                $suffix = "000$i"
-                                $suffix = $suffix.Substring($suffix.Length - 4)
+                                $suffix = "00$i"
+                                $suffix = $suffix.Substring($suffix.Length - 3)
                                 $tmpName = "$($newName)_$suffix"
                                 if (-not $renames.ContainsKey($tmpName)) {
                                     $newName = $tmpName
