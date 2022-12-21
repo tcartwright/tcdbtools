@@ -36,7 +36,7 @@
         * Primary Key = "PK_SchemaName_TableName"
         * Unique Constraint = "UQ_SchemaName_TableName_ColumnName"
         * Unique Index = "UX_SchemaName_TableName_ColumnName"
-        * Non-Clustered Index = "IX_SchemaName_TableName_ColumnName"  
+        * Non-Clustered Index = "IX_SchemaName_TableName_ColumnName"
 
     .PARAMETER Force
         If enabled then all constraint names will be renamed even if they match the expected naming conventions.
