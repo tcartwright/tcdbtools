@@ -330,7 +330,10 @@ function RemoveTempFileGroupAndFile{
 
 function AddTempFileGroupAndFile {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments
+        [System.Collections.Hashtable]$SqlCmdArguments,
+        $OriginalFile,
+        $NewFileName,
+        [int]$Size
     )
 
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP"
@@ -342,9 +345,9 @@ function AddTempFileGroupAndFile {
             ALTER DATABASE [$Database]
                 ADD FILE (
                     NAME = 'SHRINK_DATA_TEMP',
-                    FILENAME = '$newFileName',
-                    SIZE = $($usedTotalSize)MB,
-                    FILEGROWTH = $($originalFile.Growth)$($originalFile.GrowthType)
+                    FILENAME = '$NewFileName',
+                    SIZE = $($Size)MB,
+                    FILEGROWTH = $($OriginalFile.Growth)$($OriginalFile.GrowthType)
                 )
             TO FILEGROUP SHRINK_DATA_TEMP
         END

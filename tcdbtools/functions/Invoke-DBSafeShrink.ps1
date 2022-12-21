@@ -227,9 +227,9 @@
             Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
 
             <#
-            # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME UNLESS IT ALREADY EXISTS
+            # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME 
             #>
-            AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments
+            AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -NewFileName $newFileName -Size $usedTotalSize -OriginalFile $originalFile
 
             <#
             # MOVE THE INDEXES FROM THE BASE FILEGROUP TO THE TARGET TEMP FILEGROUP
