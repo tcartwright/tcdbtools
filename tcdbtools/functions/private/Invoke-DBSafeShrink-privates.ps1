@@ -198,7 +198,7 @@ function ShrinkFile {
     [int]$loops = (($size - $targetSize) / $shrinkIncrement) + 1
     $counter = 0
 
-    Write-InformationColored "SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB" -ForegroundColor Yellow
+    Write-InformationColored "SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 
     for($x = $size; $x -ge $targetSize; $x -= $shrinkIncrement) {
