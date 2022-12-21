@@ -137,90 +137,29 @@
 
         $shrinkTimeOut = ([Timespan]::FromMinutes($ShrinkTimeout).TotalSeconds)
         $IndexMoveTimeout = ([Timespan]::FromMinutes($IndexMoveTimeout).TotalSeconds)
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        $swFormat = "hh\:mm\:ss"
 
         <#
         # IF THEY PASSED IN A NEW DIRECTORY, MAKE SURE IT IS CREATED
         #>
         if ($NewFileDirectory) {
-            if (([Uri]$NewFileDirectory.FullName).IsUnc) {
-                if (-not $NewFileDirectory.Exists) {
-                    New-Item $NewFileDirectory.FullName -ItemType Directory -Force | Out-Null
-                }
-            } else {
-                try {
-                    # create the directory on the sql server if it does not exist. has no effect if the directory is already created. Throws an exception if the path is invalid, usually the directory
-                    $sql = "EXECUTE master.dbo.xp_create_subdir '$($NewFileDirectory.FullName)'"
-                    Write-Verbose $sql
-                    Invoke-Sqlcmd @SqlCmdArguments -query $sql
-                } catch {
-                    throw
-                    exit 1
-                }
-            }
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING DIRECTORY ($($NewFileDirectory.FullName))" 
+            CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
         }
+
+        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
 
         <#
         # IF THEY PASSED IN A TLOG BACKUP JOB NAME THEN STOP IT, AND WAIT A BIT FOR IT TO FINISH
         #>
         if ($TlogBackupJobName) {
-            # lets disable the job. We must ensure to re-enable it at the end
-            $sql = "EXEC msdb.dbo.sp_update_job
-                @job_name = N'$TlogBackupJobName',
-                @enabled = 0 ;"
-            Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -query $sql
-
-            # now, lets wait a bit so that if the job is running we can let it finish up
-            $sql = "DECLARE @sanityCounter INT = 0
-
-                WHILE EXISTS (
-	                SELECT [job].[name]
-		                ,job.job_id
-		                ,[job].[originating_server]
-		                ,[activity].[run_requested_date]
-		                ,DATEDIFF(SECOND, [activity].[run_requested_date], GETDATE()) AS elapsed
-	                FROM msdb.dbo.sysjobs_view AS job
-	                JOIN msdb.dbo.sysjobactivity AS activity ON job.job_id = activity.job_id
-	                JOIN msdb.dbo.syssessions AS sess ON sess.session_id = activity.session_id
-	                JOIN (
-		                SELECT MAX(agent_start_date) AS max_agent_start_date
-		                FROM msdb.dbo.syssessions
-	                ) AS sess_max ON [sess].[agent_start_date] = [sess_max].[max_agent_start_date]
-	                WHERE [activity].[run_requested_date] IS NOT NULL
-		                AND [activity].[stop_execution_date] IS NULL
-		                AND [job].[name] = '$TlogBackupJobName') BEGIN
-
-                    -- wait at max 2 minutes
-	                SET @sanityCounter += 1
-	                IF @sanityCounter > 24 BREAK
-	                WAITFOR DELAY '00:00:05'
-                END"
-            Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -query $sql
+            StopTLogBackupJob -SqlCmdArguments $SqlCmdArguments -TlogBackupJobName $TlogBackupJobName
         }
 
-        $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        $swFormat = "hh\:mm\:ss"
         $ret = @{}
-        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
-
-        foreach($Database in $Databases) {
-            $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database]
-
-            if ($db.Name -ne $Database) {
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
-                continue
-            };
-            <#
-            # ADJUST THE RECOVERY IF REQUESTED, IF WE ARE ALREADY NOT IN SIMPLE
-            #>
-            if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING DATABASE RECOVERY TO SIMPLE"
-                $sql = "ALTER DATABASE [$Database] SET RECOVERY SIMPLE"
-                Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql"
-            }
+        if ($AdjustRecovery.IsPresent) {
+            $recoveryModels = AdjustRecoveryModels -AdjustRecovery $AdjustRecovery -SqlCmdArguments $SqlCmdArguments -Databases $Databases -recoveryModels @{} -TargetRecoveryModel "SIMPLE"
         }
     }
 
@@ -251,7 +190,6 @@
             $usedTotalSize = $totals[1].Sum
             # in case of a restart, figure out the average without counting the shrink temp file in the divisor
             $averageUsedSize = $totals[1].Sum / ([System.Object[]]($freespace | Where-Object { $_.filegroup_name -ine "SHRINK_DATA_TEMP" })).Count
-            $originalRecovery = $db.RecoveryModel
 
             foreach ($fs in $freeSpace) {
                 $fileInfo = [PSCustomObject] @{
@@ -286,34 +224,12 @@
                 $newFileName = [System.IO.Path]::Combine($NewFileDirectory.FullName, ([System.IO.FileInfo]$newFileName).Name)
             }
 
-            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
+            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME UNLESS IT ALREADY EXISTS
             #>
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP"
-            $sql = "
-                IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
-                    ALTER DATABASE [$Database] ADD FILEGROUP SHRINK_DATA_TEMP
-                END
-                IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
-                    ALTER DATABASE [$Database]
-                        ADD FILE (
-                            NAME = 'SHRINK_DATA_TEMP',
-                            FILENAME = '$newFileName',
-                            SIZE = $($usedTotalSize)MB,
-                            FILEGROWTH = $($originalFile.Growth)$($originalFile.GrowthType)
-                        )
-                    TO FILEGROUP SHRINK_DATA_TEMP
-                END
-                DBCC SHRINKFILE([SHRINK_DATA_TEMP], TRUNCATEONLY) WITH NO_INFOMSGS;
-            "
-            try {
-                PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
-            } catch {
-                Write-Warning $_.Exception.Message
-                continue
-            }
+            AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments
 
             <#
             # MOVE THE INDEXES FROM THE BASE FILEGROUP TO THE TARGET TEMP FILEGROUP
@@ -340,21 +256,7 @@
 
                 MoveIndexes -db $db -fromFG "SHRINK_DATA_TEMP" -toFG $fileGroupName -indicator "<--" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
 
-                # there have been occasions when an error occurred saying the file was not empty, until an empty file was issued. even though all of the indexes had been moved back
-                $sql = "DBCC SHRINKFILE(SHRINK_DATA_TEMP, 'EMPTYFILE') WITH NO_INFOMSGS;"
-                Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
-
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE"
-                $sql = "
-                    IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
-	                    ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILE [SHRINK_DATA_TEMP]
-                    END
-
-                    IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
-	                    ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILEGROUP [SHRINK_DATA_TEMP]
-                    END"
-                PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
+                RemoveTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -shrinkTimeOut $shrinkTimeOut
             }
 
             <#
@@ -380,40 +282,25 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
+            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
         }
     }
 
     end {
-        foreach($Database in $Databases) {
-            $SqlCmdArguments.Database = $Database
-            $db = $server.Databases[$Database]
+        # dont pass the target recovery model in so that the function will reset the name tag to the original
+        if ($AdjustRecovery.IsPresent) {
+            AdjustRecoveryModels -AdjustRecovery $AdjustRecovery -SqlCmdArguments $SqlCmdArguments -Databases $Databases -recoveryModels $recoveryModels -TargetRecoveryModel $null | Out-Null
+        }
 
-            if ($db.Name -ne $Database) {
-                Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
-                continue
-            };
-            <#
-            # SET THE RECOVERY BACK TO THE ORIGINAL RECOVERY IF REQUESTED AND THE ORIGINAL WAS NOT SIMPLE
-            #>
-            if ($AdjustRecovery.IsPresent -and $originalRecovery -ine "Simple") {
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] RESETTING DATABASE RECOVERY MODE TO '$($originalRecovery.ToString().ToUpper())'"
-                $sql = "ALTER DATABASE [$Database] SET RECOVERY $originalRecovery"
-                Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut
-            }
+        if ($TlogBackupJobName) {
+            $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TlogBackupJobName', @enabled = 1 ;"
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] ENABLING JOB [$TlogBackupJobName]"
+            Write-Verbose $sql
+            Invoke-Sqlcmd @SqlCmdArguments -query $sql
         }
 
         $sw.Stop()
         Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
-
-        if ($TlogBackupJobName) {
-            $sql = "EXEC msdb.dbo.sp_update_job
-                @job_name = N'$TlogBackupJobName',
-                @enabled = 1 ;"
-            Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -query $sql
-        }
 
         return $ret.Values
     }
