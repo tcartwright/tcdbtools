@@ -7,7 +7,7 @@
             fn.[space_used] AS used_space_mb,
             fn.[size] - fn.[space_used] AS free_space_mb
         FROM [$Database].sys.database_files df
-        INNER JOIN [$Database].sys.[filegroups] AS [f] 
+        INNER JOIN [$Database].sys.[filegroups] AS [f]
             ON [f].[data_space_id] = [df].[data_space_id]
         CROSS APPLY (
             SELECT CAST(CAST(FILEPROPERTY(df.name,'SpaceUsed') AS INT) / 128.0 AS INT) AS [space_used],
@@ -122,28 +122,28 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
     if ($shrinkIncrement -lt 50 -or $shrinkIncrement -gt 10000) {
         switch ($size) {
             {$_ -le 1000 } {
-                $shrinkIncrement = 100 
+                $shrinkIncrement = 100
             }
             {$_ -gt 1000 -and $_ -le 5000 } {
-                $shrinkIncrement = 500 
+                $shrinkIncrement = 500
             }
             {$_ -gt 5000 -and $_ -le 10000 } {
-                $shrinkIncrement = 1000 
+                $shrinkIncrement = 1000
             }
             {$_ -gt 10000 -and $_ -le 50000 } {
-                $shrinkIncrement = 2500 
+                $shrinkIncrement = 2500
             }
             {$_ -gt 50000 -and $_ -le 100000 } {
-                $shrinkIncrement = 5000 
+                $shrinkIncrement = 5000
             }
             {$_ -gt 100000 -and $_ -le 500000 } {
-                $shrinkIncrement = 7500 
+                $shrinkIncrement = 7500
             }
             {$_ -gt 500000 -and $_ -le 1000000 } {
-                $shrinkIncrement = 10000 
+                $shrinkIncrement = 10000
             }
             {$_ -gt 1000000 } {
-                $shrinkIncrement = 15000 
+                $shrinkIncrement = 15000
             }
             default {
                 $shrinkIncrement = [int]($targetSizeMB * 0.1)
@@ -151,7 +151,7 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
         }
     }
 
-    # set our target size to % of the original, to reduce file growths needed. 
+    # set our target size to % of the original, to reduce file growths needed.
     $targetSize = [Math]::Max(5, $targetSizeMB * 0.75)
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 

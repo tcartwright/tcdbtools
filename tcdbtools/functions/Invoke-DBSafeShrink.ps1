@@ -242,14 +242,14 @@
                 continue
             }
 
-            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database -FileGroupName $FileGroupName | Where-Object { $_.used_space_mb -gt 0 } 
-            $totals = $freeSpace | Measure-Object -Property free_space_mb, used_space_mb -Sum 
+            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database -FileGroupName $FileGroupName | Where-Object { $_.used_space_mb -gt 0 }
+            $totals = $freeSpace | Measure-Object -Property free_space_mb, used_space_mb -Sum
 
             if ($totals[0].Sum -lt $MinimumFreeSpaceMB ) {
                 Write-Warning "Database [$Database] does not have any files with the minimum required free space of $MinimumFreeSpaceMB MB for this operation to continue."
                 continue
             }
-            
+
             $usedTotalSize = $totals[1].Sum
             # in case of a restart, figure out the average without counting the shrink temp file in the divisor
             $averageUsedSize = $totals[1].Sum / ([System.Object[]]($freespace | Where-Object { $_.filegroup_name -ine "SHRINK_DATA_TEMP" })).Count
