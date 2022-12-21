@@ -144,7 +144,7 @@
         # IF THEY PASSED IN A NEW DIRECTORY, MAKE SURE IT IS CREATED
         #>
         if ($NewFileDirectory) {
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING DIRECTORY ($($NewFileDirectory.FullName))" 
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING DIRECTORY ($($NewFileDirectory.FullName))"
             CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
         }
 
@@ -227,7 +227,7 @@
             Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
 
             <#
-            # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME 
+            # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME
             #>
             AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -NewFileName $newFileName -Size $usedTotalSize -OriginalFile $originalFile
 

@@ -1,10 +1,10 @@
-function GetFreeSpace {
+﻿function GetFreeSpace {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments, 
-        [string]$Database, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
+        [string]$Database,
         [string]$FileGroupName
-    ) 
-    
+    )
+
     $sql = "
         SELECT DB_NAME() AS [db_name],
             f.[name] AS [filegroup_name],
@@ -53,9 +53,9 @@ function GetFreeSpace {
 
 function PeformFileOperation {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
         [string]$sql
-    ) 
+    )
     # A t-log backup could be occuring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error
     # https://blog.sqlauthority.com/2014/11/09/sql-server-fix-error-msg-3023-level-16-state-2-backup-file-manipulation-operations-such-as-alter-database-add-file-and-encryption-changes-on-a-database-must-be-serialized/
     $tryAgain = $false
@@ -82,15 +82,15 @@ function PeformFileOperation {
     } while ($tryAgain)
 }
 
-function MoveIndexes { 
+function MoveIndexes {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments, 
-        $db, 
-        [string]$fromFG, 
-        [string]$toFG, 
-        [string]$indicator, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
+        $db,
+        [string]$fromFG,
+        [string]$toFG,
+        [string]$indicator,
         [int]$timeout
-    ) 
+    )
     # using sql to scan for the indexes to move instead of scanning SMO, as SMO is very, very slow scanning the tables
     # especially if some of the tables do not have indexes in the fromFG
 
@@ -158,13 +158,13 @@ function MoveIndexes {
 
 function ShrinkFile {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments, 
-        [string] $fileName, 
-        [int]$size, 
-        [int]$targetSizeMB = 5, 
-        [int]$timeout, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
+        [string] $fileName,
+        [int]$size,
+        [int]$targetSizeMB = 5,
+        [int]$timeout,
         [int]$ShrinkIncrementMB = 0
-    ) 
+    )
     # shrink N-gb at a a time
     [int]$shrinkIncrement = $ShrinkIncrementMB
 
@@ -221,9 +221,9 @@ function ShrinkFile {
 
 function AdjustRecoveryModels {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments, 
-        [string[]]$Databases, 
-        [System.Collections.Hashtable]$recoveryModels, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
+        [string[]]$Databases,
+        [System.Collections.Hashtable]$recoveryModels,
         [string]$TargetRecoveryModel
     )
 
@@ -245,7 +245,7 @@ function AdjustRecoveryModels {
         #>
         if ( $recoveryModels[$Database] -ine "SIMPLE" ) {
             if (-not $TargetRecoveryModel){
-                $TargetRecoveryModel = $recoveryModels[$Database] 
+                $TargetRecoveryModel = $recoveryModels[$Database]
             }
 
             Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING RECOVERY FOR DATABASE [$Database] TO $TargetRecoveryModel"
@@ -259,7 +259,7 @@ function AdjustRecoveryModels {
 
 function StopTLogBackupJob {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
         [string]$TlogBackupJobName
     )
 
@@ -290,11 +290,11 @@ function StopTLogBackupJob {
 	    WHERE [activity].[run_requested_date] IS NOT NULL
 		    AND [activity].[stop_execution_date] IS NULL
 		    AND [job].[name] = '$TlogBackupJobName') BEGIN
-	
+
 	    RAISERROR('WAITING LOOP %d FOR JOB [%s] TO STOP', 0, 1, @sanityCounter, '$TlogBackupJobName') WITH NOWAIT
         -- wait at max 2 minutes
 	    SET @sanityCounter += 1
-	    IF @sanityCounter > 24 BEGIN 
+	    IF @sanityCounter > 24 BEGIN
 		    RAISERROR('SANITY LOOP COUNTER EXCEEDED WAITING FOR JOB [%s] TO STOP, EXITING.', 0, 1, '$TlogBackupJobName') WITH NOWAIT
 		    BREAK
 	    END
@@ -308,7 +308,7 @@ function StopTLogBackupJob {
 
 function RemoveTempFileGroupAndFile{
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments, 
+        [System.Collections.Hashtable]$SqlCmdArguments,
         [int]$shrinkTimeOut
     )
     # there have been occasions when an error occurred saying the file was not empty, until an empty file was issued. even though all of the indexes had been moved back
