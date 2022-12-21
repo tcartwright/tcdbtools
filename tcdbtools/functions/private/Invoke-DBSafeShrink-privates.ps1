@@ -1,4 +1,4 @@
-﻿function GetFreeSpace {
+function GetFreeSpace {
     Param (
         [System.Collections.Hashtable]$SqlCmdArguments, 
         [string]$Database, 
@@ -42,13 +42,13 @@
 		$dr = $command.ExecuteReader();
 
 		[System.Data.DataTable]$dt = New-Object System.Data.DataTable;
-		$dt.load($dr) | Out-Null;        
+		$dt.load($dr) | Out-Null;
     } finally {
         if ($dr) { $dr.Dispose() }
         if ($command) { $command.Dispose() }
         if ($connection) { $connection.Dispose() }
     }
-    return $dt 
+    return $dt
 }
 
 function PeformFileOperation {
