@@ -46,6 +46,12 @@
     )
 
     begin {
+        $groups = ($ServerInstances | Group-Object)
+        if ($groups | Where-Object { $_.Count -gt 1 }) {
+            throw "You cannot pass in duplicate ServerInstances"
+            return
+        }
+
         $sqlCon = InitSqlObjects -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $list = [System.Collections.ArrayList]::new()
