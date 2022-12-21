@@ -1,4 +1,5 @@
 ﻿function GetFreeSpace($SqlCmdArguments, $Database, $FileGroupName) {
+    
     $sql = "
         SELECT DB_NAME() AS [db_name],
             f.[name] AS [filegroup_name],
@@ -15,11 +16,34 @@
 
         ) fn
         WHERE [df].[type_desc] = 'ROWS'
-            AND [f].[name] IN ('$FileGroupName', 'SHRINK_DATA_TEMP');
+            AND [f].[name] IN (@FileGroupName, 'SHRINK_DATA_TEMP');
     "
+    [System.Data.SqlClient.SqlConnection]$connection = GetSQLConnection @SqlCmdArguments
+    try {
+        $connection.Open()
+        [System.Data.SqlClient.SqlCommand]$command = $connection.CreateCommand();
+        $command.CommandText = $sql
+        $command.CommandType = "Text"
 
-    Write-Verbose $sql
-    return Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -OutputAs DataRows
+        [System.Data.SqlClient.SqlParameter]$param = $command.CreateParameter()
+		$param.ParameterName = "@FileGroupName";
+		$param.SqlDBtype = [System.Data.SqlDbType]::VarChar;
+        $param.Size = 1000
+		$param.Direction = [System.Data.ParameterDirection]::Input;
+		$param.value = $FileGroupName;
+
+        Write-Verbose $sql
+        $command.Parameters.Add($param)
+		$dr = $command.ExecuteReader();
+
+		[System.Data.DataTable]$dt = New-Object System.Data.DataTable;
+		$dt.load($dr) | Out-Null;        
+    } finally {
+        if ($dr) { $dr.Dispose() }
+        if ($command) { $command.Dispose() }
+        if ($connection) { $connection.Dispose() }
+    }
+    return $dt 
 }
 
 function PeformFileOperation($SqlCmdArguments, $sql) {

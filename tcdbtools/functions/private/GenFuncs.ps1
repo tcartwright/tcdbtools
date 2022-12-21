@@ -76,7 +76,7 @@ function GetSQLConnection {
         [string]$AppName = "tcdbtools"
     )
 
-    # in powershell you cannot use the propery names of the builder, you have to use the dictionary keys
+    # in powershell you cannot use the proper names of the builder, you have to use the dictionary keys
     $builder = [System.Data.SqlClient.SqlConnectionStringBuilder]::new()
     $builder["Data Source"] = $ServerInstance
     $builder["Initial Catalog"] = $Database

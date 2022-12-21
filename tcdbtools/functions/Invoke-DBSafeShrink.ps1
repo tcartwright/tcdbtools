@@ -122,11 +122,9 @@
         [ValidateSet("oneway", "twoway")]
         [string]$Direction = "twoway",
         [switch]$AdjustRecovery,
-        [ValidateRange(1, 20)]
         [int]$ShrinkTimeout = 10,
         [ValidateRange(0, 20000)]
         [int]$ShrinkIncrementMB = 0,
-        [ValidateRange(1, 20)]
         [int]$IndexMoveTimeout = 5,
         [int]$MinimumFreeSpaceMB = 250,
         [string]$TlogBackupJobName
