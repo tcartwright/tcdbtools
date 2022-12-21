@@ -122,8 +122,11 @@
         [ValidateSet("oneway", "twoway")]
         [string]$Direction = "twoway",
         [switch]$AdjustRecovery,
+        [ValidateRange(1, 20)]
         [int]$ShrinkTimeout = 10,
+        [ValidateRange(0, 20000)]
         [int]$ShrinkIncrementMB = 0,
+        [ValidateRange(1, 20)]
         [int]$IndexMoveTimeout = 5,
         [int]$MinimumFreeSpaceMB = 250,
         [string]$TlogBackupJobName
@@ -239,10 +242,23 @@
                 continue
             }
 
-            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database
+            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database -FileGroupName $FileGroupName | Where-Object { $_.used_space_mb -gt 0 } 
+            $totals = $freeSpace | Measure-Object -Property free_space_mb, used_space_mb -Sum 
+
+            if ($totals[0].Sum -lt $MinimumFreeSpaceMB ) {
+                Write-Warning "Database [$Database] does not have any files with the minimum required free space of $MinimumFreeSpaceMB MB for this operation to continue."
+                continue
+            }
+            
+            $usedTotalSize = $totals[1].Sum
+            # in case of a restart, figure out the average without counting the shrink temp file in the divisor
+            $averageUsedSize = $totals[1].Sum / ([System.Object[]]($freespace | Where-Object { $_.filegroup_name -ine "SHRINK_DATA_TEMP" })).Count
+            $originalRecovery = $db.RecoveryModel
+
             foreach ($fs in $freeSpace) {
                 $fileInfo = [PSCustomObject] @{
                     Database = $Database
+                    FileGroupName = [string]$fs.filegroup_name
                     FileName = [string]$fs.file_name
                     SizeBefore = [int]$fs.current_size_mb
                     UsedBefore = [int]$fs.used_space_mb
@@ -265,21 +281,12 @@
                 }
             }
 
-            if (-not ($freeSpace | Where-Object { $_.free_space_mb -ge $MinimumFreeSpaceMB })) {
-                Write-Warning "Databasse [$Database] does not have any files with the minimum required free space of $MinimumFreeSpaceMB MB for this operation to continue."
-                continue
-            }
             $fi = [System.IO.FileInfo]$originalFile.FileName
             $newFileName = "$($fi.DirectoryName)\$($fi.BaseName)_SHRINK_DATA_TEMP$($fi.Extension)"
 
             if ($NewFileDirectory) {
                 $newFileName = [System.IO.Path]::Combine($NewFileDirectory.FullName, ([System.IO.FileInfo]$newFileName).Name)
             }
-
-            $totals = $freeSpace | Measure-Object -Property used_space_mb -Sum -Minimum
-            $usedMinSize = $totals.Minimum
-            $usedTotalSize = $totals.Sum
-            $originalRecovery = $db.RecoveryModel
 
             Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName`r`n" -ForegroundColor Cyan
 
@@ -329,7 +336,7 @@
                     [int]$size = $file.Size
 
                     Write-Verbose "LOOPING SHRINKFILE"
-                    $size = ShrinkFile -SqlCmdArguments $SqlCmdArguments -size $size -fileName $fileName -targetSizeMB $usedMinSize -timeout $ShrinkTimeout -ShrinkIncrementMB $ShrinkIncrementMB | Select-Object -Last 1
+                    $size = ShrinkFile -SqlCmdArguments $SqlCmdArguments -size $size -fileName $fileName -targetSizeMB $averageUsedSize -timeout $ShrinkTimeout -ShrinkIncrementMB $ShrinkIncrementMB | Select-Object -Last 1
                 }
                 Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
 
@@ -366,7 +373,7 @@
             <#
             # RECORD THE CHANGES AFTER THE OPERATION HAS COMPLETED FOR THE FILES
             #>
-            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database
+            $freeSpace = GetFreeSpace -SqlCmdArguments $SqlCmdArguments -Database $Database -FileGroupName $FileGroupName
             $freeSpace | ForEach-Object {
                 $obj = $ret["$Database-$($_.file_name)"]
                 if ($obj) {

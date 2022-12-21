@@ -1,17 +1,22 @@
-﻿function GetFreeSpace($SqlCmdArguments, $Database) {
+﻿function GetFreeSpace($SqlCmdArguments, $Database, $FileGroupName) {
     $sql = "
-        SELECT DB_NAME() AS db_name,
-	        df.[name] AS file_name,
-	        fn.[size] AS current_size_mb,
-	        fn.[space_used] AS used_space_mb,
-	        fn.[size] - fn.[space_used] AS free_space_mb
+        SELECT DB_NAME() AS [db_name],
+            f.[name] AS [filegroup_name],
+            df.[name] AS [file_name],
+            fn.[size] AS current_size_mb,
+            fn.[space_used] AS used_space_mb,
+            fn.[size] - fn.[space_used] AS free_space_mb
         FROM [$Database].sys.database_files df
+        INNER JOIN [$Database].sys.[filegroups] AS [f] 
+            ON [f].[data_space_id] = [df].[data_space_id]
         CROSS APPLY (
-	        SELECT CAST(CAST(FILEPROPERTY(df.name,'SpaceUsed') AS INT) / 128.0 AS INT) AS [space_used],
-		        CAST(df.[size] / 128.0 AS INT) AS [size]
+            SELECT CAST(CAST(FILEPROPERTY(df.name,'SpaceUsed') AS INT) / 128.0 AS INT) AS [space_used],
+                CAST(df.[size] / 128.0 AS INT) AS [size]
 
         ) fn
-        WHERE [df].[type_desc] = 'ROWS';"
+        WHERE [df].[type_desc] = 'ROWS'
+            AND [f].[name] IN ('$FileGroupName', 'SHRINK_DATA_TEMP');
+    "
 
     Write-Verbose $sql
     return Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -OutputAs DataRows
@@ -116,42 +121,52 @@ function ShrinkFile($SqlCmdArguments, [string] $fileName, [int]$size, [int]$targ
 
     if ($shrinkIncrement -lt 50 -or $shrinkIncrement -gt 10000) {
         switch ($size) {
-            {$_ -le 10000 } {
-                $shrinkIncrement = 1000 # < 10 gb
+            {$_ -le 1000 } {
+                $shrinkIncrement = 100 
             }
-            {$_ -gt 10000 -and $_ -le 100000 } {
-                $shrinkIncrement = 2500 # 10 gb - 100 gb
+            {$_ -gt 1000 -and $_ -le 5000 } {
+                $shrinkIncrement = 500 
             }
-            {$_ -gt 100000 -and $_ -le 1000000 } {
-                $shrinkIncrement = 5000 # 100 gb - 1 tb
+            {$_ -gt 5000 -and $_ -le 10000 } {
+                $shrinkIncrement = 1000 
+            }
+            {$_ -gt 10000 -and $_ -le 50000 } {
+                $shrinkIncrement = 2500 
+            }
+            {$_ -gt 50000 -and $_ -le 100000 } {
+                $shrinkIncrement = 5000 
+            }
+            {$_ -gt 100000 -and $_ -le 500000 } {
+                $shrinkIncrement = 7500 
+            }
+            {$_ -gt 500000 -and $_ -le 1000000 } {
+                $shrinkIncrement = 10000 
             }
             {$_ -gt 1000000 } {
-                $shrinkIncrement = 7500 # > 1 tb
+                $shrinkIncrement = 15000 
             }
             default {
-                $shrinkIncrement = 5000
+                $shrinkIncrement = [int]($targetSizeMB * 0.1)
             }
         }
     }
 
-    # set our target size to 75% of the original, to reduce file growths needed. This size should be the smallest of the files if there were multiple
-    $targetSize = [Math]::Max(1, $targetSizeMB * 0.75)
+    # set our target size to % of the original, to reduce file growths needed. 
+    $targetSize = [Math]::Max(5, $targetSizeMB * 0.75)
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 
-    if ($size -gt 50 -or $size -gt $targetSize) {
-        if ($shrinkIncrement -gt 0) {
-            for($x = $size; $x -gt $targetSize; $x -= $shrinkIncrement) {
-                $size = $x
-                $sql = $rawsql -f $x
-                Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING: $sql"
-                Write-Verbose $sql
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
-            }
-        }
+    for($x = $size; $x -ge $targetSize; $x -= $shrinkIncrement) {
+        $sql = $rawsql -f $x
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING: $sql"
+        Write-Verbose $sql
+        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
     }
+    $size = $x + $shrinkIncrement
 
-    $sql = $rawsql -f $targetSize
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING FINAL SHRINK: $sql"
-    Write-Verbose $sql
-    Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
+    if ($size -gt $targetSize) {
+        $sql = $rawsql -f $targetSize
+        Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING FINAL SHRINK: $sql"
+        Write-Verbose $sql
+        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
+    }
 }
