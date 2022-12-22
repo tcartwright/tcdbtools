@@ -47,20 +47,20 @@
 
     .EXAMPLE
         If you need to ignore names of certain types, you can define a variable that follows this pattern $ignore + Type that is of type Regex. Any object name that matches will not be scripted.
-        
-        EX: Say that you wanted to ignore certain domain users, you could define the following variable before calling the function: 
 
-        PS> $ignoreUsers = ".*DomainName.*" 
-        PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Database "DatabaseName" 
+        EX: Say that you wanted to ignore certain domain users, you could define the following variable before calling the function:
+
+        PS> $ignoreUsers = ".*DomainName.*"
+        PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Database "DatabaseName"
 
         To ignore other types just define more variables, like $ignoreStoredProcedures or $ignoreTables
-    .EXAMPLE 
+    .EXAMPLE
         Creating a customized scripter that ignores extended properties:
-        
+
         PS> $scripter = New-DBScripterObject -ServerInstance "ServerName"
         PS> $Scripter.Options.ExtendedProperties = $false
         PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName1", "DatabaseName2" -SavePath "C:\db_scripts" -Scripter $scripter -InformationAction Continue
-        
+
     .LINK
         https://github.com/tcartwright/tcdbtools
     #>
@@ -84,7 +84,7 @@
             $path = $env:TEMP
         } else {
             $path = $SavePath.FullName
-        }        
+        }
         # create a scripter object if they did not pass one in (used by the function ScriptOutDbObj())
         if (-not $Scripter) {
             $Scripter = New-DBScripterObject -ServerInstance $ServerInstance

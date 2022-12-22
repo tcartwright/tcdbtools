@@ -113,7 +113,7 @@
 
                 $assemblies | Export-Csv -Path "$path\Assemblies.csv" -Force -Encoding ASCII -NoTypeInformation
 
-                # open up explorer, highlighting the csv file 
+                # open up explorer, highlighting the csv file
                 # Invoke-Expression "explorer.exe '/select,$path\Assemblies.csv'"
             } else {
                 Write-Warning "No assemblies found to export"

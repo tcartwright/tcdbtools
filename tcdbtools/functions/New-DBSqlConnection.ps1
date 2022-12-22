@@ -1,4 +1,4 @@
-function New-DBSqlConnection {
+﻿function New-DBSqlConnection {
     <#
     .SYNOPSIS
         Creates a SqlConnection
@@ -10,13 +10,13 @@ function New-DBSqlConnection {
         Specifies the database server hostname.
 
     .PARAMETER Database
-        Specifies the name of the database. 
+        Specifies the name of the database.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
-    
-    .PARAMETER AppName    
-        The application name that will be supplied to the connection.    
+
+    .PARAMETER AppName
+        The application name that will be supplied to the connection.
 
     .OUTPUTS
         The SqlConnection object
@@ -30,7 +30,7 @@ function New-DBSqlConnection {
     .NOTES
         Author: Tim Cartwright
 
-    #>    
+    #>
     param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,

@@ -167,7 +167,7 @@ function ShrinkFile {
     )
     # shrink N-gb at a a time
     [int]$shrinkIncrement = $ShrinkIncrementMB
-    
+
     if ($shrinkIncrement -lt 50 -or $shrinkIncrement -gt 10000) {
         $factor = 0.33
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
     .Synopsis
         This Module contains functions to help with automating various SQL Server functionality.
 
@@ -23,7 +23,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\New-DBScripterObject.ps1"
 . "$scriptDir\functions\New-DBSqlObjects.ps1"
 . "$scriptDir\functions\New-DBSQLConnection.ps1"
-. "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related. 
+. "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
 
 # private functions
 . "$scriptDir\functions\private\Invoke-DBSafeShrink-privates.ps1"

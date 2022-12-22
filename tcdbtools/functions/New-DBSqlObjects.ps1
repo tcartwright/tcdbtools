@@ -1,10 +1,10 @@
-function New-DBSqlObjects {
+﻿function New-DBSqlObjects {
     <#
     .SYNOPSIS
         Creates two objects:
         * The first is a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
         * The second is a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections
-        
+
     .PARAMETER ServerInstance
         The sql server instance to connect to.
 
@@ -16,7 +16,7 @@ function New-DBSqlObjects {
         * return.SqlCmdArguments: The first is a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
         * return.Server: The second is a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections
 
-    .EXAMPLE 
+    .EXAMPLE
 
     PS> $objects = New-DBSqlObjects -ServerInstance "ServerName"
     PS> $server = $objects.Server                       # this is the SMO connection object
@@ -24,11 +24,11 @@ function New-DBSqlObjects {
 
     .LINK
         https://blog.kieranties.com/2018/03/26/write-information-with-colours
-    #>    
+    #>
     Param (
-        [string]$ServerInstance, 
+        [string]$ServerInstance,
         [pscredential]$Credentials
-    ) 
+    )
 
     begin {
 
