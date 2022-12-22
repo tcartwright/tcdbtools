@@ -37,7 +37,8 @@ Moves indexes from one file group to another. Both file groups must exist, neith
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied then 
+        a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -64,7 +65,8 @@ Moves indexes from one file group to another. Both file groups must exist, neith
         Accept wildcard characters?  false
 
     -IndexMoveTimeout <Int32>
-        The amount of time that controls how long a index move can run before timing out.
+        The amount of time that controls how long a index move can run 
+        before timing out.
         
         NOTES: This timeout is in minutes.
 

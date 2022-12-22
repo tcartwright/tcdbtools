@@ -198,8 +198,8 @@ function ShrinkFile {
     [int]$loops = (($size - $targetSize) / $shrinkIncrement) + 1
     $counter = 0
 
-    Write-InformationColored "SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
-    Write-InformationColored "ESTIMATED SHRINK COUNT: $loops" -ForegroundColor Yellow
+    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
+    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] ESTIMATED NUMBER OF SHRINKS: $loops" -ForegroundColor Yellow
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 
     for($x = $size; $x -ge $targetSize; $x -= $shrinkIncrement) {

@@ -52,7 +52,8 @@ The column name picked will be the first column name used. With complex predicat
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied 
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -80,7 +81,8 @@ The column name picked will be the first column name used. With complex predicat
         Accept wildcard characters?  false
 
     -Force <SwitchParameter>
-        If enabled then all constraint names will be renamed even if they match the expected naming conventions.
+        If enabled then all constraint names will be renamed even if they match 
+        the expected naming conventions.
 
         Required?                    false
         Position?                    named
@@ -91,7 +93,8 @@ The column name picked will be the first column name used. With complex predicat
     -CustomGetObjectName <ScriptBlock>
         This script block can be passed in to override the naming convention used.
         
-        The method signature is as follows: function GetObjectName($obj, [switch]$IncludeSchemaInNames)
+        The method signature is as follows: 
+            function GetObjectName($obj, [switch]$IncludeSchemaInNames)
         
         Note: Each of the details properties holds different values based upon object type
         
@@ -126,13 +129,19 @@ The column name picked will be the first column name used. With complex predicat
         Accept wildcard characters?  false
 
     -NameExistsFunction <ScriptBlock>
-        This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 000. Starting with 001. A unique name for this object should be returned. 
+        This scriptblock can be passed in to override the base functionality when the 
+        names produced already exist and come into conflict. By default if the name 
+        already exists then a number will be suffixed to the name in the pattern: 000. 
+        Starting with 001. A unique name for this object should be returned. 
         
-        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_001 will be tried, then 002 and so on until a unique name can be found.
+        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_001 
+        will be tried, then 002 and so on until a unique name can be found.
         
-        The method signature is as follows: function GetObjectName($newName, $renames)
+        The method signature is as follows: 
+            function GetObjectName($newName, $renames)
         
-        The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
+        The parameter $renames will be a collection of names that have already been 
+        assigned to the table. The $newName parameter will be the name that was created.
 
         Required?                    false
         Position?                    5
@@ -146,7 +155,9 @@ The column name picked will be the first column name used. With complex predicat
 Rename all the constraints in the AdventureWorks2012 database
     
 ```powershell
-Invoke-DBRenameConstraints -ServerInstance "ServerName" -Database "AdventureWorks2012"
+Invoke-DBRenameConstraints `
+    -ServerInstance "ServerName" `
+    -Database "AdventureWorks2012"
 ```
 
 ### Example
@@ -187,7 +198,11 @@ $GetObjectName = {
     return $ret
 }
 
-Invoke-DBRenameConstraints -ServerInstance "ServerName" -Databases "AdventureWorks2012" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
+Invoke-DBRenameConstraints `
+    -ServerInstance "ServerName" `
+    -Databases "AdventureWorks2012" `
+    -InformationAction Continue `
+    -CustomGetObjectName $GetObjectName | Format-Table
 ```
 
 [Back](/README.md)

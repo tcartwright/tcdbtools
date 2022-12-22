@@ -51,7 +51,8 @@ Editor: Tim Cartwright:
         Accept wildcard characters?  false
 
     -Databases <String[]>
-        Specifies the name of the databases you want to script. Each database will be scripted to its own directory.
+        Specifies the name of the databases you want to script. Each database will be 
+        scripted to its own directory.
 
         Required?                    true
         Position?                    3
@@ -60,7 +61,8 @@ Editor: Tim Cartwright:
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied then a 
+        trusted connection will be used.
 
         Required?                    false
         Position?                    named
@@ -69,7 +71,9 @@ Editor: Tim Cartwright:
         Accept wildcard characters?  false
 
     -Scripter <Scripter>
-        An object of type [Microsoft.SqlServer.Management.Smo.Scripter]. Allows for custom scripter options to be set. If not provided a default scripter will be created. Can be created using New-DBScripterObject and then customized.
+        An object of type [Microsoft.SqlServer.Management.Smo.Scripter]. Allows for 
+        custom scripter options to be set. If not provided a default scripter will 
+        be created. Can be created using New-DBScripterObject and then customized.
 
         Required?                    false
         Position?                    named
@@ -78,7 +82,8 @@ Editor: Tim Cartwright:
         Accept wildcard characters?  false
 
     -SavePath <String>
-        Specifies the directory where you want to store the generated scripts. If the SavePath is not supplied, then the users temp directory will be used.
+        Specifies the directory where you want to store the generated scripts. 
+        If the SavePath is not supplied, then the users temp directory will be used.
 
         Required?                    false
         Position?                    named
@@ -93,7 +98,11 @@ EX: Say that you wanted to ignore certain domain users, you could define the fol
 
 ```powershell
 $ignoreUsers = ".*DomainName.*" 
-Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName" -SavePath "C:\db_scripts" -InformationAction Continue
+Invoke-DBScriptObjects ` 
+    -ServerInstance "ServerName" `
+    -Databases "DatabaseName" `
+    -SavePath "C:\db_scripts" `
+    -InformationAction Continue
 ```
 To ignore other types just define more variables, like $ignoreStoredProcedures or $ignoreTables
 
@@ -103,7 +112,12 @@ Creating a customized scripter that ignores extended properties:
 ```powershell
 $scripter = New-ScripterObject -ServerInstance "ServerName"
 $Scripter.Options.ExtendedProperties = $false
-Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName1", "DatabaseName2" -SavePath "C:\db_scripts" -Scripter $scripter -InformationAction Continue
+Invoke-DBScriptObjects `
+    -ServerInstance "ServerName" `
+    -Databases "DatabaseName1", "DatabaseName2" `
+    -SavePath "C:\db_scripts" `
+    -Scripter $scripter `
+    -InformationAction Continue
 ```
 
 

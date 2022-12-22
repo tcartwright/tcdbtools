@@ -29,7 +29,8 @@ Creates two objects:
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied 
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    2
@@ -41,8 +42,13 @@ Creates two objects:
 
 ```powershell
 $objects = New-DBSqlObjects -ServerInstance "ServerName"
-$server = $objects.Server                       # this is the SMO connection object
-$sqlCmdArguments = $objects.SqlCmdArguments     # this object can be splatted to Invoke-SqlCmd or other functions that take the same parameters
+
+# this is the SMO connection object
+$server = $objects.Server                       
+
+# this object can be splatted to Invoke-SqlCmd or other functions 
+# that take the same parameters
+$sqlCmdArguments = $objects.SqlCmdArguments     
 ```
 
 [Back](/README.md)
