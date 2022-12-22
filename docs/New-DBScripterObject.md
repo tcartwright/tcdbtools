@@ -2,10 +2,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-Creates a database scripting object that can be customized and used by [Invoke-DBScriptObjects](docs/Invoke-DBScriptObjects.md)
+Creates a database scripting object that can be customized and used by [Invoke-DBScriptObjects](/docs/Invoke-DBScriptObjects.md)
 
 ## Description
-Creates a database scripting object that can be customized and used by [Invoke-DBScriptObjects](docs/Invoke-DBScriptObjects.md)
+Creates a database scripting object that can be customized and used by [Invoke-DBScriptObjects](/docs/Invoke-DBScriptObjects.md)
 
 ## Syntax
     New-DBScripterObject 
