@@ -10,13 +10,13 @@ Will rename all indexes and constraints to match naming conventions. Any constra
 
 The default naming conventions are as follows:
 
-* Default Constraint = "DF_**TableName**_**ColumnName**"
-* Check Constraint = "CK_**TableName**_**ColumnName**"
-* Foreign Key = "FK_**TableName**_**RemoteTableName**"
-* Primary Key = "PK_**TableName**"
-* Unique Constraint = "UQ_**TableName**_**ColumnName**"
-* Unique Index = "UX_**TableName**_**ColumnName**"
-* Non-Clustered Index = "IX_**TableName**_**ColumnName**"
+* Default Constraint    = "DF_**TableName**_**ColumnName**"
+* Check Constraint      = "CK_**TableName**_**ColumnName**"
+* Foreign Key           = "FK_**TableName**_**RemoteTableName**"
+* Primary Key           = "PK_**TableName**"
+* Unique Constraint     = "UQ_**TableName**_**ColumnName**"
+* Unique Index          = "UX_**TableName**_**ColumnName**"
+* Non-Clustered Index   = "IX_**TableName**_**ColumnName**"
 
 The column name picked will be the first column name used. With complex predicates and or the use of functions in check constraints the column name sometimes cannot be determined by SQL Server and will return null.
 
