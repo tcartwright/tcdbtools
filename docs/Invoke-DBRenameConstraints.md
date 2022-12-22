@@ -142,14 +142,14 @@ The column name picked will be the first column name used. With complex predicat
         
 ## Examples
 
-### Example 1
+### Example
 Rename all the constraints in the AdventureWorks2012 database
     
 ```powershell
-Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
+Invoke-DBRenameConstraints -ServerInstance "ServerName" -Database "AdventureWorks2012"
 ```
 
-### Example 2
+### Example
 Rename all the constraints in the AdventureWorks2012 database using a custom naming function.
 
 ```powershell
@@ -187,7 +187,7 @@ $GetObjectName = {
     return $ret
 }
 
-Invoke-DBRenameConstraints -ServerInstance "servername" -Databases "AdventureWorks2012" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
+Invoke-DBRenameConstraints -ServerInstance "ServerName" -Databases "AdventureWorks2012" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
 ```
 
 [Back](/README.md)

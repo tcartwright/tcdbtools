@@ -5,8 +5,7 @@
 Moves indexes from one file group to another including heaps.
 
 ## Description
-Moves indexes from one file group to another. Both file groups must exist, neither
-will be created for you. As the indexes are moved, they will be rebuilt.
+Moves indexes from one file group to another. Both file groups must exist, neither will be created for you. As the indexes are moved, they will be rebuilt.
 
 ## Syntax
     Invoke-DBMoveIndexes 
@@ -29,7 +28,7 @@ will be created for you. As the indexes are moved, they will be rebuilt.
         Accept wildcard characters?  false
 
     -Databases <String[]>
-        The databases to shrink. A string array.
+        The databases to move indexes in.
 
         Required?                    true
         Position?                    2

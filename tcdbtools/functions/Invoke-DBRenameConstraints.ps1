@@ -82,10 +82,7 @@
         The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
 
     .EXAMPLE
-        PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
-
-    .EXAMPLE
-        PS> .\Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
+        PS> Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
 
     .EXAMPLE
         Using a custom naming function:
@@ -140,10 +137,10 @@
     )
 
     begin {
-        $sqlCon = InitSqlObjects -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
+        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
 
-        $connection = GetSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
+        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
         $connection.Open();
         $command = $connection.CreateCommand()
         $command.CommandType = "Text";
@@ -316,6 +313,7 @@
                         $tempSql = $sql -f "[$($grp.schema_name)].[$($grp.table_name)].[$tempName]", "$newName", "INDEX"
                         $renames.Add($newName, $tempSql) | Out-Null
                     }
+                    Write-Information "Adding rename for database [$Database]: [$oldName] TO [$newName]"
 
                     $output.Add([PSCustomObject] @{
                         Database = $Database
@@ -360,6 +358,9 @@ $($renames.Values)"
     end {
         if ($command) { $command.Dispose() }
         if ($connection) { $connection.Dispose() }
+        if ($output.Count -eq 0) {
+            Write-Warning "No renames found at all for any of the specified databases: `r`n`t$([string]::Join(",`r`n`t", $Databases))"
+        }
         return $output | Sort-Object Database, ObjectName, NewConstraintName
     }
 }

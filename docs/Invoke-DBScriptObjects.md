@@ -51,18 +51,10 @@ Editor: Tim Cartwright:
         Accept wildcard characters?  false
 
     -Databases <String[]>
+        Specifies the name of the databases you want to script. Each database will be scripted to its own directory.
 
         Required?                    true
         Position?                    3
-        Default value                
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-    -SavePath <String>
-        Specifies the directory where you want to store the generated scripts.
-
-        Required?                    true
-        Position?                    4
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
@@ -75,5 +67,44 @@ Editor: Tim Cartwright:
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
+
+    -Scripter <Scripter>
+        An object of type [Microsoft.SqlServer.Management.Smo.Scripter]. Allows for custom scripter options to be set. If not provided a default scripter will be created. Can be created using New-DBScripterObject and then customized.
+
+        Required?                    false
+        Position?                    named
+        Default value                
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -SavePath <String>
+        Specifies the directory where you want to store the generated scripts. If the SavePath is not supplied, then the users temp directory will be used.
+
+        Required?                    false
+        Position?                    named
+        Default value                
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+### Example 
+If you need to ignore names of certain types, you can define a variable that follows this pattern $ignore + Type that is of type Regex. Any object name that matches will not be scripted.
+
+EX: Say that you wanted to ignore certain domain users, you could define the following variable before calling the function: 
+
+```powershell
+$ignoreUsers = ".*DomainName.*" 
+Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName" -SavePath "C:\db_scripts" -InformationAction Continue
+```
+To ignore other types just define more variables, like $ignoreStoredProcedures or $ignoreTables
+
+### Example 
+Creating a customized scripter that ignores extended properties:
+        
+```powershell
+$scripter = New-ScripterObject -ServerInstance "ServerName"
+$Scripter.Options.ExtendedProperties = $false
+Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName1", "DatabaseName2" -SavePath "C:\db_scripts" -Scripter $scripter -InformationAction Continue
+```
+
 
 [Back](/README.md)

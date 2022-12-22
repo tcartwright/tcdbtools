@@ -12,11 +12,11 @@
     .PARAMETER Database
         The database containing the CLR dlls.
 
-    .PARAMETER SavePath
-        Specifies the directory where you want to store the generated dll object.
-
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+
+    .PARAMETER SavePath
+        Specifies the directory where you want to store the generated dll object. If the SavePath is not supplied, then the users temp directory will be used.
 
     .INPUTS
         None. You cannot pipe objects to this script.
@@ -25,10 +25,7 @@
         Returns the list of files that were extracted.
 
     .EXAMPLE
-        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012"
-
-    .EXAMPLE
-        PS> .\Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
+        PS> Invoke-DBExtractCLRDLL -ServerInstance "servername" -Database "AdventureWorks2012"
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -42,8 +39,8 @@
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
         [string]$Database,
-        [System.IO.DirectoryInfo]$SavePath,
-        [pscredential]$Credentials
+        [pscredential]$Credentials,
+        [System.IO.DirectoryInfo]$SavePath
     )
 
     begin {
@@ -61,7 +58,7 @@
         WHERE a.is_user_defined = 1"
 
         $assemblies = New-Object System.Collections.ArrayList
-        $connection = GetSQLConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
+        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
     }
 
     process {
@@ -97,7 +94,7 @@
                     }
 
                     $fileName = [System.IO.Path]::Combine($path, $fileName)
-                    # extract the bytes from a column into an arry
+                    # extract the bytes from a column into an array
                     [byte[]]$bytes = $reader.GetSqlBytes($fields.content).Buffer
                     # write the byte array to a file
                     Write-Information "Writing file: $fileName"
@@ -116,7 +113,7 @@
 
                 $assemblies | Export-Csv -Path "$path\Assemblies.csv" -Force -Encoding ASCII -NoTypeInformation
 
-                # open up explorer, highlighting the first file name we found
+                # open up explorer, highlighting the csv file 
                 # Invoke-Expression "explorer.exe '/select,$path\Assemblies.csv'"
             } else {
                 Write-Warning "No assemblies found to export"

@@ -23,7 +23,7 @@
         WHERE [df].[type_desc] = 'ROWS'
             AND [f].[name] IN (@FileGroupName, 'SHRINK_DATA_TEMP');
     "
-    [System.Data.SqlClient.SqlConnection]$connection = GetSQLConnection @SqlCmdArguments
+    [System.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
     try {
         $connection.Open()
         [System.Data.SqlClient.SqlCommand]$command = $connection.CreateCommand();
@@ -51,12 +51,12 @@
     return $dt
 }
 
-function PeformFileOperation {
+function PerformFileOperation {
     Param (
         [System.Collections.Hashtable]$SqlCmdArguments,
         [string]$sql
     )
-    # A t-log backup could be occuring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error
+    # A t-log backup could be occurring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error
     # https://blog.sqlauthority.com/2014/11/09/sql-server-fix-error-msg-3023-level-16-state-2-backup-file-manipulation-operations-such-as-alter-database-add-file-and-encryption-changes-on-a-database-must-be-serialized/
     $tryAgain = $false
     $tryAgainCount = 0
@@ -142,7 +142,7 @@ function MoveIndexes {
 
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 
-                # set the new filegroup, and the dropexisting property so the script will generate properly
+                # set the new FileGroup, and the DropExistingIndex property so the script will generate properly
                 $index.FileGroup = $toFG
                 $index.DropExistingIndex = $true
                 $sql = $index.Script()
@@ -167,7 +167,7 @@ function ShrinkFile {
     )
     # shrink N-gb at a a time
     [int]$shrinkIncrement = $ShrinkIncrementMB
-
+    
     if ($shrinkIncrement -lt 50 -or $shrinkIncrement -gt 10000) {
         $factor = 0.33
 
@@ -199,6 +199,7 @@ function ShrinkFile {
     $counter = 0
 
     Write-InformationColored "SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
+    Write-InformationColored "ESTIMATED SHRINK COUNT: $loops" -ForegroundColor Yellow
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 
     for($x = $size; $x -ge $targetSize; $x -= $shrinkIncrement) {
@@ -244,7 +245,7 @@ function AdjustRecoveryModels {
         # ADJUST THE RECOVERY IF REQUESTED, IF WE ARE ALREADY NOT IN SIMPLE
         #>
         if ( $recoveryModels[$Database] -ine "SIMPLE" ) {
-            if (-not $TargetRecoveryModel){
+            if (-not $TargetRecoveryModel) {
                 $TargetRecoveryModel = $recoveryModels[$Database]
             }
 
@@ -325,7 +326,7 @@ function RemoveTempFileGroupAndFile{
         IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
 	        ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILEGROUP [SHRINK_DATA_TEMP]
         END"
-    PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
+    PerformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
 }
 
 function AddTempFileGroupAndFile {
@@ -354,7 +355,7 @@ function AddTempFileGroupAndFile {
         DBCC SHRINKFILE([SHRINK_DATA_TEMP], TRUNCATEONLY) WITH NO_INFOMSGS;
     "
     try {
-        PeformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
+        PerformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
     } catch {
         Write-Warning $_.Exception.Message
         continue

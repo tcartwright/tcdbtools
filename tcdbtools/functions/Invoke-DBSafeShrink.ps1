@@ -95,13 +95,10 @@
         Generates a table of records detailing before and after sizes for each filegroup shrunk.
 
     .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012"
+        PS> Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012"
 
     .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp"
-
-    .EXAMPLE
-        PS> .\Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -MinimumFreeSpaceMB 1 -NewFileDirectory "D:\sqltemp\"
+        PS> Invoke-DBSafeShrink -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -MinimumFreeSpaceMB 1 -NewFileDirectory "D:\sqltemp\"
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -109,7 +106,7 @@
     .NOTES
         Author: Tim Cartwright
 
-#>
+    #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
@@ -131,7 +128,7 @@
     )
 
     begin {
-        $sqlCon = InitSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
+        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 
@@ -189,7 +186,7 @@
 
             $usedTotalSize = $totals[1].Sum
             # in case of a restart, figure out the average without counting the shrink temp file in the divisor
-            $averageUsedSize = $totals[1].Sum / ([System.Object[]]($freespace | Where-Object { $_.filegroup_name -ine "SHRINK_DATA_TEMP" })).Count
+            $averageUsedSize = $totals[1].Sum / ([System.Object[]]($freeSpace | Where-Object { $_.filegroup_name -ine "SHRINK_DATA_TEMP" })).Count
 
             foreach ($fs in $freeSpace) {
                 $fileInfo = [PSCustomObject] @{
@@ -282,12 +279,12 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FISNISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
+            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
         }
     }
 
     end {
-        # dont pass the target recovery model in so that the function will reset the name tag to the original
+        # don't pass the target recovery model in so that the function will reset the name tag to the original
         if ($AdjustRecovery.IsPresent) {
             AdjustRecoveryModels -AdjustRecovery $AdjustRecovery -SqlCmdArguments $SqlCmdArguments -Databases $Databases -recoveryModels $recoveryModels -TargetRecoveryModel $null | Out-Null
         }

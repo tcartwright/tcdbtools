@@ -1,39 +1,36 @@
 ﻿function Invoke-DBCompareServerSettings {
     <#
-        .SYNOPSIS
-            Compares all server settings for each instance passed in to generate a report showing differences. The user options are also compared
-            individually. Any user option will have its name suffixed with (options).
+    .SYNOPSIS
+        Compares all server settings for each instance passed in to generate a report showing differences. The user options are also compared
+        individually. Any user option will have its name suffixed with (options).
 
-        .DESCRIPTION
-            Compares all server settings for each instance passed in to generate a report showing differences.
+    .DESCRIPTION
+        Compares all server settings for each instance passed in to generate a report showing differences.
 
-        .PARAMETER ServerInstances
-            The sql server instances to connect to and compare. At least two servers must be passed in.
+    .PARAMETER ServerInstances
+        The sql server instances to connect to and compare. At least two servers must be passed in.
 
-        .PARAMETER Credentials
-            Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
-        .PARAMETER IgnoreVersionDifferences
-            If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is
-            present, then any setting value with a dash will not be considered a difference.
+    .PARAMETER IgnoreVersionDifferences
+        If a SQL Server does not support a particular setting because it is an older version then the value will be a dash: "-". If this switch is
+        present, then any setting value with a dash will not be considered a difference.
 
-        .INPUTS
-            None. You cannot pipe objects to this script.
+    .INPUTS
+        None. You cannot pipe objects to this script.
 
-        .OUTPUTS
-            A list of the servers and a comparison report.
+    .OUTPUTS
+        A list of the servers and a comparison report.
 
-        .EXAMPLE
-            PS> .\Invoke-DBCompareServerSettings -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -SourceFileGroupName SHRINK_DATA_TEMP -TargetFileGroupName PRIMARY
+    .EXAMPLE
+        PS> Invoke-DBCompareServerSettings -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -SourceFileGroupName SHRINK_DATA_TEMP -TargetFileGroupName PRIMARY
 
-        .EXAMPLE
-            PS> .\Invoke-DBCompareServerSettings -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" -SourceFileGroupName PRIMARY -TargetFileGroupName SHRINK_DATA_TEMP
+    .LINK
+        https://github.com/tcartwright/tcdbtools
 
-        .LINK
-            https://github.com/tcartwright/tcdbtools
-
-        .NOTES
-            Author: Tim Cartwright
+    .NOTES
+        Author: Tim Cartwright
 
     #>
     [CmdletBinding()]
@@ -52,7 +49,7 @@
             return
         }
 
-        $sqlCon = InitSqlObjects -ServerInstance $ServerInstances[0] -Credentials $Credentials
+        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $list = [System.Collections.ArrayList]::new()
 

@@ -1,49 +1,46 @@
 ﻿function Invoke-DBMoveIndexes {
     <#
-        .SYNOPSIS
-            Moves indexes from one file group to another including heaps.
+    .SYNOPSIS
+        Moves indexes from one file group to another including heaps.
 
-        .DESCRIPTION
-            Moves indexes from one file group to another. Both file groups must exist, neither
-            will be created for you.
+    .DESCRIPTION
+        Moves indexes from one file group to another. Both file groups must exist, neither
+        will be created for you.
 
-        .PARAMETER ServerInstance
-            The sql server instance to connect to.
+    .PARAMETER ServerInstance
+        The sql server instance to connect to.
 
-        .PARAMETER Databases
-            The databases to shrink. A string array.
+    .PARAMETER Databases
+        The databases to move indexes in.
 
-        .PARAMETER Credentials
-            Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
-        .PARAMETER SourceFileGroupName
-            The file group name to move indexes from.
+    .PARAMETER SourceFileGroupName
+        The file group name to move indexes from.
 
-        .PARAMETER TargetFileGroupName
-            The file group where the indexes will be moved to.
+    .PARAMETER TargetFileGroupName
+        The file group where the indexes will be moved to.
 
-        .PARAMETER IndexMoveTimeout
-            The amount of time that controls how long a index move can run before timing out.
+    .PARAMETER IndexMoveTimeout
+        The amount of time that controls how long a index move can run before timing out.
 
-            NOTES: This timeout is in minutes.
+        NOTES: This timeout is in minutes.
 
-        .INPUTS
-            None. You cannot pipe objects to this script.
+    .INPUTS
+        None. You cannot pipe objects to this script.
 
-        .OUTPUTS
-            None.
+    .OUTPUTS
+        None.
 
-        .EXAMPLE
-            PS> .\Invoke-DBMoveIndexes -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -SourceFileGroupName SHRINK_DATA_TEMP -TargetFileGroupName PRIMARY
+    .EXAMPLE
+        PS> Invoke-DBMoveIndexes -ServerInstance "ServerName" -Databases "AdventureWorks2008","AdventureWorks2012" -SourceFileGroupName SHRINK_DATA_TEMP -TargetFileGroupName PRIMARY
 
-        .EXAMPLE
-            PS> .\Invoke-DBMoveIndexes -ServerInstance "servername" -Databases "AdventureWorks2008","AdventureWorks2012" -UserName "user.name" -Password "ilovelamp" -SourceFileGroupName PRIMARY -TargetFileGroupName SHRINK_DATA_TEMP
+    .LINK
+        https://github.com/tcartwright/tcdbtools
 
-        .LINK
-            https://github.com/tcartwright/tcdbtools
-
-        .NOTES
-            Author: Tim Cartwright
+    .NOTES
+        Author: Tim Cartwright
 
     #>
     [CmdletBinding()]
@@ -61,7 +58,7 @@
     )
 
     begin {
-        $sqlCon = InitSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
+        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 

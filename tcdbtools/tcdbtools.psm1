@@ -20,7 +20,10 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\Invoke-DBExtractCLRDLL.ps1"
 . "$scriptDir\functions\Invoke-DBCompareServerSettings.ps1"
 . "$scriptDir\functions\Invoke-DBRenameConstraints.ps1"
-. "$scriptDir\functions\Invoke-Telnet.ps1"
+. "$scriptDir\functions\New-DBScripterObject.ps1"
+. "$scriptDir\functions\New-DBSqlObjects.ps1"
+. "$scriptDir\functions\New-DBSQLConnection.ps1"
+. "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related. 
 
 # private functions
 . "$scriptDir\functions\private\Invoke-DBSafeShrink-privates.ps1"
@@ -36,4 +39,7 @@ Export-ModuleMember -Function Invoke-DBMoveIndexes
 Export-ModuleMember -Function Invoke-DBSafeShrink
 Export-ModuleMember -Function Write-InformationColored
 Export-ModuleMember -Function Invoke-DBRenameConstraints
+Export-ModuleMember -Function New-DBScripterObject
+Export-ModuleMember -Function New-DBSqlObjects
+Export-ModuleMember -Function New-DBSqlConnection
 #Export-ModuleMember -Function Invoke-Telnet

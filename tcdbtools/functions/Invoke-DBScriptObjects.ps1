@@ -6,17 +6,20 @@
     .DESCRIPTION
         Generate file-per-object scripts of specified server and database to specified directory. Attempts to create specified directory if not found.
 
-    .PARAMETER ServerName
+    .PARAMETER ServerInstance
         Specifies the database server hostname.
 
-    .PARAMETER Database
-        Specifies the name of the database you want to script as objects to files.
-
-    .PARAMETER SavePath
-        Specifies the directory where you want to store the generated scripts.
+    .PARAMETER Databases
+        Specifies the name of the databases you want to script. Each database will be scripted to its own directory.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+
+    .PARAMETER Scripter
+        An object of type [Microsoft.SqlServer.Management.Smo.Scripter]. Allows for custom scripter options to be set. If not provided a default scripter will be created.
+
+    .PARAMETER SavePath
+        Specifies the directory where you want to store the generated scripts. If the SavePath is not supplied, then the users temp directory will be used.
 
     .NOTES
         Author: Phil Factor
@@ -42,10 +45,24 @@
             │   │       ...
 
 
+    .EXAMPLE
+        If you need to ignore names of certain types, you can define a variable that follows this pattern $ignore + Type that is of type Regex. Any object name that matches will not be scripted.
+        
+        EX: Say that you wanted to ignore certain domain users, you could define the following variable before calling the function: 
+
+        PS> $ignoreUsers = ".*DomainName.*" 
+        PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Database "DatabaseName" 
+
+        To ignore other types just define more variables, like $ignoreStoredProcedures or $ignoreTables
+    .EXAMPLE 
+        Creating a customized scripter that ignores extended properties:
+        
+        PS> $scripter = New-DBScripterObject -ServerInstance "ServerName"
+        PS> $Scripter.Options.ExtendedProperties = $false
+        PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Databases "DatabaseName1", "DatabaseName2" -SavePath "C:\db_scripts" -Scripter $scripter -InformationAction Continue
+        
     .LINK
         https://github.com/tcartwright/tcdbtools
-    #>
-
     #>
     [CmdletBinding()]
     Param (
@@ -53,44 +70,25 @@
         [string]$ServerInstance,
         [Parameter(Mandatory = $true, Position = 2)]
         [string[]]$Databases,
-        [Parameter(Mandatory = $true, Position = 3)]
-        [string]$SavePath,
-        [pscredential]$Credentials
+        [pscredential]$Credentials,
+        [Microsoft.SqlServer.Management.Smo.Scripter]$Scripter,
+        [System.IO.DirectoryInfo]$SavePath
     )
 
     begin {
-        $sqlCon = InitSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
+        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 
-        # create scripter object (used by the function ScriptOutDbObj())
-        $scripter = New-Object "Microsoft.SqlServer.Management.Smo.Scripter" $server #create the scripter
-
-        # https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.management.smo.scriptingoptions?view=sql-smo-160
-        $scripter.Options.AllowSystemObjects = $false
-        $scripter.Options.AnsiFile = $true
-        $scripter.Options.AnsiPadding = $false # true = SET ANSI_PADDING statements
-        $scripter.Options.Default = $true
-        $scripter.Options.DriAll = $true
-        $scripter.Options.Encoding = New-Object "System.Text.ASCIIEncoding"
-        $scripter.Options.ExtendedProperties = $true
-        $scripter.Options.IncludeDatabaseContext = $false # true = USE <databasename> statements
-        $scripter.Options.IncludeHeaders = $false
-        $scripter.Options.NoCollation = $false # true = don't script verbose collation info in table scripts
-        $scripter.Options.Permissions = $true
-        $scripter.Options.ScriptSchema = $true
-        $scripter.Options.SchemaQualify = $true
-        $scripter.Options.SchemaQualifyForeignKeysReferences = $true
-        $scripter.Options.ScriptDrops = $false
-        $scripter.Options.ToFileOnly = $true
-        $scripter.Options.Triggers = $true
-        $scripter.Options.Indexes = $true
-        $scripter.Options.XmlIndexes = $true
-        $scripter.Options.FullTextIndexes = $true
-        $scripter.Options.ClusteredIndexes = $true
-        $scripter.Options.NonClusteredIndexes = $true
-        $scripter.Options.WithDependencies = $false
-        $scripter.Options.ContinueScriptingOnError = $true
+        if (-not $SavePath) {
+            $path = $env:TEMP
+        } else {
+            $path = $SavePath.FullName
+        }        
+        # create a scripter object if they did not pass one in (used by the function ScriptOutDbObj())
+        if (-not $Scripter) {
+            $Scripter = New-DBScripterObject -ServerInstance $ServerInstance
+        }
 
         # now get all the object types except extended stored procedures and a few others we don't want
         # by creating a bit flags of the DatabaseObjectTypes enum:
@@ -107,7 +105,7 @@
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
-            $dbSavePath = [System.IO.Path]::Combine($SavePath, $Database)
+            $dbSavePath = [System.IO.Path]::Combine($path, $Database)
 
             if (!(Test-Path -Path $dbSavePath)) {
                 Write-Verbose "Creating directory at '$dbSavePath'"
@@ -144,17 +142,17 @@
             #  write out each scriptable object as a file in the directory you specify
             $objects | ForEach-Object {
                 #for every object we have in the datatable.
-                $cnt = ScriptOutDbObj -scripter $scripter -dbObj $_ -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
+                $cnt = ScriptOutDbObj -scripter $Scripter -dbObj $_ -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
             }
 
             # Next, script out Database Triggers (DatabaseDdlTrigger) separately because they are not returned by Database.EnumObjects()
             foreach ($trigger in $db.Triggers) {
-                $cnt = ScriptOutDbObj -scripter $scripter -dbObj $trigger -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
+                $cnt = ScriptOutDbObj -scripter $Scripter -dbObj $trigger -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
             }
 
-            $scripter.Options.Permissions = $false
+            $Scripter.Options.Permissions = $false
             # also script out the database definition itself
-            $cnt = ScriptOutDbObj -scripter $scripter -dbObj $db -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
+            $cnt = ScriptOutDbObj -scripter $Scripter -dbObj $db -SavePath $dbSavePath -WriteProgressActivity $activity -WriteProgressCount $cnt -WriteProgressTotal $total
 
             Write-Progress -Activity $activity -Completed
             Write-InformationColored "FINISHED $activity" -ForegroundColor Yellow
