@@ -4,7 +4,6 @@
 ## Synopsis
 Will rename all indexes and constraints to match naming conventions.
 
-
 ## Description
 Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected convention will be skipped. Custom naming conventions can be used.
 
@@ -22,7 +21,7 @@ The default naming conventions are as follows:
 
 The column name picked will be the first column name used in the index or constraint. With complex predicates and or the use of functions in check constraints the column name sometimes cannot be determined by SQL Server and will return null.
 
-When there are conflicts then a number will be suffixed on to the end of the name until a unique name can be found. Starting with _001, _002, and so on.
+When there are conflicts a number will be suffixed on to the end of the name until a unique name can be found. Starting with _001, _002, and so on up until _999. 
 
 ## Syntax
     Invoke-DBRenameConstraints 
