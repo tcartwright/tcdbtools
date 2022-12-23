@@ -39,6 +39,7 @@ Editor: Tim Cartwright:
         [-Databases] <String[]> 
         [-SavePath] <String> 
         [-Credentials <PSCredential>] 
+        [-Scripter <Scripter>]
         [<CommonParameters>] 
 
 ## Parameters
