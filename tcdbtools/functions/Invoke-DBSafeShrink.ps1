@@ -132,6 +132,13 @@
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
         $server = $sqlCon.server
 
+        # these two function can show you what fields are available
+        # $server.SetDefaultInitFields([Microsoft.SqlServer.Management.Smo.Table], $true)
+        # $server.GetDefaultInitFields([Microsoft.SqlServer.Management.Smo.Table])
+        # cut way down on the number of table fields smo pulls to hopefully speed it up
+        [string[]]$fields = @("ID", "FileGroup", "HasClusteredIndex")
+        $server.SetDefaultInitFields([Microsoft.SqlServer.Management.Smo.Table], $fields)
+
         $shrinkTimeOut = ([Timespan]::FromMinutes($ShrinkTimeout).TotalSeconds)
         $IndexMoveTimeout = ([Timespan]::FromMinutes($IndexMoveTimeout).TotalSeconds)
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -164,6 +171,9 @@
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
+            
+            # try to enum the tables to hopefully speed this up
+            $tbls = $db.EnumObjects([Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::Table);
 
             if ($db.Name -ne $Database) {
                 Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
