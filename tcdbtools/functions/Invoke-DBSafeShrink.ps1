@@ -171,9 +171,9 @@
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
-            
+
             # try to enum the tables to hopefully speed this up
-            $db.EnumObjects([Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::Table) | Out-Null 
+            $db.EnumObjects([Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::Table) | Out-Null
 
             if ($db.Name -ne $Database) {
                 Write-Warning "Can't find the database [$Database] in '$ServerInstance'"
