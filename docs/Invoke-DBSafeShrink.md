@@ -3,7 +3,7 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-Shrinks a Sql Server mdf database file while also rebuilding the indexes. This function does NOT make use of DBCC SHRINKDATABASE or DBCC SHRINKFILE.
+Shrinks a Sql Server mdf database file while also rebuilding the indexes. 
 
 ## Description
 Shrinks a Sql Server mdf database file while also rebuilding the indexes. Can be used to migrate indexes to a new filegroup, or just shrink and move the indexes back to the original filegroup after the shrink is done. Typically runs faster than a normal shrink operation.
@@ -167,7 +167,8 @@ This script automates those steps so you don't have to.
     -MinimumFreeSpaceMB <Int32>
         The file shrunk must have at least this amount of free space, otherwise
         the shrink operation will write out a warning and skip the shrink operation 
-        for this file.
+        for this file. If there are multiple files in the filegroup, then the total 
+        free space of the all the files must be greater than this value.
 
         Required?                    false
         Position?                    10
@@ -175,10 +176,10 @@ This script automates those steps so you don't have to.
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
-    -TlogBackupJobName <String>
+    -TLogBackupJobName <String>
         The name of a TLOG back up job name. If passed in, then the job will be 
         temporarily disabled until the process finishes as TLOG backups will interfere 
-        with the file operations.
+        with the file operations. The job will be re-enabled once the process finishes.
 
         Required?                    false
         Position?                    11

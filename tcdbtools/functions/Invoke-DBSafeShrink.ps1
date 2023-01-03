@@ -27,7 +27,7 @@
                 and remove fragmentation from them at the same time
             - Drop the old filegroup that you were going to shrink anyway (or
                 shrink it way down if its the primary filegroup)
-            - Move the indexes back to the original filegroup if desired
+            - Move the indexes back to the original filegroup if desired (added by me :))
 
         This script automates those steps so you don't have to.
 
@@ -84,9 +84,10 @@
         The file shrunk must have at least this amount of free space, otherwise the shrink
         operation will write out a warning and skip the shrink operation for this file.
 
-    .PARAMETER TlogBackupJobName
+    .PARAMETER TLogBackupJobName
         The name of a TLOG back up job name. If passed in, then the job will be temporarily
         disabled until the process finishes as TLOG backups will interfere with the file operations.
+         The job will be re-enabled once the process finishes.
 
     .INPUTS
         None. You cannot pipe objects to this script.
@@ -124,7 +125,7 @@
         [int]$ShrinkIncrementMB = 0,
         [int]$IndexMoveTimeout = 5,
         [int]$MinimumFreeSpaceMB = 250,
-        [string]$TlogBackupJobName
+        [string]$TLogBackupJobName
     )
 
     begin {
@@ -157,8 +158,8 @@
         <#
         # IF THEY PASSED IN A TLOG BACKUP JOB NAME THEN STOP IT, AND WAIT A BIT FOR IT TO FINISH
         #>
-        if ($TlogBackupJobName) {
-            StopTLogBackupJob -SqlCmdArguments $SqlCmdArguments -TlogBackupJobName $TlogBackupJobName
+        if ($TLogBackupJobName) {
+            StopTLogBackupJob -SqlCmdArguments $SqlCmdArguments -TLogBackupJobName $TLogBackupJobName
         }
 
         $ret = @{}
@@ -299,15 +300,15 @@
             AdjustRecoveryModels -AdjustRecovery $AdjustRecovery -SqlCmdArguments $SqlCmdArguments -Databases $Databases -recoveryModels $recoveryModels -TargetRecoveryModel $null | Out-Null
         }
 
-        if ($TlogBackupJobName) {
-            $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TlogBackupJobName', @enabled = 1 ;"
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] ENABLING JOB [$TlogBackupJobName]"
+        if ($TLogBackupJobName) {
+            $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TLogBackupJobName', @enabled = 1 ;"
+            Write-Information "[$($sw.Elapsed.ToString($swFormat))] ENABLING JOB [$TLogBackupJobName]"
             Write-Verbose $sql
             Invoke-Sqlcmd @SqlCmdArguments -query $sql
         }
 
-        $sw.Stop()
         Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
+        $sw.Stop()
 
         return $ret.Values
     }

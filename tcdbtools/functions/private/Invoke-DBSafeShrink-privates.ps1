@@ -261,13 +261,13 @@ function AdjustRecoveryModels {
 function StopTLogBackupJob {
     Param(
         [System.Collections.Hashtable]$SqlCmdArguments,
-        [string]$TlogBackupJobName
+        [string]$TLogBackupJobName
     )
 
 
     # lets disable the job. We must ensure to re-enable it at the end
-    $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TlogBackupJobName', @enabled = 0 ;"
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] DISABLING JOB [$TlogBackupJobName]"
+    $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TLogBackupJobName', @enabled = 0 ;"
+    Write-Information "[$($sw.Elapsed.ToString($swFormat))] DISABLING JOB [$TLogBackupJobName]"
     Write-Verbose $sql
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
 
@@ -290,20 +290,20 @@ function StopTLogBackupJob {
 	    ) AS sess_max ON [sess].[agent_start_date] = [sess_max].[max_agent_start_date]
 	    WHERE [activity].[run_requested_date] IS NOT NULL
 		    AND [activity].[stop_execution_date] IS NULL
-		    AND [job].[name] = '$TlogBackupJobName') BEGIN
+		    AND [job].[name] = '$TLogBackupJobName') BEGIN
 
-	    RAISERROR('WAITING LOOP %d FOR JOB [%s] TO STOP', 0, 1, @sanityCounter, '$TlogBackupJobName') WITH NOWAIT
+	    RAISERROR('WAITING LOOP %d FOR JOB [%s] TO STOP', 0, 1, @sanityCounter, '$TLogBackupJobName') WITH NOWAIT
         -- wait at max 2 minutes
 	    SET @sanityCounter += 1
 	    IF @sanityCounter > 24 BEGIN
-		    RAISERROR('SANITY LOOP COUNTER EXCEEDED WAITING FOR JOB [%s] TO STOP, EXITING.', 0, 1, '$TlogBackupJobName') WITH NOWAIT
+		    RAISERROR('SANITY LOOP COUNTER EXCEEDED WAITING FOR JOB [%s] TO STOP, EXITING.', 0, 1, '$TLogBackupJobName') WITH NOWAIT
 		    BREAK
 	    END
 	    WAITFOR DELAY '00:00:05'
     END
     "
     Write-Verbose $sql
-    Write-Information "[$($sw.Elapsed.ToString($swFormat))] WAITING FOR JOB [$TlogBackupJobName] TO STOP"
+    Write-Information "[$($sw.Elapsed.ToString($swFormat))] WAITING FOR JOB [$TLogBackupJobName] TO STOP"
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
 }
 
