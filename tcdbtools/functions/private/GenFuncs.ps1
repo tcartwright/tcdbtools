@@ -1,7 +1,7 @@
 ﻿#Requires -Version 5.0
 using namespace System.Management.Automation
 
-Function Write-InformationColored {
+Function Write-InformationColorized {
     <#
         .SYNOPSIS
             Writes messages to the information stream, optionally with
@@ -36,6 +36,10 @@ Function Write-InformationColored {
     Write-Information $msg
 }
 
+function GetSQLFileContent ([string]$fileName) {
+    return Get-Content -Path ([System.IO.Path]::Combine($global:tcdbtools_SqlDir, $fileName)) -Raw
+}
+
 # If the script has a hard time finding SMO, you can install the dbatools module and import it. Which ensures that SMO can be found.
 if (-not (Get-Module -Name dbatools) -and (Get-Module -ListAvailable -Name dbatools)) {
     Write-Verbose "Importing dbatools"
@@ -44,5 +48,8 @@ if (-not (Get-Module -Name dbatools) -and (Get-Module -ListAvailable -Name dbato
 
 # load up SMO by default for all scripts.... hopefully. MSFT recently changed SMO to a nuget package which really jacks with finding it, or downloading it automatically
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO") | Out-Null
+
+$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
+$global:tcdbtools_SqlDir = [System.IO.Path]::Combine($scriptDir, "..\..\sql")
 
 

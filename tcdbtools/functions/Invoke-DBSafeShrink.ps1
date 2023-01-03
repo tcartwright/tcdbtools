@@ -153,7 +153,7 @@
             CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
         }
 
-        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
+        Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
 
         <#
         # IF THEY PASSED IN A TLOG BACKUP JOB NAME THEN STOP IT, AND WAIT A BIT FOR IT TO FINISH
@@ -232,7 +232,7 @@
                 $newFileName = [System.IO.Path]::Combine($NewFileDirectory.FullName, ([System.IO.FileInfo]$newFileName).Name)
             }
 
-            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
+            Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME
@@ -251,7 +251,7 @@
                 <#
                 # SHRINK THE OLD FILE GROUP DOWN A SMALL AMOUNT AT A TIME UNTIL WE REACH THE SMALLEST SIZE
                 #>
-                Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
+                Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
                 foreach($file in $originalFiles) {
                     # shrink each file a percentage at a time to keep from possibly timing out the shrink. cause even EMPTY files take a long time to shrink. WTF.
                     $fileName = $file.Name
@@ -260,7 +260,7 @@
                     Write-Verbose "LOOPING SHRINKFILE"
                     $size = ShrinkFile -SqlCmdArguments $SqlCmdArguments -size $size -fileName $fileName -targetSizeMB $averageUsedSize -timeout $ShrinkTimeout -ShrinkIncrementMB $ShrinkIncrementMB | Select-Object -Last 1
                 }
-                Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
+                Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
 
                 MoveIndexes -db $db -fromFG "SHRINK_DATA_TEMP" -toFG $fileGroupName -indicator "<--" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
 
@@ -290,7 +290,7 @@
                     $obj.FreeAfter = [int]$_.free_space_mb
                 }
             }
-            Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
+            Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
         }
     }
 
@@ -307,7 +307,7 @@
             Invoke-Sqlcmd @SqlCmdArguments -query $sql
         }
 
-        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
+        Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
         $sw.Stop()
 
         return $ret.Values

@@ -5,24 +5,8 @@
         [string]$FileGroupName
     )
 
-    $sql = "
-        SELECT DB_NAME() AS [db_name],
-            f.[name] AS [filegroup_name],
-            df.[name] AS [file_name],
-            fn.[size] AS current_size_mb,
-            fn.[space_used] AS used_space_mb,
-            fn.[size] - fn.[space_used] AS free_space_mb
-        FROM [$Database].sys.database_files df
-        INNER JOIN [$Database].sys.[filegroups] AS [f]
-            ON [f].[data_space_id] = [df].[data_space_id]
-        CROSS APPLY (
-            SELECT CAST(CAST(FILEPROPERTY(df.name,'SpaceUsed') AS INT) / 128.0 AS INT) AS [space_used],
-                CAST(df.[size] / 128.0 AS INT) AS [size]
+    $sql = (GetSQLFileContent -fileName "GetFreeSpace.sql") -f $Database
 
-        ) fn
-        WHERE [df].[type_desc] = 'ROWS'
-            AND [f].[name] IN (@FileGroupName, 'SHRINK_DATA_TEMP');
-    "
     [System.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
     try {
         $connection.Open()
@@ -94,26 +78,15 @@ function MoveIndexes {
     # using sql to scan for the indexes to move instead of scanning SMO, as SMO is very, very slow scanning the tables
     # especially if some of the tables do not have indexes in the fromFG
 
-    $sql = "
-        SELECT OBJECT_SCHEMA_NAME(i.[object_id]) AS [schema_name],
-	        OBJECT_NAME(i.[object_id]) AS [object_name]
-            ,i.[index_id]
-            ,i.[name] AS [index_name]
-            ,i.[type_desc] AS [index_type]
-        FROM [$($db.Name)].[sys].[indexes] i
-        INNER JOIN [$($db.Name)].[sys].[filegroups] f
-            ON f.[data_space_id] = i.[data_space_id]
-        WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
-	        AND [f].[name] = '$fromFG'
-        ORDER BY OBJECT_NAME(i.[object_id])
-            ,i.[index_id]"
+    $sql = (GetSQLFileContent -fileName "GetIndexes.sql") -f ($db.Name), $fromFG
+
     Write-Verbose $sql
     $indexes = Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $timeout
 
     $indexCounter = 0
     $indexCountTotal = $indexes.Count
     $activity = "MOVING ($indexCountTotal) INDEXES FROM FILEGROUP [$fromFG] TO FILEGROUP [$toFG] FOR DATABASE: [$($db.Name)]"
-    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] $activity" -ForegroundColor Green
+    Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] $activity" -ForegroundColor Green
 
     foreach ($tbl in ($indexes | Group-Object -Property schema_name,object_name)) {
         $table = $db.Tables.Item($tbl.Group[0].object_name, $tbl.Group[0].schema_name)
@@ -152,7 +125,7 @@ function MoveIndexes {
         }
     }
     Write-Progress -Activity $activity -Completed
-    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED $activity" -ForegroundColor Green
+    Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED $activity" -ForegroundColor Green
 }
 
 
@@ -198,8 +171,8 @@ function ShrinkFile {
     [int]$loops = (($size - $targetSize) / $shrinkIncrement) + 1
     $counter = 0
 
-    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
-    Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] ESTIMATED NUMBER OF SHRINKS: $loops" -ForegroundColor Yellow
+    Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILE $fileName FROM SIZE $size MB to $targetSize MB INCREMENTALLY BY $shrinkIncrement MB" -ForegroundColor Yellow
+    Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] ESTIMATED NUMBER OF SHRINKS: $loops" -ForegroundColor Yellow
     $rawsql = "DBCC SHRINKFILE([$fileName], {0}) WITH NO_INFOMSGS;"
 
     for($x = $size; $x -ge $targetSize; $x -= $shrinkIncrement) {
@@ -272,36 +245,7 @@ function StopTLogBackupJob {
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
 
     # now, lets wait a bit so that if the job is running we can let it finish up
-    $sql = "
-    DECLARE @sanityCounter INT = 1
-
-    WHILE EXISTS (
-	    SELECT [job].[name]
-		    ,job.job_id
-		    ,[job].[originating_server]
-		    ,[activity].[run_requested_date]
-		    ,DATEDIFF(SECOND, [activity].[run_requested_date], GETDATE()) AS elapsed
-	    FROM msdb.dbo.sysjobs_view AS job
-	    JOIN msdb.dbo.sysjobactivity AS activity ON job.job_id = activity.job_id
-	    JOIN msdb.dbo.syssessions AS sess ON sess.session_id = activity.session_id
-	    JOIN (
-		    SELECT MAX(agent_start_date) AS max_agent_start_date
-		    FROM msdb.dbo.syssessions
-	    ) AS sess_max ON [sess].[agent_start_date] = [sess_max].[max_agent_start_date]
-	    WHERE [activity].[run_requested_date] IS NOT NULL
-		    AND [activity].[stop_execution_date] IS NULL
-		    AND [job].[name] = '$TLogBackupJobName') BEGIN
-
-	    RAISERROR('WAITING LOOP %d FOR JOB [%s] TO STOP', 0, 1, @sanityCounter, '$TLogBackupJobName') WITH NOWAIT
-        -- wait at max 2 minutes
-	    SET @sanityCounter += 1
-	    IF @sanityCounter > 24 BEGIN
-		    RAISERROR('SANITY LOOP COUNTER EXCEEDED WAITING FOR JOB [%s] TO STOP, EXITING.', 0, 1, '$TLogBackupJobName') WITH NOWAIT
-		    BREAK
-	    END
-	    WAITFOR DELAY '00:00:05'
-    END
-    "
+    $sql = (GetSQLFileContent -fileName "WaitForTsqlAgentJobToStop.sql"	) -f $TLogBackupJobName
     Write-Verbose $sql
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] WAITING FOR JOB [$TLogBackupJobName] TO STOP"
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
@@ -318,14 +262,7 @@ function RemoveTempFileGroupAndFile{
     Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
 
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE"
-    $sql = "
-        IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
-	        ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILE [SHRINK_DATA_TEMP]
-        END
-
-        IF EXISTS (SELECT 1 FROM [$($SqlCmdArguments.Database)].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
-	        ALTER DATABASE [$($SqlCmdArguments.Database)] REMOVE FILEGROUP [SHRINK_DATA_TEMP]
-        END"
+    $sql = (GetSQLFileContent -fileName "RemoveShrinkTempObjects.sql") -f  ($SqlCmdArguments.Database)
     PerformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
 }
 
@@ -338,22 +275,8 @@ function AddTempFileGroupAndFile {
     )
 
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP"
-    $sql = "
-        IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
-            ALTER DATABASE [$Database] ADD FILEGROUP SHRINK_DATA_TEMP
-        END
-        IF NOT EXISTS (SELECT 1 FROM [$Database].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
-            ALTER DATABASE [$Database]
-                ADD FILE (
-                    NAME = 'SHRINK_DATA_TEMP',
-                    FILENAME = '$NewFileName',
-                    SIZE = $($Size)MB,
-                    FILEGROWTH = $($OriginalFile.Growth)$($OriginalFile.GrowthType)
-                )
-            TO FILEGROUP SHRINK_DATA_TEMP
-        END
-        DBCC SHRINKFILE([SHRINK_DATA_TEMP], TRUNCATEONLY) WITH NO_INFOMSGS;
-    "
+    $sql = (GetSQLFileContent -fileName "AddShrinkTempObjects.sql") -f  $Database, $NewFileName, $Size, ($OriginalFile.Growth), ($OriginalFile.GrowthType)
+    
     try {
         PerformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
     } catch {

@@ -74,7 +74,7 @@
 
 
                 if ($tcp.Connected) {
-                    Write-InformationColored "Successfully connected to Host: `"$Computer`" on Port: `"$Port`"" -ForegroundColor Green
+                    Write-InformationColorized "Successfully connected to Host: `"$Computer`" on Port: `"$Port`"" -ForegroundColor Green
 
                     $tcpStream = $tcp.GetStream()
                     $tcpStream.ReadTimeout = 1000
@@ -121,7 +121,7 @@
                             # clean up the command so we can write it out
                             $cmd = $command -replace "`r|`n", " "
                             if ($cmd.Length -ge 80) { $cmd = $cmd.SubString(0, 80) + "..." }
-                            Write-InformationColored "Sending: $cmd" -ForegroundColor Yellow
+                            Write-InformationColorized "Sending: $cmd" -ForegroundColor Yellow
                         }
 
                         # write the command back to the remote host
@@ -129,12 +129,12 @@
                             $writer.WriteLine($command);
                         }
                     }
-                    Write-InformationColored "`r`nDone." -ForegroundColor Yellow
+                    Write-InformationColorized "`r`nDone." -ForegroundColor Yellow
                 } else {
-                    Write-InformationColored "Could not connect to Host: `"$Computer `" on Port: `"$Port`"" -ForegroundColor Red
+                    Write-InformationColorized "Could not connect to Host: `"$Computer `" on Port: `"$Port`"" -ForegroundColor Red
                 }
             } catch {
-                Write-InformationColored "Unknown Error: $($_)" -ForegroundColor Red
+                Write-InformationColorized "Unknown Error: $($_)" -ForegroundColor Red
             } finally {
                 if ($null -ne $writer) { $writer.Dispose(); }
                 if ($null -ne $tcp) { $tcp.Dispose(); }

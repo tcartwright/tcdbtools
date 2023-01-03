@@ -50,12 +50,7 @@
             $path = $SavePath.FullName
         }
 
-        $query = "
-        SELECT a.name, af.content, af.file_id, af.name AS [file_name], a.clr_name, a.permission_set_desc, a.create_date, a.modify_date
-        FROM sys.assemblies a
-        INNER JOIN sys.assembly_files af
-            ON a.assembly_id = af.assembly_id
-        WHERE a.is_user_defined = 1"
+        $query = GetSQLFileContent -fileName "GetAssemblies.sql"
 
         $assemblies = New-Object System.Collections.ArrayList
         $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
@@ -71,7 +66,7 @@
             $reader = $command.ExecuteReader();
 
             if ($reader.HasRows) {
-                # create the output directory if it doesnt exist
+                # create the output directory if it doesn't exist
                 if (!(Test-Path -Path $path -PathType Container)) {
                     New-Item -Path $path -ItemType Directory | Out-Null
                 }

@@ -66,7 +66,7 @@
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
-        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
+        Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
     }
 
     process {
@@ -85,7 +85,7 @@
 
     end {
         $sw.Stop()
-        Write-InformationColored "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
+        Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow
     }
 }
 

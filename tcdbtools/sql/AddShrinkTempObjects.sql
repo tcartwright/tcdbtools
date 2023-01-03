@@ -1,0 +1,14 @@
+IF NOT EXISTS (SELECT 1 FROM [{0}].sys.[filegroups] AS [f] WHERE [f].[name] = 'SHRINK_DATA_TEMP') BEGIN
+    ALTER DATABASE [{0}] ADD FILEGROUP SHRINK_DATA_TEMP
+END
+IF NOT EXISTS (SELECT 1 FROM [{0}].sys.[database_files] AS [df] WHERE [df].[name] = 'SHRINK_DATA_TEMP') BEGIN
+    ALTER DATABASE [{0}]
+        ADD FILE (
+            NAME = 'SHRINK_DATA_TEMP',
+            FILENAME = '{1}',
+            SIZE = {2}MB,
+            FILEGROWTH = {3}{4}
+        )
+    TO FILEGROUP SHRINK_DATA_TEMP
+END
+DBCC SHRINKFILE([SHRINK_DATA_TEMP], TRUNCATEONLY) WITH NO_INFOMSGS;
