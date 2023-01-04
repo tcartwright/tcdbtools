@@ -12,7 +12,7 @@ Collection of PowerShell tools for SQL Server management.
 
 ## Installation
 
-TCDbTools is published to the [Powershell Gallery](https://www.powershellgallery.com/packages/tcdbtools)
+TCDbTools is published to the [Powershell Gallery][def]
 and can be installed as follows:
 
 ```powershell
@@ -21,7 +21,7 @@ Install-Module tcdbtools
 
 ## Functions
 
-* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : Can be used to shrink an mdf file **and** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file.
+* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : Can be used to shrink an mdf file ***and*** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file.
 * [Invoke-DBMoveIndexes](/docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps.
 * [Invoke-DBCompareServerSettings](/docs/Invoke-DBCompareServerSettings.md) : Compares the server settings between two or more servers.
 * [Invoke-DBExtractCLRDLL](/docs/Invoke-DBExtractCLRDLL.md) : Extracts all user defined CLR dlls from a SQL server.
@@ -34,3 +34,6 @@ Install-Module tcdbtools
 * [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
 * [New-DBSqlObjects](/docs/New-DBSqlObjects.md) : Creates two objects that can be used for connectivity.
 
+
+
+[def]: https://www.powershellgallery.com/packages/tcdbtools

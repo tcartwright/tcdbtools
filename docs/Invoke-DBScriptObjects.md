@@ -10,7 +10,7 @@ Generate file-per-object scripts of specified server and database.
 Generate file-per-object scripts of specified server and database to specified directory. Attempts to create specified directory if not found.
 
 ## NOTES
-Adapted from [Automated Script-generation with Powershell and SMO](http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/)
+Adapted from [Automated Script-generation with Powershell and SMO][def]
 
 Editor: Tim Cartwright:
 - Changed to script Service Broker objects.
@@ -123,3 +123,6 @@ Invoke-DBScriptObjects `
 
 
 [Back](/README.md)
+
+
+[def]: http://www.simple-talk.com/sql/database-administration/automated-script-generation-with-powershell-and-smo/
