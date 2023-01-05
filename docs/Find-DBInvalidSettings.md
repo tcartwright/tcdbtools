@@ -2,10 +2,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however. 
+Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated.
 
 ## Description
-Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however. Any option marked with an X will typically have a non-standard setting, and or may not be an issue and should be investigated. This function does not fix any invalid settings. That is left to the DBA.
+Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated. Any option marked with an X will typically have a non-standard setting, and or may not be an issue and should be investigated. This function does not fix any invalid settings. That is left to the DBA.
 
 ## Syntax
     Find-DBInvalidSettings 
@@ -39,7 +39,7 @@ $result = Find-DBInvalidSettings -ServerInstance "ServerName"
 
 $result.ServerInstance
 $result.ServerOptions    | Format-Table
-$result.ServerSettings   
+$result.ServerSettings   | Format-Table
 $result.FileGrowths      | Format-Table 
 $result.DatabaseSettings | Format-Table
 $result.DatabaseObjects  | Format-Table

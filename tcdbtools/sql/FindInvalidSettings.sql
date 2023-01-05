@@ -176,7 +176,7 @@ SELECT 'DATABASE' AS [container]
 -- find databases with possible bad options
 SELECT name AS [database_name], 
     -- owner is not SA
-    CASE WHEN d.owner_sid <> 0x01 THEN 'X' ELSE '' END AS [owner],
+    CASE WHEN d.owner_sid <> 0x01 THEN 'X' ELSE '' END AS [owner_is_sa],
     /* change the collation to your desired collation */
     CASE WHEN d.collation_name <> @desired_collation THEN 'X' ELSE '' END AS [collation_name], /*this varies from region to region*/
     /* dbs should never have auto close on */
