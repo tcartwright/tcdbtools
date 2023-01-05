@@ -1,43 +1,32 @@
 ﻿function GetFreeSpace {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [string]$Database,
         [string]$FileGroupName
     )
 
-    $sql = (GetSQLFileContent -fileName "GetFreeSpace.sql") -f $Database
-
-    [System.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
-    try {
+    begin {
+        $sql = (GetSQLFileContent -fileName "GetFreeSpace.sql") -f $Database
+        [System.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
+    }
+    process {
         $connection.Open()
-        [System.Data.SqlClient.SqlCommand]$command = $connection.CreateCommand();
-        $command.CommandText = $sql
-        $command.CommandType = "Text"
 
-        [System.Data.SqlClient.SqlParameter]$param = $command.CreateParameter()
-		$param.ParameterName = "@FileGroupName";
-		$param.SqlDBtype = [System.Data.SqlDbType]::VarChar;
-        $param.Size = 1000
-		$param.Direction = [System.Data.ParameterDirection]::Input;
-		$param.value = $FileGroupName;
+        $params = @()
+        $params += (New-SqlParameter -name "@FileGroupName" -type VarChar -size 1000 -value $FileGroupName)
+        $dataset = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $params
 
-        Write-Verbose $sql
-        $command.Parameters.Add($param)
-		$dr = $command.ExecuteReader();
+        return $dataset.Tables | Select-Object -First 1
+    } 
 
-		[System.Data.DataTable]$dt = New-Object System.Data.DataTable;
-		$dt.load($dr) | Out-Null;
-    } finally {
-        if ($dr) { $dr.Dispose() }
-        if ($command) { $command.Dispose() }
+    end {
         if ($connection) { $connection.Dispose() }
     }
-    return $dt
 }
 
 function PerformFileOperation {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [string]$sql
     )
     # A t-log backup could be occurring which would cause this script to break, so lets pause for a bit to try again, if we get that specific error
@@ -68,7 +57,7 @@ function PerformFileOperation {
 
 function MoveIndexes {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         $db,
         [string]$fromFG,
         [string]$toFG,
@@ -131,7 +120,7 @@ function MoveIndexes {
 
 function ShrinkFile {
     Param (
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [string] $fileName,
         [int]$size,
         [int]$targetSizeMB = 5,
@@ -195,9 +184,9 @@ function ShrinkFile {
 
 function AdjustRecoveryModels {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [string[]]$Databases,
-        [System.Collections.Hashtable]$recoveryModels,
+        [System.Collections.HashTable]$recoveryModels,
         [string]$TargetRecoveryModel
     )
 
@@ -233,7 +222,7 @@ function AdjustRecoveryModels {
 
 function StopTLogBackupJob {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [string]$TLogBackupJobName
     )
 
@@ -253,7 +242,7 @@ function StopTLogBackupJob {
 
 function RemoveTempFileGroupAndFile{
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         [int]$shrinkTimeOut
     )
     # there have been occasions when an error occurred saying the file was not empty, until an empty file was issued. even though all of the indexes had been moved back
@@ -268,7 +257,7 @@ function RemoveTempFileGroupAndFile{
 
 function AddTempFileGroupAndFile {
     Param(
-        [System.Collections.Hashtable]$SqlCmdArguments,
+        [System.Collections.HashTable]$SqlCmdArguments,
         $OriginalFile,
         $NewFileName,
         [int]$Size
@@ -288,7 +277,7 @@ function AddTempFileGroupAndFile {
 function CreateNewDirectory {
     Param (
         [System.IO.DirectoryInfo]$NewFileDirectory,
-        [System.Collections.Hashtable]$SqlCmdArguments
+        [System.Collections.HashTable]$SqlCmdArguments
     )
     if (([Uri]$NewFileDirectory.FullName).IsUnc) {
         if (-not $NewFileDirectory.Exists) {

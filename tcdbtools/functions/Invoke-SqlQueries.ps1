@@ -26,21 +26,25 @@ function Invoke-DBScalarQuery {
 		[System.Data.SqlClient.SqlConnection]$conn, 
 		[Parameter(Mandatory=$true)]
 		[string]$sql, 
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
 		[System.Data.SqlClient.SqlParameter[]]$parameters, 
 		[int]$timeout=30
 	)
 	
-    try {
-        $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
-        $cmd.CommandTimeout=$timeout
-        foreach($p in $parameters){
-            $cmd.Parameters.Add($p) | Out-Null
+    process {
+        try {
+            $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
+            $cmd.CommandType = $CommandType
+            $cmd.CommandTimeout=$timeout
+            foreach($p in $parameters){
+                $cmd.Parameters.Add($p) | Out-Null
+            }
+            return $cmd.ExecuteScalar()
+        } finally {
+            if ($cmd) {
+                $cmd.Dispose();
+            }
         }
-        return $cmd.ExecuteScalar()
-    } finally {
-		if ($cmd) {
-			$cmd.Dispose();
-		}
     }
 }
 
@@ -72,21 +76,25 @@ function Invoke-DBNonQuery {
 		[System.Data.SqlClient.SqlConnection]$conn, 
 		[Parameter(Mandatory=$true)]
 		[string]$sql, 
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
 		[System.Data.SqlClient.SqlParameter[]]$parameters, 
 		[int]$timeout=30
 	)
 	
-    try {
-        $cmd = New-Object system.Data.SqlClient.SqlCommand($sql, $conn)
-        $cmd.CommandTimeout=$timeout
-        foreach($p in $parameters){
-            $cmd.Parameters.Add($p) | Out-Null
+    process {
+        try {
+            $cmd = New-Object system.Data.SqlClient.SqlCommand($sql, $conn)
+            $cmd.CommandType = $CommandType
+            $cmd.CommandTimeout = $timeout
+            foreach($p in $parameters){
+                $cmd.Parameters.Add($p) | Out-Null
+            }
+            return $cmd.ExecuteNonQuery()
+        } finally {
+            if ($cmd) {
+                $cmd.Dispose();
+            }
         }
-        return $cmd.ExecuteNonQuery()
-    } finally {
-		if ($cmd) {
-			$cmd.Dispose();
-		}
     }
 }
 
@@ -118,23 +126,30 @@ function Invoke-DBReaderQuery {
 		[System.Data.SqlClient.SqlConnection]$conn, 
 		[Parameter(Mandatory=$true)]
 		[string]$sql, 
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
 		[System.Data.SqlClient.SqlParameter[]]$parameters, 
 		[int]$timeout=30
 	)
 	
-    try {
-        $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
-        $cmd.CommandTimeout=$timeout
-        foreach($p in $parameters){
-            $cmd.Parameters.Add($p) | Out-Null
+    process {
+        try {
+            $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
+            $cmd.CommandType = $CommandType
+            $cmd.CommandTimeout = $timeout
+            foreach($p in $parameters){
+                $cmd.Parameters.Add($p) | Out-Null
+            }
+            $reader = $cmd.ExecuteReader()
+            # the comma before the reader object is on purpose to force powershell to return this object AS IS
+            return ,$reader
+        } finally {
+            if ($cmd) {
+                $cmd.Dispose();
+            }
         }
-        return $cmd.ExecuteReader()
-    } finally {
-		if ($cmd) {
-			$cmd.Dispose();
-		}
     }
 }
+
 function Invoke-DBDataSetQuery {
     <#
     .SYNOPSIS
@@ -165,25 +180,29 @@ function Invoke-DBDataSetQuery {
 		[System.Data.SqlClient.SqlConnection]$conn, 
 		[Parameter(Mandatory=$true)]
 		[string]$sql, 
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
 		[System.Data.SqlClient.SqlParameter[]]$parameters, 
 		[int]$timeout = 30
 	)
 	
-    try {
-        $cmd = New-Object System.Data.SqlClient.SqlCommand($sql, $conn)
-        $cmd.CommandTimeout=$timeout
-        foreach($p in $parameters){
-            $cmd.Parameters.Add($p) | Out-Null
+    process {
+        try {
+            $cmd = New-Object System.Data.SqlClient.SqlCommand($sql, $conn)
+            $cmd.CommandType = $CommandType
+            $cmd.CommandTimeout=$timeout
+            foreach($p in $parameters){
+                $cmd.Parameters.Add($p) | Out-Null
+            }
+            $ds = New-Object System.Data.DataSet
+            $da = New-Object System.Data.SqlClient.SqlDataAdapter($cmd)
+            $da.Fill($ds) | Out-Null
+    
+            return $ds
+        } finally {
+            if ($cmd) {
+                $cmd.Dispose();
+            }
         }
-        $ds = New-Object System.Data.DataSet
-        $da = New-Object System.Data.SqlClient.SqlDataAdapter($cmd)
-        $da.Fill($ds) | Out-Null
- 
-        return $ds
-    } finally {
-		if ($cmd) {
-			$cmd.Dispose();
-		}
     }
 }
 
@@ -219,24 +238,26 @@ function New-SqlParameter {
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlDbType]$type, 
 		$value, 
-        [Parameter(Mandatory=$true, ParameterSetName="Size")]
         [int]$size , 
-        [Parameter(Mandatory=$true, ParameterSetName="ScaleAndPrecision")]
 		[int]$scale, 
-        [Parameter(Mandatory=$true, ParameterSetName="ScaleAndPrecision")]
 		[int]$precision
 	)
 	
-    if ($name[0] -ne "@") { $name = "@$name" }
- 
-    $param = New-Object System.Data.SqlClient.SqlParameter($name, $type) 
+    process {
+        if ($name[0] -ne "@") { $name = "@$name" }
     
-    if ($null -ne $value) { $param.Value = $value }
-    if ($null -ne $size) { $param.Size = $size }
-    if ($null -ne $scale) { $param.Scale = $scale }
-    if ($null -ne $precision) { $param.Precision = $precision }
-	
-    return $param
+        $param = New-Object System.Data.SqlClient.SqlParameter($name, $type) 
+        
+        if ($null -ne $value) { $param.Value = $value }
+        if ($null -ne $size)  { 
+            $param.Size = $size 
+        } else {
+            if ($null -ne $scale) { $param.Scale = $scale }
+            if ($null -ne $precision) { $param.Precision = $precision }
+        }
+
+        return $param
+    }
 }
 
 function Get-InClauseParams {
@@ -267,6 +288,13 @@ function Get-InClauseParams {
 
     .OUTPUTS
         The results of the query.
+
+    .EXAMPLE
+        PS> $list = 1..15
+        PS> $params = Get-InClauseParams -prefix "p" -values $list -type Int
+
+$params
+
     #>    
 	param (
 		[Parameter(Mandatory=$true)]
@@ -275,20 +303,19 @@ function Get-InClauseParams {
 		$values, 
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlDbType]$type, 
-        [Parameter(Mandatory=$true, ParameterSetName="Size")]
         [int]$size, 
-        [Parameter(Mandatory=$true, ParameterSetName="ScaleAndPrecision")]
 		[int]$scale, 
-        [Parameter(Mandatory=$true, ParameterSetName="ScaleAndPrecision")]
 		[int]$precision
 	)
 	
-    $params = New-Object System.Collections.ArrayList
-    for  ($i=0; $i -le $values.Length -1; $i++) {
-        $param = New-SqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
-        $params.Add($param)
+    process {
+        $params = New-Object System.Collections.ArrayList
+        for  ($i=0; $i -le $values.Length -1; $i++) {
+            $param = New-SqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
+            $params.Add($param) | Out-Null
+        }
+        return $params
     }
-    return $params
 }
 
 function Get-InClauseString {
@@ -301,6 +328,9 @@ function Get-InClauseString {
 
     .PARAMETER parameters
         The IN clause parameters created by using Get-InClauseParams.
+
+    .PARAMETER delimiter
+        The delimiter to use between the parameter names. Defaults to ",".
 
     .OUTPUTS
         A string representation of the parameters that can be used with an IN clause by concatenating the result into your query.
@@ -315,11 +345,23 @@ function Get-InClauseString {
         If multiple parameter lists are needed for multiple IN clauses, then different prefixes should be utilized for each list.
 
         By using a parameterized query you both block SQL Injection, and you also allow for execution plan re-use.
+
+    .EXAMPLE
+        PS> $list = 1..15
+        PS> $params = Get-InClauseParams -prefix "p" -values $list -type Int
+        PS> $paramStr = Get-InClauseString -parameters $params
+        PS> $params
+        PS> $paramStr
+
     #>    
 	param (
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlParameter[]]$parameters
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
+        [string]$delimiter = ","
 	)
 	
-    return [String]::Join(",", ($parameters | Select-Object -ExpandProperty ParameterName))
+    process {
+        $names = $parameters | ForEach-Object { $_.ParameterName }
+        return $names -join $delimiter
+    }
 }

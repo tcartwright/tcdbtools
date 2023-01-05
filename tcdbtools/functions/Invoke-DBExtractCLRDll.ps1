@@ -60,10 +60,7 @@
         try {
             # using an old style reader here as the data sizes can exceed the capabilities of Invoke-SqlCmd
             $connection.Open();
-            $command = $connection.CreateCommand()
-            $command.CommandType = "Text";
-            $command.CommandText = $query;
-            $reader = $command.ExecuteReader();
+            $reader = Invoke-DBReaderQuery -conn $connection -sql $query
 
             if ($reader.HasRows) {
                 # create the output directory if it doesn't exist
@@ -117,7 +114,6 @@
             throw
         } finally {
             if ($reader) { $reader.Dispose() }
-            if ($command) { $command.Dispose() }
             if ($connection) { $connection.Dispose() }
         }
     }
