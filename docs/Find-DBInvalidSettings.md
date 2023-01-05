@@ -1,4 +1,4 @@
-# Find-InvalidSettings
+# Find-DBInvalidSettings
 **Author** Tim Cartwright
 
 ## Synopsis
