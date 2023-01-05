@@ -70,16 +70,24 @@ Description = 'A collection of SQL Server automation functionality'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
-    "Invoke-DBCompareServerSettings",
-    "Invoke-DBExtractCLRDLL",
-    "Invoke-DBScriptObjects",
-    "Invoke-DBMoveIndexes",
-    "Invoke-DBSafeShrink",
-    "Invoke-DBRenameConstraints",
-    "New-DBScripterObject",
-    "New-DBSqlObjects",
-    "New-DBSqlConnection",
-    "Write-InformationColorized"
+     "Invoke-DBMoveIndexes"
+    ,"Invoke-DBSafeShrink"
+    ,"Invoke-DBScriptObjects"
+    ,"Invoke-DBExtractCLRDLL"
+    ,"Invoke-DBCompareServerSettings"
+    ,"Invoke-DBRenameConstraints"
+    ,"Find-DBInvalidSettings"
+    ,"Invoke-DBScalarQuery"
+    ,"Invoke-DBNonQuery"
+    ,"Invoke-DBReaderQuery"
+    ,"Invoke-DBDataSetQuery"
+    ,"New-SqlParameter"
+    ,"Get-InClauseParams"
+    ,"Get-InClauseString"
+    ,"Write-InformationColorized"
+    ,"New-DBScripterObject"
+    ,"New-DBSqlObjects"
+    ,"New-DBSQLConnection"
 )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

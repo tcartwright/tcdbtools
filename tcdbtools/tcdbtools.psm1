@@ -24,6 +24,8 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\New-DBSqlObjects.ps1"
 . "$scriptDir\functions\New-DBSQLConnection.ps1"
 . "$scriptDir\functions\Find-DBInvalidSettings.ps1"
+. "$scriptDir\functions\Invoke-SqlQueries.ps1"
+
 # . "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
 
 # private functions
@@ -33,6 +35,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\private\Invoke-DBRenameConstraints.ps1"
 . "$scriptDir\functions\private\GenFuncs.ps1"
 
+
 Export-ModuleMember -Function Invoke-DBMoveIndexes
 Export-ModuleMember -Function Invoke-DBSafeShrink
 Export-ModuleMember -Function Invoke-DBScriptObjects
@@ -40,6 +43,14 @@ Export-ModuleMember -Function Invoke-DBExtractCLRDLL
 Export-ModuleMember -Function Invoke-DBCompareServerSettings
 Export-ModuleMember -Function Invoke-DBRenameConstraints
 Export-ModuleMember -Function Find-DBInvalidSettings
+
+Export-ModuleMember -Function Invoke-DBScalarQuery
+Export-ModuleMember -Function Invoke-DBNonQuery
+Export-ModuleMember -Function Invoke-DBReaderQuery
+Export-ModuleMember -Function Invoke-DBDataSetQuery
+Export-ModuleMember -Function New-SqlParameter
+Export-ModuleMember -Function Get-InClauseParams
+Export-ModuleMember -Function Get-InClauseString
 
 Export-ModuleMember -Function Write-InformationColorized
 Export-ModuleMember -Function New-DBScripterObject
