@@ -38,7 +38,7 @@ function template {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
-        
+            Write-Information $db.Name
         }
     }
 
