@@ -1,4 +1,4 @@
-function template {
+﻿function template {
     <#
     .SYNOPSIS
 
@@ -8,7 +8,7 @@ function template {
         The sql server instance to connect to.
 
     .PARAMETER Databases
-        The databases. 
+        The databases.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.

@@ -17,7 +17,7 @@
         $dataset = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $params
 
         return $dataset.Tables | Select-Object -First 1
-    } 
+    }
 
     end {
         if ($connection) { $connection.Dispose() }
@@ -265,7 +265,7 @@ function AddTempFileGroupAndFile {
 
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING FG SHRINK_DATA_TEMP"
     $sql = (GetSQLFileContent -fileName "AddShrinkTempObjects.sql") -f  $Database, $NewFileName, $Size, ($OriginalFile.Growth), ($OriginalFile.GrowthType)
-    
+
     try {
         PerformFileOperation -SqlCmdArguments $SqlCmdArguments -sql "$sql"
     } catch {
