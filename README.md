@@ -34,7 +34,6 @@ Install-Module tcdbtools
 * [New-DBScripterObject](/docs/New-DBScripterObject.md) : Creates a database scripting object that can be modified and used by Invoke-DBScriptObjects.
 * [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
 * [New-DBSqlObjects](/docs/New-DBSqlObjects.md) : Creates two objects that can be used for connectivity.
-
 * Invoke-DBScalarQuery : Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
 * Invoke-DBNonQuery : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
 * Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.
@@ -42,9 +41,6 @@ Install-Module tcdbtools
 * New-SqlParameter : Creates a new instance of a SqlParameter object.
 * [Get-InClauseParams](/docs/Get-InClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
 * [Get-InClauseString](/docs/Get-InClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
-
-
-
 
 
 [def]: https://www.powershellgallery.com/packages/tcdbtools

@@ -38,7 +38,10 @@ Creates the string representation of the parameters that can be used with an IN 
 $params = Get-InClauseParams -prefix "p_" -values $someList -type [System.Data.SqlDbType]::VarChar -size 50
 $paramString = Get-InClauseString -parameters $params
 
-# Assuming the list has 3 values in it, Get-InClauseParams should return "@p_0,@p_1,@p_2". This string can now be concatenated to the original query like so that the query looks like this example: "SELECT * FROM dbo.SomeTable AS [t] WHERE [t].id IN (@p_0,@p_1,@p_2)" 
+# Assuming the list has 3 values in it, Get-InClauseParams should return "@p_0,@p_1,@p_2". This string can 
+# now be concatenated to the original query like so that the query looks like this example: 
+#    
+#   "SELECT * FROM dbo.SomeTable AS [t] WHERE [t].id IN (@p_0,@p_1,@p_2)" 
 
 # If multiple parameter lists are needed for multiple IN clauses, then different prefixes should be utilized for each list.
 ```
