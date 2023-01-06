@@ -72,7 +72,7 @@
                 PK      : The detailed type of the index
             type: The type of object
 
-    .PARAMETER NameExistsFunction
+    .PARAMETER CustomNameExists
         This scriptblock can be passed in to override the base functionality when the names produced already exist and come into conflict. By default if the name already exists then a number will be suffixed to the name in the pattern: 0000. Starting with 0001. A unique name for this object should be returned.
 
         EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_0001 will be tried, then 0002 and so on until a unique name can be found.
@@ -133,7 +133,7 @@
         [switch]$IncludeSchemaInNames,
         [switch]$Force,
         [scriptblock]$CustomGetObjectName,
-        [scriptblock]$NameExistsFunction
+        [scriptblock]$CustomNameExists
     )
 
     begin {
@@ -151,6 +151,15 @@
         $tempRenames = @{}
         $renames = @{}
         $output = [System.Collections.ArrayList]::new()
+
+        $getName = $GetObjectNameFunction
+        if ($CustomGetObjectName) {
+            $getName = $CustomGetObjectName
+        }
+        $nameExists = $NameExistsFunction
+        if ($CustomNameExists) {
+            $nameExists = $CustomNameExists
+        }
     }
 
     process {
@@ -165,28 +174,13 @@
                 $objectName = $item.Name -replace ", ", "."
 
                 foreach ($grp in $item.Group) {
-                    if (-not $CustomGetObjectName) {
-                        $newName = GetObjectName -obj $grp -IncludeSchemaInNames:$IncludeSchemaInNames.IsPresent
-                    } else {
-                        $newName = $CustomGetObjectName.Invoke($grp, $IncludeSchemaInNames.IsPresent) | Select-Object -Last 1
-                    }
+                    $newName = $getName.Invoke($grp, $IncludeSchemaInNames.IsPresent) | Select-Object -Last 1
 
                     if ($renames.ContainsKey($newName)) {
-                        if (-not $NameExistsFunction) {
-                            for ($i = 1; $i -lt 1000; $i++) {
-                                $suffix = "00$i"
-                                $suffix = $suffix.Substring($suffix.Length - 3)
-                                $tmpName = "$($newName)_$suffix"
-                                if (-not $renames.ContainsKey($tmpName)) {
-                                    $newName = $tmpName
-                                    break;
-                                }
-                            }
-                        } else {
-                            $newName = $NameExistsFunction.Invoke($newName, $renames) | Select-Object -Last 1
-                            if ($renames.ContainsKey($newName)) {
-                                throw "The $newName name returned by the custom name exists function is not unique and already exists."
-                            }
+                        $newName = $nameExists.Invoke($newName, $renames) | Select-Object -Last 1
+                        # even after trying to find a new custom name it still exists, then we have to bail... :|
+                        if ($renames.ContainsKey($newName)) {
+                            throw "The $newName name returned by the custom name exists function is not unique and already exists."
                         }
                     }
 

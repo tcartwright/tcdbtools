@@ -232,7 +232,8 @@ function New-SqlParameter {
     .OUTPUTS
         The SqlParameter.
     #>
-	param (
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
+    param (
 		[Parameter(Mandatory=$true)]
 		[string]$name,
 		[Parameter(Mandatory=$true)]

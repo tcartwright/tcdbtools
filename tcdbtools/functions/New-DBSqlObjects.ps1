@@ -25,7 +25,8 @@
     .LINK
         https://blog.kieranties.com/2018/03/26/write-information-with-colours
     #>
-    Param (
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
+    param (
         [string]$ServerInstance,
         [pscredential]$Credentials
     )

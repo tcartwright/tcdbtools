@@ -1,4 +1,6 @@
-﻿function GetObjectName($obj, [switch]$IncludeSchemaInNames){
+﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", '', Scope="Function", Target="*")]
+$GetObjectNameFunction = {
+    param ($obj, [switch]$IncludeSchemaInNames)
     $ret = ""
     $details = ""
     $schemaNamePart = ""
@@ -31,3 +33,18 @@
     return $ret
 }
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", '', Scope="Function", Target="*")]
+$NameExistsFunction = {
+    Param($newName, $renames)
+
+    for ($i = 1; $i -lt 1000; $i++) {
+        $suffix = "00$i"
+        $suffix = $suffix.Substring($suffix.Length - 3)
+        $tmpName = "$($newName)_$suffix"
+        if (-not $renames.ContainsKey($tmpName)) {
+            $newName = $tmpName
+            break;
+        }
+    }
+    return $newName
+}

@@ -31,6 +31,7 @@
         Author: Tim Cartwright
 
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,

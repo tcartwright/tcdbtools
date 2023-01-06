@@ -131,7 +131,7 @@ When there are conflicts a number will be suffixed on to the end of the name unt
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
-    -NameExistsFunction <ScriptBlock>
+    -CustomNameExists <ScriptBlock>
         This scriptblock can be passed in to override the base functionality when the 
         names produced already exist and come into conflict. By default if the name 
         already exists then a number will be suffixed to the name in the pattern: 000. 
@@ -141,7 +141,7 @@ When there are conflicts a number will be suffixed on to the end of the name unt
         will be tried, then 002 and so on until a unique name can be found.
         
         The method signature is as follows: 
-            function GetObjectName($newName, $renames)
+            function CustomNameExists($newName, $renames)
         
         The parameter $renames will be a collection of names that have already been 
         assigned to the table. The $newName parameter will be the name that was created.

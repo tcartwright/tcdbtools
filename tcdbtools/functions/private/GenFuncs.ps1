@@ -36,8 +36,9 @@ Function Write-InformationColorized {
     Write-Information $msg
 }
 
-function GetSQLFileContent ([string]$fileName) {
-    return Get-Content -Path ([System.IO.Path]::Combine($global:tcdbtools_SqlDir, $fileName)) -Raw
+function GetSQLFileContent {
+    param ([string]$fileName)
+    return Get-Content -Path ([System.IO.Path]::Combine($script:tcdbtools_SqlDir, $fileName)) -Raw
 }
 
 # If the script has a hard time finding SMO, you can install the dbatools module and import it. Which ensures that SMO can be found.
@@ -50,6 +51,6 @@ if (-not (Get-Module -Name dbatools) -and (Get-Module -ListAvailable -Name dbato
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO") | Out-Null
 
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-$global:tcdbtools_SqlDir = [System.IO.Path]::Combine($scriptDir, "..\..\sql")
+$script:tcdbtools_SqlDir = [System.IO.Path]::Combine($scriptDir, "..\..\sql")
 
 
