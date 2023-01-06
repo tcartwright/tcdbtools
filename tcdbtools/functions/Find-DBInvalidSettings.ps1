@@ -1,13 +1,13 @@
-function Find-DBInvalidSettings {
+﻿function Find-DBInvalidSettings {
     <#
     .SYNOPSIS
-        Finds settings and options that may or may not be invalid depending upon design choices. They are typically 
+        Finds settings and options that may or may not be invalid depending upon design choices. They are typically
         invalid however and should be investigated.
 
     .DESCRIPTION
-        Finds settings and options that may or may not be invalid depending upon design choices. They are typically 
-        invalid however and should be investigated. Any option marked with an X will typically have a non-standard 
-        setting, and or may not be an issue and should be investigated. This function does not fix any invalid 
+        Finds settings and options that may or may not be invalid depending upon design choices. They are typically
+        invalid however and should be investigated. Any option marked with an X will typically have a non-standard
+        setting, and or may not be an issue and should be investigated. This function does not fix any invalid
         settings. That is left to the DBA.
 
     .PARAMETER ServerInstance
@@ -19,12 +19,12 @@ function Find-DBInvalidSettings {
     .OUTPUTS
 
     .EXAMPLE
-        PS> $result = Find-DBInvalidSettings -ServerInstance "ServerName" 
+        PS> $result = Find-DBInvalidSettings -ServerInstance "ServerName"
 
         PS> $result.ServerInstance
         PS> $result.ServerOptions    | Format-Table
-        PS> $result.ServerSettings   
-        PS> $result.FileGrowths      | Format-Table 
+        PS> $result.ServerSettings
+        PS> $result.FileGrowths      | Format-Table
         PS> $result.DatabaseSettings | Format-Table
         PS> $result.DatabaseObjects  | Format-Table
 
@@ -40,7 +40,7 @@ function Find-DBInvalidSettings {
     begin {
         $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
         $SqlCmdArguments = $sqlCon.SqlCmdArguments
-                
+
         $ret = [PSCustomObject] @{
             ServerInstance = $ServerInstance
             ServerOptions = $null

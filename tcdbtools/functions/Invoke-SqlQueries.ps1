@@ -1,4 +1,4 @@
-function Invoke-DBScalarQuery {
+﻿function Invoke-DBScalarQuery {
     <#
     .SYNOPSIS
         Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
@@ -20,17 +20,17 @@ function Invoke-DBScalarQuery {
 
     .OUTPUTS
         The results of the query.
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn, 
+		[System.Data.SqlClient.SqlConnection]$conn,
 		[Parameter(Mandatory=$true)]
-		[string]$sql, 
+		[string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters, 
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
 		[int]$timeout=30
 	)
-	
+
     process {
         try {
             $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
@@ -70,17 +70,17 @@ function Invoke-DBNonQuery {
 
     .OUTPUTS
         The results of the query.
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn, 
+		[System.Data.SqlClient.SqlConnection]$conn,
 		[Parameter(Mandatory=$true)]
-		[string]$sql, 
+		[string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters, 
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
 		[int]$timeout=30
 	)
-	
+
     process {
         try {
             $cmd = New-Object system.Data.SqlClient.SqlCommand($sql, $conn)
@@ -102,7 +102,7 @@ function Invoke-DBReaderQuery {
     <#
     .SYNOPSIS
         Sends the CommandText to the Connection and builds a SqlDataReader.
-    
+
     .DESCRIPTION
         Sends the CommandText to the Connection and builds a SqlDataReader.
 
@@ -120,17 +120,17 @@ function Invoke-DBReaderQuery {
 
     .OUTPUTS
         The SqlDataReader.
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn, 
+		[System.Data.SqlClient.SqlConnection]$conn,
 		[Parameter(Mandatory=$true)]
-		[string]$sql, 
+		[string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters, 
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
 		[int]$timeout=30
 	)
-	
+
     process {
         try {
             $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
@@ -153,11 +153,11 @@ function Invoke-DBReaderQuery {
 function Invoke-DBDataSetQuery {
     <#
     .SYNOPSIS
-        Executes a Transact-SQL statement against the connection and returns a DataSet containing a 
+        Executes a Transact-SQL statement against the connection and returns a DataSet containing a
         DataTable for each result set returned.
 
     .DESCRIPTION
-        Executes a Transact-SQL statement against the connection and returns a DataSet containing a 
+        Executes a Transact-SQL statement against the connection and returns a DataSet containing a
         DataTable for each result set returned.
 
     .PARAMETER conn
@@ -174,17 +174,17 @@ function Invoke-DBDataSetQuery {
 
     .OUTPUTS
         The results of the query.
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn, 
+		[System.Data.SqlClient.SqlConnection]$conn,
 		[Parameter(Mandatory=$true)]
-		[string]$sql, 
+		[string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters, 
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
 		[int]$timeout = 30
 	)
-	
+
     process {
         try {
             $cmd = New-Object System.Data.SqlClient.SqlCommand($sql, $conn)
@@ -196,7 +196,7 @@ function Invoke-DBDataSetQuery {
             $ds = New-Object System.Data.DataSet
             $da = New-Object System.Data.SqlClient.SqlDataAdapter($cmd)
             $da.Fill($ds) | Out-Null
-    
+
             return $ds
         } finally {
             if ($cmd) {
@@ -231,26 +231,26 @@ function New-SqlParameter {
 
     .OUTPUTS
         The SqlParameter.
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[string]$name, 
+		[string]$name,
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlDbType]$type, 
-		$value, 
-        [int]$size , 
-		[int]$scale, 
+		[System.Data.SqlDbType]$type,
+		$value,
+        [int]$size ,
+		[int]$scale,
 		[int]$precision
 	)
-	
+
     process {
         if ($name[0] -ne "@") { $name = "@$name" }
-    
-        $param = New-Object System.Data.SqlClient.SqlParameter($name, $type) 
-        
+
+        $param = New-Object System.Data.SqlClient.SqlParameter($name, $type)
+
         if ($null -ne $value) { $param.Value = $value }
-        if ($null -ne $size)  { 
-            $param.Size = $size 
+        if ($null -ne $size)  {
+            $param.Size = $size
         } else {
             if ($null -ne $scale) { $param.Scale = $scale }
             if ($null -ne $precision) { $param.Precision = $precision }
@@ -295,19 +295,19 @@ function Get-InClauseParams {
 
 $params
 
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
-		[string]$prefix, 
+		[string]$prefix,
 		[Parameter(Mandatory=$true)]
-		$values, 
+		$values,
 		[Parameter(Mandatory=$true)]
-		[System.Data.SqlDbType]$type, 
-        [int]$size, 
-		[int]$scale, 
+		[System.Data.SqlDbType]$type,
+        [int]$size,
+		[int]$scale,
 		[int]$precision
 	)
-	
+
     process {
         $params = New-Object System.Collections.ArrayList
         for  ($i=0; $i -le $values.Length -1; $i++) {
@@ -335,12 +335,12 @@ function Get-InClauseString {
     .OUTPUTS
         A string representation of the parameters that can be used with an IN clause by concatenating the result into your query.
 
-    .EXAMPLE 
+    .EXAMPLE
         PS> $params = Get-InClauseParams -prefix "p_" -values $someList -type [System.Data.SqlDbType]::VarChar -size 50
         PS> $paramString = Get-InClauseString -parameters $params
 
-        Assuming the list has 3 values in it, the function should return "@p_0, @p_1, @p_2". This string can now be concatenated 
-        to the original query like so: "SELECT * FROM dbo.SomeTable AS [t] WHERE [t].id IN (@p_0, @p_1, @p_2)" 
+        Assuming the list has 3 values in it, the function should return "@p_0, @p_1, @p_2". This string can now be concatenated
+        to the original query like so: "SELECT * FROM dbo.SomeTable AS [t] WHERE [t].id IN (@p_0, @p_1, @p_2)"
 
         If multiple parameter lists are needed for multiple IN clauses, then different prefixes should be utilized for each list.
 
@@ -353,13 +353,13 @@ function Get-InClauseString {
         PS> $params
         PS> $paramStr
 
-    #>    
+    #>
 	param (
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlClient.SqlParameter[]]$parameters,
         [string]$delimiter = ","
 	)
-	
+
     process {
         $names = $parameters | ForEach-Object { $_.ParameterName }
         return $names -join $delimiter
