@@ -10,6 +10,7 @@ Creates a database scripting object that can be customized and used by [Invoke-D
 ## Syntax
     New-DBScripterObject 
         [-ServerInstance] <String> 
+        [-Credentials <PSCredential>] 
         [<CommonParameters>]
 
 ## Parameters
@@ -18,6 +19,16 @@ Creates a database scripting object that can be customized and used by [Invoke-D
 
         Required?                    true
         Position?                    1
+        Default value                
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -Credentials <PSCredential>
+        Specifies credentials to connect to the database with. If not supplied then 
+        a trusted connection will be used.
+
+        Required?                    false
+        Position?                    3
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false

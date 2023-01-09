@@ -9,6 +9,9 @@ function New-DBScripterObject {
     .PARAMETER ServerInstance
         Specifies the database server hostname.
 
+    .PARAMETER Credentials
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+
     .INPUTS
         None. You cannot pipe objects to this script.
 
@@ -28,7 +31,8 @@ function New-DBScripterObject {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     param (
         [Parameter(Mandatory=$true)]
-        [string]$ServerInstance
+        [string]$ServerInstance,
+        [pscredential]$Credentials
     )
 
     begin {
@@ -36,7 +40,7 @@ function New-DBScripterObject {
     }
 
     process {
-        $server = (New-DBSqlObjects -ServerInstance $ServerInstance).Server
+        $server = (New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials).Server
         $Scripter = New-Object "Microsoft.SqlServer.Management.Smo.Scripter" $Server #create the scripter
 
         # https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.management.smo.scriptingoptions?view=sql-smo-160

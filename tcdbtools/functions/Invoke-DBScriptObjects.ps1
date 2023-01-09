@@ -87,7 +87,7 @@
         }
         # create a scripter object if they did not pass one in (used by the function ScriptOutDbObj())
         if (-not $Scripter) {
-            $Scripter = New-DBScripterObject -ServerInstance $ServerInstance
+            $Scripter = New-DBScripterObject -ServerInstance $ServerInstance -Credentials $Credentials
         }
 
         # now get all the object types except extended stored procedures and a few others we don't want
