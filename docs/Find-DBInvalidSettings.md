@@ -123,6 +123,17 @@ All user defined database objects are inspected for various SET options that wer
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+    -CollationName <String>
+        The collation name you expect your server and databases to be using. Defaults to "SQL_Latin1_General_CP1_CI_AS"        
+
+        Required?                    false
+        Position?                    3
+        Default value                SQL_Latin1_General_CP1_CI_AS
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+
+
 ### Example
 
 ```powershell

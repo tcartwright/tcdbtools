@@ -1,5 +1,5 @@
 SET NOCOUNT ON
-DECLARE @desired_collation sysname = 'SQL_Latin1_General_CP1_CI_AS'
+-- DECLARE @desired_collation sysname = 'SQL_Latin1_General_CP1_CI_AS'
 
 /****************************************************************************************************/
 SELECT 'SERVER OPTIONS' AS [container] 

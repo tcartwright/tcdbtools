@@ -16,6 +16,9 @@
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
+    .PARAMETER CollationName
+        The collation name you expect your server and databases to be using. Defaults to "SQL_Latin1_General_CP1_CI_AS"
+
     .OUTPUTS
 
     .EXAMPLE
@@ -34,12 +37,12 @@
     Param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
-        [pscredential]$Credentials
+        [pscredential]$Credentials,
+        [string]$CollationName = "SQL_Latin1_General_CP1_CI_AS"
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
+        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials 
 
         $ret = [PSCustomObject] @{
             ServerInstance = $ServerInstance
@@ -53,14 +56,27 @@
     }
 
     process {
-        $sql = (GetSQLFileContent -fileName "FindInvalidSettings.sql") -f $Database
-        $results = Invoke-Sqlcmd @SqlCmdArguments -Query $sql -ErrorAction Stop -OutputAs DataSet
+        try {
+            <#
+            # FIND ALL THE POSSIBLE APPROPRIATE COLUMNS THAT COULD CONTAIN THE VALUE
+            #>
+            $connection.Open()        
+            $sql = (GetSQLFileContent -fileName "FindInvalidSettings.sql") -f $Database
 
-        $ret.ServerOptions = $results.Tables[1]
-        $ret.ServerSettings = $results.Tables[3]
-        $ret.FileGrowths = $results.Tables[5]
-        $ret.DatabaseSettings = $results.Tables[7]
-        $ret.DatabaseObjects = $results.Tables[9]
+            $parameters = @(
+                (New-DBSqlParameter -name "desired_collation" -type VarChar -size 512 -value $CollationName)
+            )
+
+            $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters
+
+            $ret.ServerOptions = $results.Tables[1]
+            $ret.ServerSettings = $results.Tables[3]
+            $ret.FileGrowths = $results.Tables[5]
+            $ret.DatabaseSettings = $results.Tables[7]
+            $ret.DatabaseObjects = $results.Tables[9]
+        } finally {
+            if ($connection) { $connection.Dispose() }
+        }        
     }
 
     end {
