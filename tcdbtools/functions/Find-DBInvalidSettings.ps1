@@ -42,7 +42,7 @@
     )
 
     begin {
-        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials 
+        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
 
         $ret = [PSCustomObject] @{
             ServerInstance = $ServerInstance
@@ -60,7 +60,7 @@
             <#
             # FIND ALL THE POSSIBLE APPROPRIATE COLUMNS THAT COULD CONTAIN THE VALUE
             #>
-            $connection.Open()        
+            $connection.Open()
             $sql = (GetSQLFileContent -fileName "FindInvalidSettings.sql") -f $Database
 
             $parameters = @(
@@ -76,7 +76,7 @@
             $ret.DatabaseObjects = $results.Tables[9]
         } finally {
             if ($connection) { $connection.Dispose() }
-        }        
+        }
     }
 
     end {
