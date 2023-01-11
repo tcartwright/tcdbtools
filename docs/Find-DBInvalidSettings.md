@@ -42,7 +42,7 @@ Server settings each have different validations.  If any of the validations are 
 | cost_of_parallelism | < 20 OR > 100 |
 | cross_db_owner_chaining | = 1 |
 | default_trace | = 0 |
-| disallow_results_from_triggers | <> 0 |
+| disallow_results_from_triggers | <> 1 |
 | fill_factor | <> 0 |
 | locks | <> 0 |
 | max_dop | < 2 OR > 32 |

@@ -109,7 +109,7 @@ FROM (
         CASE WHEN c.name = 'max server memory (MB)' AND c.value <= 2000 THEN 'X' ELSE '' END AS [max_server_memory_MB],
         CASE WHEN c.name = 'user connections' AND c.value <> 0 THEN 'X' ELSE '' END AS [user_connections],
         CASE WHEN c.name = 'locks' AND c.value <> 0 THEN 'X' ELSE '' END AS [locks],
-        CASE WHEN c.name = 'disallow results from triggers' AND c.value <> 0 THEN 'X' ELSE '' END AS [disallow_results_from_triggers]
+        CASE WHEN c.name = 'disallow results from triggers' AND c.value <> 1 THEN 'X' ELSE '' END AS [disallow_results_from_triggers]
     FROM sys.configurations c
 ) t
 
