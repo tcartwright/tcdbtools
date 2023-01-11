@@ -1,4 +1,4 @@
-# Find-DBScanForValue
+# Find-DBValue
 **Author** Tim Cartwright
 
 ## Synopsis
@@ -8,7 +8,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself.
 
 ## Syntax
-    Find-DBScanForValue 
+    Find-DBValue
         [-ServerInstance] <String> 
         [-Database] <String> 
         [[-Credentials] <PSCredential>] 
@@ -127,7 +127,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
 ```powershell
 # Scans all string columns in all user defined tables in the dbo schema for the value "%tim%"
-Find-DBScanForValue -ServerInstance "ServerName" -Database "DBName" -LookForValue "%tim%" -IncludeSchemas @("dbo") | Format-Table
+Find-DBValue-ServerInstance "ServerName" -Database "DBName" -LookForValue "%tim%" -IncludeSchemas @("dbo") | Format-Table
 ```
 
 [Back](/README.md)
