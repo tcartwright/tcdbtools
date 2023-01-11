@@ -13,7 +13,7 @@
         The sql to use for the query.
 
     .PARAMETER parameters
-        An array of sql parameters to use for the query. Can be created using New-SqlParameter.
+        An array of sql parameters to use for the query. Can be created using New-DBSqlParameter.
 
     .PARAMETER timeout
         The command timeout for the query in seconds.
@@ -63,7 +63,7 @@ function Invoke-DBNonQuery {
         The sql to use for the query.
 
     .PARAMETER parameters
-        An array of sql parameters to use for the query. Can be created using New-SqlParameter.
+        An array of sql parameters to use for the query. Can be created using New-DBSqlParameter.
 
     .PARAMETER timeout
         The command timeout for the query in seconds.
@@ -113,7 +113,7 @@ function Invoke-DBReaderQuery {
         The sql to use for the query.
 
     .PARAMETER parameters
-        An array of sql parameters to use for the query. Can be created using New-SqlParameter.
+        An array of sql parameters to use for the query. Can be created using New-DBSqlParameter.
 
     .PARAMETER timeout
         The command timeout for the query in seconds.
@@ -150,6 +150,53 @@ function Invoke-DBReaderQuery {
     }
 }
 
+function Invoke-DBDataTableQuery {
+    <#
+    .SYNOPSIS
+        Sends the CommandText to the Connection and builds a DataTable.
+
+    .DESCRIPTION
+        Sends the CommandText to the Connection and builds a DataTable.
+
+    .PARAMETER conn
+        The sql server connection to use when creating the command.
+
+    .PARAMETER sql
+        The sql to use for the query.
+
+    .PARAMETER parameters
+        An array of sql parameters to use for the query. Can be created using New-DBSqlParameter.
+
+    .PARAMETER timeout
+        The command timeout for the query in seconds.
+
+    .OUTPUTS
+        The DataTable.
+    #>
+	param (
+		[Parameter(Mandatory=$true)]
+		[System.Data.SqlClient.SqlConnection]$conn,
+		[Parameter(Mandatory=$true)]
+		[string]$sql,
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
+		[System.Data.SqlClient.SqlParameter[]]$parameters,
+		[int]$timeout=30
+	)
+
+    process {
+        try {
+            $reader = Invoke-DBReaderQuery -conn $conn -sql $sql -CommandType $CommandType -parameters $parameters -timeout $timeout
+            $table = New-Object System.Data.DataTable
+            $table.Load($reader)
+            return $table
+        } finally {
+            if ($reader) {
+                $reader.Dispose();
+            }
+        }
+    }
+}
+
 function Invoke-DBDataSetQuery {
     <#
     .SYNOPSIS
@@ -167,7 +214,7 @@ function Invoke-DBDataSetQuery {
         The sql to use for the query.
 
     .PARAMETER parameters
-        An array of sql parameters to use for the query. Can be created using New-SqlParameter.
+        An array of sql parameters to use for the query. Can be created using New-DBSqlParameter.
 
     .PARAMETER timeout
         The command timeout for the query in seconds.
@@ -206,7 +253,7 @@ function Invoke-DBDataSetQuery {
     }
 }
 
-function New-SqlParameter {
+function New-DBSqlParameter {
     <#
     .SYNOPSIS
         Creates a new instance of a SqlParameter object.
@@ -261,7 +308,7 @@ function New-SqlParameter {
     }
 }
 
-function Get-InClauseParams {
+function Get-DBInClauseParams {
     <#
     .SYNOPSIS
         Can be used to create a set of parameters that can be used with an IN clause.
@@ -292,7 +339,7 @@ function Get-InClauseParams {
 
     .EXAMPLE
         PS> $list = 1..15
-        PS> $params = Get-InClauseParams -prefix "p" -values $list -type Int
+        PS> $params = Get-DBInClauseParams -prefix "p" -values $list -type Int
 
 $params
 
@@ -312,14 +359,14 @@ $params
     process {
         $params = New-Object System.Collections.ArrayList
         for  ($i=0; $i -le $values.Length -1; $i++) {
-            $param = New-SqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
+            $param = New-DBSqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
             $params.Add($param) | Out-Null
         }
         return $params
     }
 }
 
-function Get-InClauseString {
+function Get-DBInClauseString {
     <#
     .SYNOPSIS
         Creates the string representation of the parameters that can be used with an IN clause.
@@ -328,7 +375,7 @@ function Get-InClauseString {
         Creates the string representation of the parameters that can be used with an IN clause.
 
     .PARAMETER parameters
-        The IN clause parameters created by using Get-InClauseParams.
+        The IN clause parameters created by using Get-DBInClauseParams.
 
     .PARAMETER delimiter
         The delimiter to use between the parameter names. Defaults to ",".
@@ -337,8 +384,8 @@ function Get-InClauseString {
         A string representation of the parameters that can be used with an IN clause by concatenating the result into your query.
 
     .EXAMPLE
-        PS> $params = Get-InClauseParams -prefix "p_" -values $someList -type [System.Data.SqlDbType]::VarChar -size 50
-        PS> $paramString = Get-InClauseString -parameters $params
+        PS> $params = Get-DBInClauseParams -prefix "p_" -values $someList -type [System.Data.SqlDbType]::VarChar -size 50
+        PS> $paramString = Get-DBInClauseString -parameters $params
 
         Assuming the list has 3 values in it, the function should return "@p_0, @p_1, @p_2". This string can now be concatenated
         to the original query like so: "SELECT * FROM dbo.SomeTable AS [t] WHERE [t].id IN (@p_0, @p_1, @p_2)"
@@ -349,8 +396,8 @@ function Get-InClauseString {
 
     .EXAMPLE
         PS> $list = 1..15
-        PS> $params = Get-InClauseParams -prefix "p" -values $list -type Int
-        PS> $paramStr = Get-InClauseString -parameters $params
+        PS> $params = Get-DBInClauseParams -prefix "p" -values $list -type Int
+        PS> $paramStr = Get-DBInClauseString -parameters $params
         PS> $params
         PS> $paramStr
 

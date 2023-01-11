@@ -110,8 +110,6 @@
             } else {
                 Write-Warning "No assemblies found to export"
             }
-        } catch {
-            throw
         } finally {
             if ($reader) { $reader.Dispose() }
             if ($connection) { $connection.Dispose() }

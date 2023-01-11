@@ -40,10 +40,11 @@
         $SqlCmdArguments = @{
             ServerInstance = $ServerInstance
             Database = "master"
+            Credential = $Credentials
         }
-        if ($Credentials) {
-            $SqlCmdArguments.Add("Credential", $Credentials) | Out-Null
-        }
+        # if ($Credentials) {
+        #     $SqlCmdArguments.Credential = $Credentials
+        # }
 
         $serverConnection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
         $serverConnection.ServerInstance = $ServerInstance

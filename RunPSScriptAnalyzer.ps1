@@ -10,3 +10,5 @@ $scriptDir = [System.IO.Path]::Combine($scriptDir, "tcdbtools")
 
 Invoke-ScriptAnalyzer -path $scriptDir -Recurse -Fix -ExcludeRule "PSUseSingularNouns" | Format-Table # , "PSUseShouldProcessForStateChangingFunctions", "PSAvoidGlobalVars" 
 
+Write-Host "DONE"
+

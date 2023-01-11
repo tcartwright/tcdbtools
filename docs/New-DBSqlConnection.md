@@ -8,16 +8,19 @@ Creates a SqlConnection
 Creates a SqlConnection
 
 ## Syntax
-    New-DBSQLConnection 
+    New-DBSqlConnection 
         [-ServerInstance] <String> 
         [-Database] <String> 
         [[-Credentials] <PSCredential>] 
+        [-MultipleActiveResultSets ] 
+        [-ApplicationIntent] <String>
+        [[-ConnectTimeout] <Int32>] 
         [[-AppName] <String>] 
         [<CommonParameters>]
 
 ## Parameters
     -ServerInstance <String>
-        Specifies the database server hostname.
+        The name or network address of the instance of SQL Server to connect to.
 
         Required?                    true
         Position?                    1
@@ -26,7 +29,7 @@ Creates a SqlConnection
         Accept wildcard characters?  false
 
     -Database <String>
-        Specifies the name of the database.
+        The name of the database associated with the connection.
 
         Required?                    true
         Position?                    2
@@ -35,8 +38,7 @@ Creates a SqlConnection
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied 
-        then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -44,11 +46,38 @@ Creates a SqlConnection
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
-    -AppName <String>
-        The application name that will be supplied to the connection.
+    -MultipleActiveResultSets <SwitchParameter>
+        When true, an application can maintain multiple active result sets (MARS). When false, an application must process or cancel all result sets from one batch before it can execute any other batch on that connection.
+
+        Required?                    false
+        Position?                    named
+        Default value                False
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -ApplicationIntent <String>
+        Specifies a value for ApplicationIntent. Possible values are ReadWrite and ReadOnly.
 
         Required?                    false
         Position?                    4
+        Default value                ReadWrite
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -ConnectTimeout <Int32>
+        Gets or sets the length of time (in seconds) to wait for a connection to the server before terminating the attempt and generating an error.
+
+        Required?                    false
+        Position?                    5
+        Default value                0
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -AppName <String>
+        The name of the application associated with the connection string.
+
+        Required?                    false
+        Position?                    6
         Default value                tcdbtools
         Accept pipeline input?       false
         Accept wildcard characters?  false

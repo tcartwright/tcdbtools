@@ -28,6 +28,7 @@ Install-Module tcdbtools
 * [Invoke-DBScriptObjects](/docs/Invoke-DBScriptObjects.md) : Scripts all objects from a database to individual files per object.
 * [Invoke-DBRenameConstraints](/docs/Invoke-DBRenameConstraints.md) : Will rename all indexes and constraints to match naming conventions. 
 * [Find-DBInvalidSettings](/docs/Find-DBInvalidSettings.md) : Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated.
+* [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself.
 
 ## Helper Functions
 
@@ -38,9 +39,9 @@ Install-Module tcdbtools
 * Invoke-DBNonQuery : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
 * Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.
 * Invoke-DBDataSetQuery : Executes a Transact-SQL statement against the connection and returns a DataSet containing a DataTable for each result set returned.
-* New-SqlParameter : Creates a new instance of a SqlParameter object.
-* [Get-InClauseParams](/docs/Get-InClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
-* [Get-InClauseString](/docs/Get-InClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
+* New-DBSqlParameter : Creates a new instance of a SqlParameter object.
+* [Get-DBInClauseParams](/docs/Get-DBInClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
+* [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 
 
 [def]: https://www.powershellgallery.com/packages/tcdbtools

@@ -13,7 +13,7 @@
         $connection.Open()
 
         $params = @()
-        $params += (New-SqlParameter -name "@FileGroupName" -type VarChar -size 1000 -value $FileGroupName)
+        $params += (New-DBSqlParameter -name "@FileGroupName" -type VarChar -size 1000 -value $FileGroupName)
         $dataset = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $params
 
         return $dataset.Tables | Select-Object -First 1

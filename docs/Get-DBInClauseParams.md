@@ -1,4 +1,4 @@
-# Get-InClauseParams
+# Get-DBInClauseParams
 **Author** Tim Cartwright
 
 ## Synopsis
@@ -8,7 +8,7 @@ Can be used to create a set of parameters that can be used with an IN clause.
 Can be used to create a set of parameters that can be used with an IN clause.
 
 ## Syntax
-    Get-InClauseParams 
+    Get-DBInClauseParams 
         [-prefix] <String> 
         [-values] <Object> 
         [-type]  <System.Data.SqlDbType>
@@ -76,7 +76,7 @@ Can be used to create a set of parameters that can be used with an IN clause.
 
 ```powershell
 $list = 1..15
-$params = Get-InClauseParams -prefix "p" -values $list -type Int
+$params = Get-DBInClauseParams -prefix "p" -values $list -type Int
 $params
 ```
 
