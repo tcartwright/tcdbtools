@@ -127,7 +127,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
 ```powershell
 # Scans all string columns in all user defined tables in the dbo schema for the value "%tim%"
-Find-DBValue-ServerInstance "ServerName" -Database "DBName" -LookForValue "%tim%" -IncludeSchemas @("dbo") | Format-Table
+Find-DBValue -ServerInstance "ServerName" -Database "DBName" -LookForValue "%tim%" -IncludeSchemas @("dbo") | Format-Table
 ```
 
 [Back](/README.md)
