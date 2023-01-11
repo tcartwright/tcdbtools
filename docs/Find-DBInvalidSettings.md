@@ -14,21 +14,25 @@ These settings are normally off, and if an X appears in the setting_value column
 
 | setting_name | validation |
 | ---- | ---- |
-|DISABLE_DEF_CNST_CHK | <> 0 |
-|IMPLICIT_TRANSACTIONS | <> 0 |
-|CURSOR_CLOSE_ON_COMMIT | <> 0 |
-|ANSI_WARNINGS | <> 0 |
-|ANSI_PADDING | <> 0 |
-|ANSI_NULLS | <> 0 |
-|ARITHABORT | <> 0 |
-|ARITHIGNORE | <> 0 |
-|QUOTED_IDENTIFIER | <> 0 |
-|NOCOUNT | <> 0 |
-|ANSI_NULL_DFLT_ON | <> 0 |
-|ANSI_NULL_DFLT_OFF | <> 0 |
-|CONCAT_NULL_YIELDS_NULL | <> 0 |
-|NUMERIC_ROUNDABORT | <> 0 |
-|XACT_ABORT | <> 0 | 
+| DISABLE_DEF_CNST_CHK | <> 0 |
+| IMPLICIT_TRANSACTIONS | <> 0 |
+| CURSOR_CLOSE_ON_COMMIT | <> 0 |
+| ANSI_WARNINGS | <> 0 |
+| ANSI_PADDING | <> 0 |
+| ANSI_NULLS | <> 0 |
+| [ARITHABORT](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-arithabort-transact-sql?view=sql-server-ver16#remarks) | <> 1 |
+| ARITHIGNORE | <> 0 |
+| QUOTED_IDENTIFIER | <> 0 |
+| NOCOUNT | <> 0 |
+| ANSI_NULL_DFLT_ON | <> 0 |
+| ANSI_NULL_DFLT_OFF | <> 0 |
+| CONCAT_NULL_YIELDS_NULL | <> 0 |
+| NUMERIC_ROUNDABORT | <> 0 |
+| XACT_ABORT | <> 0 | 
+
+NOTES: By setting ARITHABORT ON, then by default all of your client .NET connections will automatically enable this setting. 
+
+[SQL SERVER – Setting ARITHABORT ON for All Connecting .Net Applications](https://blog.sqlauthority.com/2018/08/07/sql-server-setting-arithabort-on-for-all-connecting-net-applications/)
 
 ### Server Settings
 Server settings each have different validations.  If any of the validations are true, then an X will appear in the results. These validations may or may not fall in line with your exact specific design. 
@@ -94,14 +98,15 @@ All user defined database objects are inspected for various SET options that wer
 | object_name | Name of the object |
 | object_type | Object Type |
 | column_name | Column name, if applicable |
-| [uses_quoted_identifier](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-quoted-identifier-transact-sql?view=sql-server-ver16) | ? |
-| [uses_ansi_nulls](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-nulls-transact-sql?view=sql-server-ver16) | ? |
-| [is_ansi_padded](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-padding-transact-sql?view=sql-server-ver16) | ? |
+| [uses_quoted_identifier](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-quoted-identifier-transact-sql?view=sql-server-ver16) | <> 1 |
+| [uses_ansi_nulls](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-nulls-transact-sql?view=sql-server-ver16) | <> 1 |
+| [is_ansi_padded](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-padding-transact-sql?view=sql-server-ver16) | <> 1 |
 
 ## Syntax
     Find-DBInvalidSettings 
         [-ServerInstance] <String> 
         [[-Credentials] <PSCredential>] 
+        [[-CollationName] <String>] 
         [<CommonParameters>]
 
 ## Parameters

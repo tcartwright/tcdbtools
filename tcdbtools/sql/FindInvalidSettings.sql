@@ -61,7 +61,11 @@ VALUES
 
 SELECT 
     [oc].[setting_name],   
-    [setting_value] = CASE WHEN fn.[is_on] = 1 THEN 'X' ELSE '' END
+    [setting_value] = CASE 
+        WHEN [oc].[setting_name] = 'ARITHABORT' AND fn.[is_on] = 0 THEN 'X'
+        WHEN fn.[is_on] = 1 THEN 'X' 
+        ELSE '' 
+    END
 FROM @optionsCheck oc
 CROSS APPLY (
     SELECT [is_on] = CASE 
