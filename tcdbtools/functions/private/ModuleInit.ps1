@@ -1,12 +1,13 @@
-<# 
+﻿<#
     Original credits: https://newbedev.com/powershell-assembly-binding-redirect-not-found-in-application-configuration-file
 
     Purpose: To provide an assembly resolve event that does not crash PowerShell with a stackoverflow exception, and works.
+    A pure powershell assembly resolver often times will crash.
 
-    Tim Cartwright: 
-        This resolver only works with assemblies that are already in your cache but the assembly asked for has a different version.  
+    Tim Cartwright:
+        This resolver only works with assemblies that are already in your cache but the assembly asked for has a different version.
         Rewrote to be less complicated, and to resolve 100% of the time IF the assembly has already been loaded with a diff version.
-        If need be, before the resolver is called, either use Add-Type, or [System.Reflection.Assembly]::LoadWithPartialName("") 
+        If need be, before the resolver is called, either use Add-Type, or [System.Reflection.Assembly]::LoadWithPartialName("")
         to load the assembly needed before hand if it is not already in your cache.
 
 
@@ -44,7 +45,7 @@ if (!("TCAssemblyRedirector" -as [type])) {
         }
 '@
 
-    $type = Add-Type -TypeDefinition $source -PassThru 
+    Add-Type -TypeDefinition $source -PassThru | Out-Null
 }
 
 $redirector = [TCAssemblyRedirector]::new()

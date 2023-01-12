@@ -47,39 +47,39 @@ function InstallPackage {
         [string]$packageName,
         [string]$packageSourceName,
         [string]$version,
-        [switch]$SkipDependencies 
+        [switch]$SkipDependencies
     )
 
-    $args = @{
+    $packageArgs = @{
         Name = $packageName
         ProviderName = "NuGet"
         Source = $packageSourceName
     }
 
     if ($version) {
-        $args.Add("RequiredVersion", $version)
+        $packageArgs.Add("RequiredVersion", $version)
     }
 
     if (-not (Test-Path $path.FullName -PathType Container)) {
         New-Item $path.FullName -ErrorAction SilentlyContinue -Force -ItemType Directory
     }
 
-    $package = Find-Package @args
+    $package = Find-Package @packageArgs
     $packagePath = "$($path.FullName)\$($package.Name).$($package.Version)"
 
     if (-not (Test-Path $packagePath -PathType Container)) {
         # remove any older versions of the package
         Remove-Item "$($path.FullName)\$($package.Name)*" -Recurse -Force
         Write-Verbose "Installing Package: $($packageName)"
-        $package = Install-Package @args -Scope CurrentUser -Destination $path.FullName -Force -SkipDependencies:$SkipDependencies.IsPresent
-    } 
-    
+        $package = Install-Package @packageArgs -Scope CurrentUser -Destination $path.FullName -Force -SkipDependencies:$SkipDependencies.IsPresent
+    }
+
     return $packagePath
 }
 
 function LoadAssembly {
     param ([System.IO.FileInfo]$path)
-    # list loaded assemblies: 
+    # list loaded assemblies:
     # [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location | Sort-Object -Property FullName | Select-Object -Property FullName, Location, GlobalAssemblyCache, IsFullyTrusted | Out-GridView
 
     # load the assembly bytes so as to not lock the file
