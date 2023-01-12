@@ -38,6 +38,8 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\private\Find-DBValue.ps1"
 . "$scriptDir\functions\private\GenFuncs.ps1"
 
+# this script MUST always be invoked last
+. "$scriptDir\functions\private\ModuleInit.ps1"
 
 Export-ModuleMember -Function Invoke-DBMoveIndexes
 Export-ModuleMember -Function Invoke-DBSafeShrink

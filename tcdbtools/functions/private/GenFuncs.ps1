@@ -41,16 +41,65 @@ function GetSQLFileContent {
     return Get-Content -Path ([System.IO.Path]::Combine($script:tcdbtools_SqlDir, $fileName)) -Raw
 }
 
-# If the script has a hard time finding SMO, you can install the dbatools module and import it. Which ensures that SMO can be found.
-if (-not (Get-Module -Name dbatools) -and (Get-Module -ListAvailable -Name dbatools)) {
-    Write-Verbose "Importing dbatools"
-    Import-Module dbatools
+function InstallPackage {
+    param (
+        [System.IO.DirectoryInfo]$path,
+        [string]$packageName,
+        [string]$packageSourceName,
+        [string]$version,
+        [switch]$SkipDependencies 
+    )
+
+    $args = @{
+        Name = $packageName
+        ProviderName = "NuGet"
+        Source = $packageSourceName
+    }
+
+    if ($version) {
+        $args.Add("RequiredVersion", $version)
+    }
+
+    if (-not (Test-Path $path.FullName -PathType Container)) {
+        New-Item $path.FullName -ErrorAction SilentlyContinue -Force -ItemType Directory
+    }
+
+    $package = Find-Package @args
+    $packagePath = "$($path.FullName)\$($package.Name).$($package.Version)"
+
+    if (-not (Test-Path $packagePath -PathType Container)) {
+        # remove any older versions of the package
+        Remove-Item "$($path.FullName)\$($package.Name)*" -Recurse -Force
+        Write-Verbose "Installing Package: $($packageName)"
+        $package = Install-Package @args -Scope CurrentUser -Destination $path.FullName -Force -SkipDependencies:$SkipDependencies.IsPresent
+    } 
+    
+    return $packagePath
 }
 
-# load up SMO by default for all scripts.... hopefully. MSFT recently changed SMO to a nuget package which really jacks with finding it, or downloading it automatically
-[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO") | Out-Null
+function LoadAssembly {
+    param ([System.IO.FileInfo]$path)
+    # list loaded assemblies: 
+    # [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location | Sort-Object -Property FullName | Select-Object -Property FullName, Location, GlobalAssemblyCache, IsFullyTrusted | Out-GridView
 
-$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-$script:tcdbtools_SqlDir = [System.IO.Path]::Combine($scriptDir, "..\..\sql")
+    # load the assembly bytes so as to not lock the file
+    Write-Verbose "Loading assembly: $($path.FullName)"
 
+    # Add-Type -Path $path.FullName
+    # $bytes = [System.IO.File]::ReadAllBytes($path.FullName)
+    # [System.Reflection.Assembly]::Load($bytes) | Out-Null
+    [System.Reflection.Assembly]::LoadFrom($path.FullName) | Out-Null
+    # Write-Host $ass | Format-List
+}
+
+function LoadAssemblies {
+    param ([string]$path)
+
+    $tmpPath = Get-Item $path
+    $dllPaths = (Get-ChildItem -Path $tmpPath.FullName -Filter "*.dll")
+
+    foreach ($dllPath in $dllPaths) {
+        LoadAssembly -path $dllPath
+    }
+}
 
