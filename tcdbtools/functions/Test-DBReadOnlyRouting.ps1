@@ -40,6 +40,7 @@
             try {
                 $serverTest = [PSCustomObject] @{
                     ListenerName = $ServerInstance
+                    Database = $null
                     ReadOnlyServer = $null
                     ReadWriteServer = $null
                     ReadOnlyIsValid = $false
@@ -77,11 +78,12 @@
                     $serverTest.ReadOnlyServer = $serverRO
                     $serverTest.ReadWriteServer = $server
                     $serverTest.ReadOnlyIsValid = $serverRO -ine $server
+                    $serverTest.Database = $Database
                     if (-not $serverTest.ReadOnlyIsValid) {
-                        $serverTest.Reason = "Servers are the same for both connections."
+                        $serverTest.Reason = "SERVERS ARE EQUAL"
                     }
                 } else {
-                    $serverTest.Reason = "A database could not be found that was being synchronized, This server does not appear to be under an Activity Group."
+                    $serverTest.Reason = "NO SYNCHRONIZED DBS"
                 }
             } catch {
                 $serverTest.Reason = "EXCEPTION: $($_.Exception.GetBaseException().Message)"
