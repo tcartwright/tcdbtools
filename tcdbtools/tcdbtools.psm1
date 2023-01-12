@@ -25,6 +25,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\New-DBSQLConnection.ps1"
 . "$scriptDir\functions\Find-DBInvalidSettings.ps1"
 . "$scriptDir\functions\Find-DBValue.ps1"
+. "$scriptDir\functions\Test-DBReadOnlyRouting.ps1"
 
 . "$scriptDir\functions\Invoke-SqlQueries.ps1"
 
@@ -49,6 +50,7 @@ Export-ModuleMember -Function Invoke-DBCompareServerSettings
 Export-ModuleMember -Function Invoke-DBRenameConstraints
 Export-ModuleMember -Function Find-DBInvalidSettings
 Export-ModuleMember -Function Find-DBValue
+Export-ModuleMember -Function Test-DBReadOnlyRouting
 
 Export-ModuleMember -Function Invoke-DBScalarQuery
 Export-ModuleMember -Function Invoke-DBNonQuery

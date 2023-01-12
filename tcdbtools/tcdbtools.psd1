@@ -78,6 +78,8 @@ FunctionsToExport = @(
     ,"Invoke-DBRenameConstraints"
     ,"Find-DBInvalidSettings"
     ,"Find-DBValue"
+    ,"Test-DBReadOnlyRouting"
+
     ,"Invoke-DBScalarQuery"
     ,"Invoke-DBNonQuery"
     ,"Invoke-DBReaderQuery"
