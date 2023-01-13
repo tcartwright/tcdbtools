@@ -19,6 +19,9 @@
     .PARAMETER CollationName
         The collation name you expect your server and databases to be using. Defaults to "SQL_Latin1_General_CP1_CI_AS"
 
+    .PARAMETER Timeout
+         The wait time (in seconds) before terminating the attempt to execute a command and generating an error. The default is 30 seconds.
+
     .OUTPUTS
 
     .EXAMPLE
@@ -38,7 +41,8 @@
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [pscredential]$Credentials,
-        [string]$CollationName = "SQL_Latin1_General_CP1_CI_AS"
+        [string]$CollationName = "SQL_Latin1_General_CP1_CI_AS",
+        [int]$Timeout = 30
     )
 
     begin {
@@ -67,7 +71,7 @@
                 (New-DBSqlParameter -name "desired_collation" -type VarChar -size 512 -value $CollationName)
             )
 
-            $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters
+            $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters -timeout $Timeout
 
             $ret.ServerOptions = $results.Tables[1]
             $ret.ServerSettings = $results.Tables[3]

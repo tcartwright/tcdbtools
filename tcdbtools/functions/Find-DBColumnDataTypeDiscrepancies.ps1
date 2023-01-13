@@ -43,8 +43,10 @@
     process {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
-            $results = Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -ErrorAction Stop -QueryTimeout $Timeout
-            $ret.AddRange($results)
+            $results = Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -QueryTimeout $Timeout
+            if ($results) {
+                $ret.AddRange($results)
+            }
         }
     }
 

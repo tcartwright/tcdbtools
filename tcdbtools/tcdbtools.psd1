@@ -85,6 +85,7 @@ FunctionsToExport = @(
     ,"Invoke-DBNonQuery"
     ,"Invoke-DBReaderQuery"
     ,"Invoke-DBDataSetQuery"
+    ,"Invoke-DBDataTableQuery"
     ,"New-DBSqlParameter"
     ,"Get-DBInClauseParams"
     ,"Get-DBInClauseString"

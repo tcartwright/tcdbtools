@@ -109,7 +109,7 @@
 
             if (!(Test-Path -Path $dbSavePath)) {
                 Write-Verbose "Creating directory at '$dbSavePath'"
-                New-Item $dbSavePath -Type Directory -Force -ErrorAction Stop | Out-Null
+                New-Item $dbSavePath -Type Directory -Force | Out-Null
             }
 
             if ($db.Name -ne $Database) {

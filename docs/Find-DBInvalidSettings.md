@@ -138,6 +138,14 @@ All user defined database objects are inspected for various SET options that wer
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+    -Timeout <Int32>
+        The wait time (in seconds) before terminating the attempt to execute a command and generating an error. The default is 30 seconds.
+
+        Required?                    false
+        Position?                    4
+        Default value                30
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
 
 
 ### Example

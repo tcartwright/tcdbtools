@@ -47,7 +47,7 @@ jobs:
             }
             $manifestContents = [Regex]::Replace($manifestContents, '(^.*?ReleaseNotes\s*=\s*@'')[\w\W]*?(''@.*$)', "`${1}`r`n$releaseNotes`r`n`${2}", $regexoptions)
         }
-        #extract the existing version out of the psd1, into seperate parts
+        #extract the existing version out of the psd1, into separate parts
         $matches = [Regex]::Matches($manifestContents, '(ModuleVersion\s*=\s*'')(.*?)(''.*$)', $regexoptions)
         Write-Output "Changing version from $($matches.Groups[2].Value) to $inputsVersion for '$fileName'"
         #update the version the contents of the $manifestContents with the new version
