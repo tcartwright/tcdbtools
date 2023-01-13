@@ -2,10 +2,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself.
+Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads.
 
 ## Description
-Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself.
+Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads.
 
 ## Syntax
     Find-DBValue

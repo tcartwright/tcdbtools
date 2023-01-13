@@ -5,7 +5,7 @@
 - [~~PossibleBadOptions.sql~~](https://gist.github.com/tcartwright/699758fd8010704af10a57ccbfc76673)
 - [~~Scan Database for value.sql~~](https://gist.github.com/tcartwright/f71e55171586227c90c8e5e96840e7b0)
 - [Recreate Procs with Bad Set Options.sql](https://gist.github.com/tcartwright/ff96862630fe76e3ab07ad1c2feb7bf5)
-- [FindColumnsWithDiffTypes.sql](https://gist.github.com/tcartwright/73849ecb70383af0314ef107b2802a98)
+- [~~FindColumnsWithDiffTypes.sql~~](https://gist.github.com/tcartwright/73849ecb70383af0314ef107b2802a98)
 - Generate Dependency Graph
     - [Choice 1](https://gist.github.com/tcartwright/3aebf4ec48d4b38c440e934a7dbf4097)
     - [Choice 2](https://gist.github.com/tcartwright/67b323bac29333ad0988ce2cb74661dc)

@@ -28,7 +28,7 @@ Install-Module tcdbtools
 * [Invoke-DBScriptObjects](/docs/Invoke-DBScriptObjects.md) : Scripts all objects from a database to individual files per object.
 * [Invoke-DBRenameConstraints](/docs/Invoke-DBRenameConstraints.md) : Will rename all indexes and constraints to match naming conventions. 
 * [Find-DBInvalidSettings](/docs/Find-DBInvalidSettings.md) : Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated.
-* [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself.
+* [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads.
 * [Test-DBReadOnlyRouting](/docs/Test-DBReadOnlyRouting.md) : Tests read only routing for an availability group, and returns whether or not the routing is valid.
 
 ## Helper Functions

@@ -230,7 +230,8 @@ CREATE TABLE #objects (
     [column_name] nvarchar(128) NULL,
     [uses_quoted_identifier] char(1) NULL,
     [uses_ansi_nulls] char(1) NULL,
-    [is_ansi_padded] char(1) NULL
+    [is_ansi_padded] char(1) NULL,
+	[bad_data_type] char(1) NULL
 )
 
 INSERT INTO [#objects] (
@@ -241,7 +242,8 @@ INSERT INTO [#objects] (
     [column_name],
     [uses_quoted_identifier],
     [uses_ansi_nulls],
-    [is_ansi_padded]
+    [is_ansi_padded],
+	[bad_data_type]
 )
 EXEC sys.sp_MSforeachdb N'USE [?]; 
     IF DB_ID() <= 4 RETURN
@@ -254,7 +256,8 @@ EXEC sys.sp_MSforeachdb N'USE [?];
         NULL AS [column_name], 
         CASE OBJECTPROPERTY(o.object_id, ''ExecIsQuotedIdentOn'') WHEN 0 THEN @bad_value ELSE '''' END AS [uses_quoted_identifier], 
         CASE OBJECTPROPERTY(o.object_id, ''ExecIsAnsiNullsOn'') WHEN 0 THEN @bad_value ELSE '''' END AS [uses_ansi_nulls], 
-        '''' AS [is_ansi_padded]
+        '''' AS [is_ansi_padded],
+		'''' AS [bad_data_type]
     FROM sys.objects AS o
     WHERE 0 IN (
         OBJECTPROPERTY(o.object_id, ''ExecIsQuotedIdentOn''), 
@@ -269,12 +272,13 @@ INSERT INTO [#objects] (
     [column_name],
     [uses_quoted_identifier],
     [uses_ansi_nulls],
-    [is_ansi_padded]
+    [is_ansi_padded],
+	[bad_data_type]
 ) 
 EXEC sys.sp_MSforeachdb N'USE [?]; 
     IF DB_ID() <= 4 RETURN
     DECLARE @bad_value CHAR(1) = ''X''
-    -- the OBJECTPROPERTY does not work for tables with ''ExecIsAnsiNullsOn''
+    -- the OBJECTPROPERTY function does not work for tables with ''ExecIsAnsiNullsOn''
     SELECT 
         DB_NAME() AS [database_name],
         OBJECT_SCHEMA_NAME(t.object_id) AS [schema_name], 
@@ -283,7 +287,8 @@ EXEC sys.sp_MSforeachdb N'USE [?];
         NULL AS [column_name], 
         '''' AS [uses_quoted_identifier], 
         CASE t.[uses_ansi_nulls] WHEN 0 THEN @bad_value ELSE '''' END AS [uses_ansi_nulls], 
-        '''' AS [is_ansi_padded]
+        '''' AS [is_ansi_padded],
+		'''' AS [bad_data_type]
     FROM sys.[tables] AS [t] 
     WHERE [t].[uses_ansi_nulls] = 0'
     
@@ -295,7 +300,8 @@ INSERT INTO [#objects] (
     [column_name],
     [uses_quoted_identifier],
     [uses_ansi_nulls],
-    [is_ansi_padded]
+    [is_ansi_padded],
+	[bad_data_type]
 )
 EXEC sys.sp_MSforeachdb N'USE [?]; 
     IF DB_ID() <= 4 RETURN
@@ -308,12 +314,23 @@ EXEC sys.sp_MSforeachdb N'USE [?];
         c.name AS [column_name], 
         '''' AS [uses_quoted_identifier], 
         '''' AS [uses_ansi_nulls], 
-        CASE c.[is_ansi_padded] WHEN 0 THEN @bad_value ELSE '''' END AS [is_ansi_padded]
+		fn.[is_ansi_padded],
+		fn.[bad_data_type]
     FROM sys.tables AS t
     JOIN sys.columns AS c ON c.object_id = t.object_id
-    JOIN sys.types AS ty ON ty.system_type_id = c.system_type_id AND ty.user_type_id = c.user_type_id
-    WHERE c.is_ansi_padded = 0 
-        AND ty.name IN (''varbinary'',''BINARY'',''varchar'',''CHAR'')'
+    JOIN sys.types AS typ ON typ.system_type_id = c.system_type_id AND typ.user_type_id = c.user_type_id
+    CROSS APPLY (
+        SELECT CASE 
+			WHEN c.[is_ansi_padded] = 0 AND typ.name IN (''varbinary'',''BINARY'',''varchar'',''CHAR'') THEN @bad_value 
+			ELSE '''' 
+		END AS [is_ansi_padded],
+		CASE 
+			WHEN typ.name IN (''real'',''float'',''smalldatetime'',''text'',''ntext'',''image'') THEN @bad_value 
+			ELSE '''' 
+		END AS [bad_data_type]
+	) fn
+	WHERE fn.[is_ansi_padded] = @bad_value
+		OR fn.[bad_data_type] = @bad_value'
 
 SELECT 
     [o].[database_name],
@@ -323,9 +340,10 @@ SELECT
     [o].[column_name],
     [o].[uses_quoted_identifier],
     [o].[uses_ansi_nulls],
-    [o].[is_ansi_padded] 
+    [o].[is_ansi_padded],
+	[o].[bad_data_type]
 FROM [#objects] AS [o] 
 ORDER BY [o].[database_name], 
     [o].[schema_name],
-    [o].[object_name]
-
+    [o].[object_name],
+	[o].[column_name]

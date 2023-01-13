@@ -79,7 +79,8 @@ FunctionsToExport = @(
     ,"Find-DBInvalidSettings"
     ,"Find-DBValue"
     ,"Test-DBReadOnlyRouting"
-
+    ,"Find-DBColumnDataTypeDiscrepancies"
+    
     ,"Invoke-DBScalarQuery"
     ,"Invoke-DBNonQuery"
     ,"Invoke-DBReaderQuery"

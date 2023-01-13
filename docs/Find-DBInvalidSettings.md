@@ -89,7 +89,7 @@ Database settings each have different validations.  If any of the validations ar
 | is_auto_shrink_on | = 1 |
 
 ## Database Objects
-All user defined database objects are inspected for various SET options that were in place when the object was created. Certain SET options apply to certain objects. If any of them are invalid an X will appear in one of the values marked with a question mark. Any object found with invalid SET options should be recreated with valid SET options.
+All user defined database objects are inspected for various SET options that were in place when the object was created. Certain SET options apply to certain objects. If any of them are invalid an X will appear in one of the values marked with a question mark. Any object found with invalid SET options should be recreated with valid SET options. Bad data type choices are also inspected.
 
 | name | description |
 | ---- | ---- |
@@ -101,6 +101,7 @@ All user defined database objects are inspected for various SET options that wer
 | [uses_quoted_identifier](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-quoted-identifier-transact-sql?view=sql-server-ver16) | <> 1 |
 | [uses_ansi_nulls](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-nulls-transact-sql?view=sql-server-ver16) | <> 1 |
 | [is_ansi_padded](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-padding-transact-sql?view=sql-server-ver16) | <> 1 |
+| bad_data_type | typ.name IN ('real','float','smalldatetime','text','ntext','image') |
 
 ## Syntax
     Find-DBInvalidSettings 
