@@ -1,10 +1,10 @@
 ﻿function Find-DBColumnDataTypeDiscrepancies {
     <#
     .SYNOPSIS
-        Scans the database for columns in different tables that have the same names, but differ by data type. 
+        Scans the database for columns in different tables that have the same names, but differ by data type.
 
     .DESCRIPTION
-        Scans the database for columns in different tables that have the same names, but differ by data type. Helps to track down and unify data types. 
+        Scans the database for columns in different tables that have the same names, but differ by data type. Helps to track down and unify data types.
         This can also help prevent potential rounding errors with decimals that may get stored in different tables.
 
     .PARAMETER ServerInstance
@@ -18,7 +18,7 @@
 
     .PARAMETER Timeout
          The wait time (in seconds) before terminating the attempt to execute a command and generating an error. The default is 30 seconds.
-    
+
     .OUTPUTS
 
     .LINK
