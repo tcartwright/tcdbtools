@@ -1,4 +1,7 @@
-﻿# # this type is used for the parameters for the Invoke-DBSqlAgentScripter function
+﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "")]
+param()
+
+# # this type is used for the parameters for the Invoke-DBSqlAgentScripter function
 # Add-Type -TypeDefinition @"
 #     [System.Flags]
 #     public enum SQLAgentScripterOptions {
