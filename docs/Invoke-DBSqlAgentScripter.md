@@ -28,7 +28,8 @@ Will script out all Sql Agent objects to sql script files.
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied then a 
+        trusted connection will be used.
 
         Required?                    false
         Position?                    2
@@ -46,7 +47,8 @@ Will script out all Sql Agent objects to sql script files.
         Accept wildcard characters?  false
 
     -DoNotScriptJobDrop <SwitchParameter>
-        APPLIES TO JOBS ONLY: if this switch is present, then jobs wills be scripted without a drop.
+        APPLIES TO JOBS ONLY: if this switch is present, then jobs wills be scripted 
+        without a drop.
 
         Required?                    false
         Position?                    named
@@ -55,7 +57,8 @@ Will script out all Sql Agent objects to sql script files.
         Accept wildcard characters?  false
 
     -IncludeIfNotExists <SwitchParameter>
-        If this switch is present an IF NOT EXISTS WILL be added to all scripts so they will only get created if they don't already exist
+        If this switch is present an IF NOT EXISTS WILL be added to all scripts so they 
+        will only get created if they don't already exist
 
         Required?                    false
         Position?                    named
@@ -64,7 +67,8 @@ Will script out all Sql Agent objects to sql script files.
         Accept wildcard characters?  false
 
     -DoNotGenerateForSqlCmd <SwitchParameter>
-        If this switch is present then $ tokens in the script will be left alone. Else they will be replaced with a token that will work for SqlCmd.
+        If this switch is present then $ tokens in the script will be left alone. Else they 
+        will be replaced with a token that will work for SqlCmd.
 
         Required?                    false
         Position?                    named
