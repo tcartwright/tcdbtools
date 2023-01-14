@@ -1,4 +1,4 @@
-# # this type is used for the parameters for the Invoke-DBSqlAgentScripter function
+﻿# # this type is used for the parameters for the Invoke-DBSqlAgentScripter function
 # Add-Type -TypeDefinition @"
 #     [System.Flags]
 #     public enum SQLAgentScripterOptions {
@@ -8,8 +8,8 @@
 #         Jobs = 8,
 #         JobCategories = 16,
 #         All = Alerts | Operators | OperatorCategories | Jobs | JobCategories
-#     } 
-# "@ 
+#     }
+# "@
 
 # [Flags()] enum SQLAgentScripterOptions {
 #     Alerts = 1
@@ -64,8 +64,8 @@ $modifyAgentJobScript = {
 
 function WriteAgentScriptFile {
     param (
-        $smoObject, 
-        [Microsoft.SqlServer.Management.Smo.ScriptingOptions]$scriptOptions, 
+        $smoObject,
+        [Microsoft.SqlServer.Management.Smo.ScriptingOptions]$scriptOptions,
         [ScriptBlock]$modifyScriptBlock,
         [switch]$DoNotScriptJobDrop,
         [switch]$DoNotGenerateForSqlCmd,
@@ -88,9 +88,9 @@ function WriteAgentScriptFile {
         if (!(Test-Path $scriptFolder -PathType Container)) {
             New-Item $scriptFolder -ItemType Directory -Force | Out-Null
         }
-    
+
         Write-Information "Generating $($typeName): $validName.sql"
-        if (!$scriptOptions) {        
+        if (!$scriptOptions) {
             $scriptOptions = New-Object Microsoft.SqlServer.Management.Smo.ScriptingOptions
         }
 
@@ -107,8 +107,8 @@ function WriteAgentScriptFile {
 
         $script | Out-File ([System.Io.Path]::Combine($scriptFolder, "$validName.sql")) -Force -Encoding ascii
     } catch {
-        Write-Error "`tException writing $typeName ($validName):`r`n`t$($_.Exception.GetBaseException().Message)" 
+        Write-Error "`tException writing $typeName ($validName):`r`n`t$($_.Exception.GetBaseException().Message)"
         continue
-    } 
+    }
 }
 

@@ -1,10 +1,10 @@
 ﻿function Invoke-DBSqlAgentScripter {
     <#
     .SYNOPSIS
-        Will script out all Sql Agent objects to sql script files. 
+        Will script out all Sql Agent objects to sql script files.
 
     .DESCRIPTION
-        Will script out all Sql Agent objects to sql script files. 
+        Will script out all Sql Agent objects to sql script files.
 
     .PARAMETER ServerInstances
         The sql server instances to connect to.
@@ -16,7 +16,7 @@
         The output path for the scripts.
 
     .PARAMETER DoNotScriptJobDrop
-        APPLIES TO JOBS ONLY: if this switch is present, then jobs wills be scripted without a drop. 
+        APPLIES TO JOBS ONLY: if this switch is present, then jobs wills be scripted without a drop.
 
     .PARAMETER IncludeIfNotExists
         If this switch is present an IF NOT EXISTS WILL be added to all scripts so they will only get created if they don't already exist
@@ -32,9 +32,9 @@
         [ValidateScript({ Test-Path -Path $_ })]
         [System.IO.DirectoryInfo] $OutputPath,
         [switch] $DoNotScriptJobDrop,
-        [switch] $IncludeIfNotExists,  
+        [switch] $IncludeIfNotExists,
         [switch] $DoNotGenerateForSqlCmd
-    
+
     )
 
     begin {
@@ -48,16 +48,16 @@
             # try to establish a connection ahead of time, because smo does not handle failed connections well.
             $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
             $server = $sqlCon.server
-            
+
             Write-InformationColorized "Generating server: $ServerInstance" -ForegroundColor Yellow
-        
+
             #IF the output folder does not exist then create it
             $outFolder =  [System.Io.Path]::Combine($outputPath,  (ReplaceInvalidPathChars -str $ServerInstance))
-        
+
             if (!(Test-Path $outFolder)) {
                 New-Item $outFolder -ItemType Directory -Force | Out-Null
             }
-       
+
             $options = New-Object Microsoft.SqlServer.Management.Smo.ScriptingOptions
             $options.IncludeIfNotExists = $IncludeIfNotExists.IsPresent
             $options.AgentNotify = $true
@@ -65,34 +65,34 @@
             $options.AllowSystemObjects = $false
 
             $WriteAgentScriptFileParams = @{
-                scriptOptions = $options 
-                DoNotScriptJobDrop = $DoNotScriptJobDrop.IsPresent 
+                scriptOptions = $options
+                DoNotScriptJobDrop = $DoNotScriptJobDrop.IsPresent
                 DoNotGenerateForSqlCmd = $DoNotGenerateForSqlCmd.IsPresent
                 modifyScriptBlock = $modifyAgentScript
                 scriptHeaderReplaceRegex = $scriptHeaderReplaceRegex
                 scriptHeaderReplace = $scriptHeaderReplace
             }
-        
+
             foreach ($alert in $server.JobServer.Alerts) {
                 WriteAgentScriptFile -smoObject $alert @WriteAgentScriptFileParams
             }
-        
+
             foreach ($operator in $server.JobServer.Operators) {
                 WriteAgentScriptFile -smoObject $operator @WriteAgentScriptFileParams
             }
-        
+
             foreach ($OperatorCategory in $server.JobServer.OperatorCategories) {
                 WriteAgentScriptFile -smoObject $OperatorCategory @WriteAgentScriptFileParams
             }
-        
+
             foreach ($category in $server.JobServer.JobCategories) {
                 WriteAgentScriptFile -smoObject $category @WriteAgentScriptFileParams
             }
-        
+
             $WriteAgentScriptFileParams.scriptOptions = New-Object Microsoft.SqlServer.Management.Smo.ScriptingOptions
             $WriteAgentScriptFileParams.modifyScriptBlock = $modifyAgentJobScript
             $options.IncludeIfNotExists = $IncludeIfNotExists.IsPresent
-        
+
             #Script out each SQL Server Agent Job for the server
             foreach ($job in $server.JobServer.Jobs) {
                 WriteAgentScriptFile -smoObject $job @WriteAgentScriptFileParams
