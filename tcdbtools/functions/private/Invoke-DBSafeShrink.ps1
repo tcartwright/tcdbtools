@@ -40,7 +40,7 @@ function PerformFileOperation {
         $tryAgain = $false
         try {
             Write-Verbose "$sql"
-            Invoke-Sqlcmd @SqlCmdArguments -Query $sql -ErrorAction Stop
+            Invoke-Sqlcmd @SqlCmdArguments -Query $sql
         } catch {
             $msg = $_.Exception.GetBaseException().Message
             if (++$tryAgainCount -lt $tryAgainCountMax -and $msg -imatch "Backup,\s+file\s+manipulation\s+operations\s+\(such\s+as .*?\)\s+and\s+encryption\s+changes\s+on\s+a\s+database\s+must\s+be\s+serialized\.") {

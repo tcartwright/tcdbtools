@@ -123,7 +123,7 @@
                 $parameters += $params
             }
             $sql = $sql -ireplace "<<extra_where>>", $where
-            $queryResults = Invoke-DBDataTableQuery -conn $connection -sql $sql -ErrorAction Stop -parameters $parameters
+            $queryResults = Invoke-DBDataTableQuery -conn $connection -sql $sql -parameters $parameters
 
             <#
             # START THE JOBS USING CHUNKS OF THE RESULTS

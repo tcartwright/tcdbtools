@@ -7,6 +7,8 @@ Scans the database for columns in different tables that have the same names, but
 ## Description
 Scans the database for columns in different tables that have the same names, but differ by data type. Helps to track down and unify data types. This can also help prevent potential rounding errors with decimals that may get stored in different tables.
 
+Obviously, there are some columns with the same name that you do not care if they have different data types or sizes. This report is there to help you find the ones that do matter.
+
 ## Syntax
     Find-DBColumnDataTypeDiscrepancies 
         [-ServerInstance] <String> 

@@ -22,6 +22,8 @@ Install-Module tcdbtools
 ## Functions
 
 * [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : Can be used to shrink an mdf file ***and*** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file.
+* [Invoke-DBDeployAgentJob](/docs/Invoke-DBDeployAgentJob.md) : This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server. 
+* [Invoke-DBSqlAgentScripter](/docs/Invoke-DBSqlAgentScripter.md) : Will script out all Sql Agent objects to sql script files. 
 * [Invoke-DBMoveIndexes](/docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps.
 * [Invoke-DBCompareServerSettings](/docs/Invoke-DBCompareServerSettings.md) : Compares the server settings between two or more servers.
 * [Invoke-DBExtractCLRDLL](/docs/Invoke-DBExtractCLRDLL.md) : Extracts all user defined CLR dlls from a SQL server.
@@ -31,6 +33,7 @@ Install-Module tcdbtools
 * [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads.
 * [Test-DBReadOnlyRouting](/docs/Test-DBReadOnlyRouting.md) : Tests read only routing for an availability group, and returns whether or not the routing is valid.
 * [Find-DBColumnDataTypeDiscrepancies](/docs/Find-DBColumnDataTypeDiscrepancies.md) : Scans the database for columns in different tables that have the same names, but differ by data type.
+
 
 ## Helper Functions
 

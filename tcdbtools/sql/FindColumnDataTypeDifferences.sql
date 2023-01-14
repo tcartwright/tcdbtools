@@ -16,7 +16,7 @@ CROSS APPLY (
 CROSS APPLY (
 	SELECT 
 		CASE 
-			WHEN fn.[type_name] IN ('varchar','char','nvarchar','nchar','varbinary') THEN CONCAT(fn.[type_name], ' (', c.[max_length], ')')
+			WHEN fn.[type_name] IN ('varchar','char','nvarchar','nchar','varbinary') THEN CONCAT(fn.[type_name], ' (', CASE WHEN c.[max_length] = -1 THEN 'MAX' ELSE CAST(c.[max_length] AS varchar(20)) END, ')')
 			WHEN fn.[type_name] IN ('datetime2','datetimeoffset','time') THEN CONCAT(fn.[type_name], ' (', c.[scale], ')')
 			WHEN fn.[type_name] IN ('decimal') THEN CONCAT(fn.[type_name], ' (', c.[precision], ',', c.[scale], ')')
 			WHEN fn.[type_name] IN ('float') THEN CONCAT(fn.[type_name], ' (', c.[precision], ')')
