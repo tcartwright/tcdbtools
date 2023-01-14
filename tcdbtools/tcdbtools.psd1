@@ -80,6 +80,8 @@ FunctionsToExport = @(
     ,"Find-DBValue"
     ,"Test-DBReadOnlyRouting"
     ,"Find-DBColumnDataTypeDiscrepancies"
+    ,"Invoke-DBDeployAgentJob"
+    ,"Invoke-DBSqlAgentScripter"
 
     ,"Invoke-DBScalarQuery"
     ,"Invoke-DBNonQuery"

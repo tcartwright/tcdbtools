@@ -101,13 +101,14 @@ All user defined database objects are inspected for various SET options that wer
 | [uses_quoted_identifier](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-quoted-identifier-transact-sql?view=sql-server-ver16) | <> 1 |
 | [uses_ansi_nulls](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-nulls-transact-sql?view=sql-server-ver16) | <> 1 |
 | [is_ansi_padded](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-ansi-padding-transact-sql?view=sql-server-ver16) | <> 1 |
-| bad_data_type | typ.name IN ('real','float','smalldatetime','text','ntext','image') |
+| bad_data_type | type name IN ('real','float','smalldatetime','text','ntext','image') |
 
 ## Syntax
     Find-DBInvalidSettings 
         [-ServerInstance] <String> 
         [[-Credentials] <PSCredential>] 
         [[-CollationName] <String>] 
+        [[Timeout] <Int32>]
         [<CommonParameters>]
 
 ## Parameters

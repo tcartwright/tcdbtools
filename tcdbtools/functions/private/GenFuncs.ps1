@@ -103,3 +103,9 @@ function LoadAssemblies {
     }
 }
 
+function ReplaceInvalidPathChars($str) {
+    $str = $str.Split([IO.Path]::GetInvalidFileNameChars()) -join '_'
+    $str = $str.Split([IO.Path]::GetInvalidPathChars()) -join '_'
+    $str = $str -replace '\[|\]', ''
+    return $str
+}

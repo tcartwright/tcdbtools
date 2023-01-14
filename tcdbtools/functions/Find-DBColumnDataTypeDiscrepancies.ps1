@@ -7,6 +7,9 @@
         Scans the database for columns in different tables that have the same names, but differ by data type. Helps to track down and unify data types.
         This can also help prevent potential rounding errors with decimals that may get stored in different tables.
 
+        Obviously, there are some columns with the same name that you do not care if they have different data types or sizes. This report is there to help
+        you find the ones that do matter.
+
     .PARAMETER ServerInstance
         The sql server instance to connect to.
 
@@ -51,6 +54,6 @@
     }
 
     end {
-        return $ret
+        return $ret | Sort-Object -Property column_name, table_name, type_name_desc
     }
 }
