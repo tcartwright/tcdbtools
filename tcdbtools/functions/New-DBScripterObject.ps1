@@ -40,7 +40,7 @@ function New-DBScripterObject {
     }
 
     process {
-        $server = (New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials).Server
+        $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
         $Scripter = New-Object "Microsoft.SqlServer.Management.Smo.Scripter" $Server #create the scripter
 
         # https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.management.smo.scriptingoptions?view=sql-smo-160

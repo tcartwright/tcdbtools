@@ -24,7 +24,7 @@
     .PARAMETER ConnectTimeout
         Gets or sets the length of time (in seconds) to wait for a connection to the server before terminating the attempt and generating an error.
 
-    .PARAMETER AppName
+    .PARAMETER ApplicationName
         The application name that will be supplied to the connection.
 
     .OUTPUTS
@@ -41,6 +41,7 @@
 
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
+    [OutputType([System.Data.SqlClient.SqlConnection])]
     param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
@@ -51,7 +52,7 @@
         [ValidateSet("ReadWrite", "ReadOnly")]
         [string]$ApplicationIntent = "ReadWrite",
         [int]$ConnectTimeout,
-        [string]$AppName = "tcdbtools"
+        [string]$ApplicationName = "tcdbtools"
     )
 
     begin {
@@ -64,7 +65,7 @@
         # $builder.Keys | Sort-Object
         $builder["Data Source"] = $ServerInstance
         $builder["Initial Catalog"] = $Database
-        $builder["Application Name"] = $AppName
+        $builder["Application Name"] = $ApplicationName
         $builder["Integrated Security"] = -not $Credentials
         $builder["ApplicationIntent"] = $ApplicationIntent
 

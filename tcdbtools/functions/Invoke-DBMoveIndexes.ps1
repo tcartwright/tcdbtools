@@ -58,11 +58,10 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
-        $server = $sqlCon.server
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
+        $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
 
-        $IndexMoveTimeout = ([Timespan]::FromMinutes($IndexMoveTimeout).TotalSeconds)
+        $IXMoveTimeout = ([Timespan]::FromMinutes($IndexMoveTimeout).TotalSeconds)
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $swFormat = "hh\:mm\:ss"
@@ -79,7 +78,7 @@
                 continue
             };
 
-            MoveIndexes -db $db -fromFG $SourceFileGroupName -toFG $TargetFileGroupName -indicator "-->" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
+            MoveIndexes -db $db -fromFG $SourceFileGroupName -toFG $TargetFileGroupName -indicator "-->" -timeout $IXMoveTimeout -SqlCmdArguments $SqlCmdArguments
         }
     }
 

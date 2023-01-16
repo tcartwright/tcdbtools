@@ -15,7 +15,7 @@ Creates a SqlConnection
         [-MultipleActiveResultSets ] 
         [-ApplicationIntent] <String>
         [[-ConnectTimeout] <Int32>] 
-        [[-AppName] <String>] 
+        [[-ApplicationName] <String>] 
         [<CommonParameters>]
 
 ## Parameters
@@ -73,7 +73,7 @@ Creates a SqlConnection
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
-    -AppName <String>
+    -ApplicationName <String>
         The name of the application associated with the connection string.
 
         Required?                    false

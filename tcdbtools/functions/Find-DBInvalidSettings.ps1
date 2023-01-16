@@ -35,7 +35,10 @@
         PS> $result.DatabaseObjects  | Format-Table
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
 
+    .NOTES
+        Author: Tim Cartwright
     #>
     Param (
         [Parameter(Mandatory=$true)]

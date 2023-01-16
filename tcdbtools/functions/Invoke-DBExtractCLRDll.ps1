@@ -45,7 +45,7 @@
 
     begin {
         if (-not $SavePath) {
-            $path = [System.IO.Path]::Combine($env:TEMP, $database)
+            $path = [System.IO.Path]::Combine($env:TEMP, (ReplaceInvalidPathChars -str $Database))
         } else {
             $path = $SavePath.FullName
         }

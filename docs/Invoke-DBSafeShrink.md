@@ -137,7 +137,7 @@ This script automates those steps so you don't have to.
 
         Required?                    false
         Position?                    7
-        Default value                10
+        Default value                5
         Accept pipeline input?       false
         Accept wildcard characters?  false
 

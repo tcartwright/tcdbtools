@@ -45,9 +45,7 @@
 
     process {
         foreach($ServerInstance in $ServerInstances) {
-            # try to establish a connection ahead of time, because smo does not handle failed connections well.
-            $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-            $server = $sqlCon.server
+            $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
 
             Write-InformationColorized "Generating server: $ServerInstance" -ForegroundColor Yellow
 

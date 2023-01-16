@@ -54,6 +54,7 @@
         PS> Invoke-DBScriptObjects -ServerInstance "ServerName" -Database "DatabaseName"
 
         To ignore other types just define more variables, like $ignoreStoredProcedures or $ignoreTables
+
     .EXAMPLE
         Creating a customized scripter that ignores extended properties:
 
@@ -63,6 +64,7 @@
 
     .LINK
         https://github.com/tcartwright/tcdbtools
+
     #>
     [CmdletBinding()]
     Param (
@@ -76,9 +78,8 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
-        $server = $sqlCon.server
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
+        $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
 
         if (-not $SavePath) {
             $path = $env:TEMP
@@ -105,7 +106,7 @@
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
-            $dbSavePath = [System.IO.Path]::Combine($path, $Database)
+            $dbSavePath = [System.IO.Path]::Combine($path, (ReplaceInvalidPathChars -str $Database))
 
             if (!(Test-Path -Path $dbSavePath)) {
                 Write-Verbose "Creating directory at '$dbSavePath'"

@@ -93,7 +93,8 @@ FunctionsToExport = @(
     ,"Get-DBInClauseString"
     ,"Write-InformationColorized"
     ,"New-DBScripterObject"
-    ,"New-DBSqlObjects"
+    ,"New-DBSMOServer"
+    ,"New-DBSqlCmdArguments"
     ,"New-DBSQLConnection"
 )
 

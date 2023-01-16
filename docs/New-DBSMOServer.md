@@ -1,21 +1,18 @@
-# New-DBSqlObjects
+# New-DBSMOServer
 **Author** Tim Cartwright
 
 ## Synopsis
-Creates two objects that can be used for connectivity.
+Creates a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 
 ## Description
-Creates two objects that can be used for connectivity.
-
-Creates two objects:
-* The first is a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
-* The second is a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections
+Creates a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 
 
 ## Syntax
-    New-DBSqlObjects 
+    New-DBSMOServer 
         [[-ServerInstance] <String>] 
         [[-Credentials] <PSCredential>] 
+        [[-ApplicationName] <String>] 
         [<CommonParameters>]
 
 ## Parameters
@@ -38,17 +35,20 @@ Creates two objects:
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+    -ApplicationName <String>
+        The name of the application associated with the connection string.
+
+        Required?                    false
+        Position?                    6
+        Default value                tcdbtools
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
 ### Example
 
 ```powershell
-$objects = New-DBSqlObjects -ServerInstance "ServerName"
-
-# this is the SMO connection object
-$server = $objects.Server                       
-
-# this object can be splatted to Invoke-SqlCmd or other functions 
-# that take the same parameters
-$sqlCmdArguments = $objects.SqlCmdArguments     
+# this is the SMO server object
+$server = New-DBSMOServer -ServerInstance "ServerName"
 ```
 
 [Back](/README.md)

@@ -18,7 +18,10 @@
     .EXAMPLE
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
 
+    .NOTES
+        Author: Tim Cartwright
     #>
     Param (
         [Parameter(Mandatory=$true)]
@@ -29,9 +32,8 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
-        $server = $sqlCon.server
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
+        $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
     }
 
     process {

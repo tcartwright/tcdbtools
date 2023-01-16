@@ -2,10 +2,16 @@
 function Invoke-DBDeployAgentJob {
     <#
     .SYNOPSIS
-        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server.
+        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for 
+        each server deployed to.
 
     .DESCRIPTION
-        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server.
+        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for 
+        each server deployed to.
+
+    .NOTES
+        To signify custom variables in your script you will use the SqlCmd format of $(variable_name). Each one of these
+        tokens will be replaced by variables that are provided in either the ServerVariables or the GlobalVariables.
 
     .PARAMETER ServerVariables
         The server variables define which server the job is deployed to, and what server specific variables there are.
@@ -73,7 +79,7 @@ function Invoke-DBDeployAgentJob {
     .EXAMPLE
         An example showing multiple servers with the example job script.
 
-        # global variables will be overwritten by servervariables with the same name
+        # global variables will be overwritten by ServerVariables with the same name
         $globalVariables = @{
             Key1 = "globals value 1"
             Key2 = "globals value 2"
@@ -94,9 +100,10 @@ function Invoke-DBDeployAgentJob {
         Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "example"
 
     .EXAMPLE
-        An example showing multiple servers with the example job script that also deploy resources to each server.
+        An example showing multiple servers with the example job script that also deploy resources to each server. Server3 in 
+        this case is also using a custom port.
 
-        # global variables will be overwritten by servervariables with the same name
+        # global variables will be overwritten by ServerVariables with the same name
         $globalVariables = @{
             Key1 = "globals value 1"
             Key2 = "globals value 2"
@@ -111,12 +118,11 @@ function Invoke-DBDeployAgentJob {
                 key1 = "server2_value1"
                 key2 = "server2_value2"
             }
-            "server3" = @{}
+            "server3,2866" = @{}
         }
 
         $resources = @{
             "c:\temp\SomeZipFile.zip"  = "\\<<server_name>>\ShareName\Jobs\FolderName"
-            "c:\temp\SomeZipFile2.zip" = "\\<<server_name>>\ShareName\Jobs\FolderName2"
         }
 
         Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "example" -Resources $resources
@@ -133,10 +139,14 @@ function Invoke-DBDeployAgentJob {
         More info on SQL Agent Job tokens: https://learn.microsoft.com/en-us/sql/ssms/agent/use-tokens-in-job-steps?view=sql-server-ver16#sql-server-agent-tokens
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
 
+    .NOTES
+        Author: Tim Cartwright
     #>
     Param (
         [Parameter(Mandatory = $true)]
+        [ValidateScript({$_.Count -ge 1})]
         [HashTable]$ServerVariables,
         [Parameter(Mandatory = $true)]
         [ValidateScript({ $_.Name -ieq "example" -or $_.Exists })]
@@ -147,6 +157,8 @@ function Invoke-DBDeployAgentJob {
     )
 
     begin {
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance "--NA--" -Credentials $Credentials
+
         $variables = New-Object System.Collections.Generic.Dictionary"[string, string]" ([StringComparer]::CurrentCultureIgnoreCase)
         # this variable is ALWAYS added so that dollar signs can be encoded in the scripts and not interpreted as sqlcmd variables
         # EX, $(ESCAPE_SQUOTE(SRVR) should be written as $(dollar)(ESCAPE_SQUOTE(SRVR) so that it will be translated to the the desired result
@@ -157,15 +169,19 @@ function Invoke-DBDeployAgentJob {
         }
 
         if ($AgentScriptFile.Name -ine "example") {
+            Write-Information "Deploying job script $($AgentScriptFile.FullName)"
             $jobScript = Get-Content -Path $AgentScriptFile.FullName -Raw -Encoding ascii
         } else {
+            Write-Information "Deploying job script SqlAgentJobExample.sql"
             $jobScript = GetSQLFileContent -fileName "SqlAgentJobExample.sql"
         }
     }
 
     process {
         foreach($serverName in $ServerVariables.Keys) {
-            # strip off the instance name is one is there
+            $SqlCmdArguments.ServerInstance = $serverName
+
+            # strip off the instance name if one is there
             $hostName = ($serverName -split "\\", 2) | Select-Object -First 1
             foreach ($key in $Resources.Keys) {
                 $resource = $key
@@ -174,7 +190,7 @@ function Invoke-DBDeployAgentJob {
                 if (-not (Test-Path $destination -PathType Container)) {
                     New-Item -Path $destination -ItemType Directory -ErrorAction SilentlyContinue
                 }
-                Write-InformationColorized "Deploying $resource to $destination"
+                Write-InformationColorized "Deploying $resource to $destination" -ForegroundColor Green
                 Expand-Archive -Path $resource -DestinationPath $destination -Force
             }
 
@@ -193,25 +209,24 @@ function Invoke-DBDeployAgentJob {
                     $serverVars[$key] = $value
                 }
             }
+            $sql = New-Object System.Text.StringBuilder
 
             # Prepend the setvar statements to the job sql. I hate using the -Variable, can never get it to work right
             # plus this way I can eventually dump it out with -WhatIf when I get around to adding that
             foreach ($key in $serverVars.Keys){
-                $sql += ":setvar $key ""$($serverVars[$key])""`r`n"
+                $sql.AppendLine(":setvar $key ""$($serverVars[$key])""") | Out-Null
             }
-            $sql = "$sql`r`n`r`n$jobScript"
-
-            $sqlCon = New-DBSqlObjects -ServerInstance $serverName -Credentials $Credentials
-            $SqlCmdArguments = $sqlCon.SqlCmdArguments
+            $sql.AppendLine("`r`n") | Out-Null
+            $sql.AppendLine($jobScript) | Out-Null
 
             Write-InformationColorized "Deploying sql for [$serverName]" -ForegroundColor Yellow
             Write-Verbose $sql
 
-            Invoke-SqlCmd @SqlCmdArguments -Query $sql -Verbose
+            Invoke-SqlCmd @SqlCmdArguments -Query ($sql.ToString())
         }
     }
 
     end {
-
+        Write-Information "Done"
     }
 }

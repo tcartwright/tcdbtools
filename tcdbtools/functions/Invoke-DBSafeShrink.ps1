@@ -120,7 +120,7 @@
         [ValidateSet("oneway", "twoway")]
         [string]$Direction = "twoway",
         [switch]$AdjustRecovery,
-        [int]$ShrinkTimeout = 10,
+        [int]$ShrinkTimeout = 5,
         [ValidateRange(0, 20000)]
         [int]$ShrinkIncrementMB = 0,
         [int]$IndexMoveTimeout = 5,
@@ -129,9 +129,8 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
-        $server = $sqlCon.server
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
+        $server = New-DBSMOServer -ServerInstance $ServerInstance -Credentials $Credentials
 
         # these two function can show you what fields are available
         # $server.SetDefaultInitFields([Microsoft.SqlServer.Management.Smo.Table], $true)

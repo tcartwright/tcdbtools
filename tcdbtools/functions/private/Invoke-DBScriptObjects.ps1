@@ -36,7 +36,7 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath, $WriteProgressActivity, $W
     } else {
         $safeName = "$($dbObj.Name).sql"
     }
-    $tempPath = [IO.Path]::Combine($SavePath, $dbObj.Schema, $typeName, $safeName.Split([IO.Path]::GetInvalidFileNameChars()) -join '_')
+    $tempPath = [IO.Path]::Combine($SavePath, $dbObj.Schema, $typeName, (ReplaceInvalidPathChars -str $safeName))
 
     $dir = [IO.Path]::GetDirectoryName($tempPath)
 

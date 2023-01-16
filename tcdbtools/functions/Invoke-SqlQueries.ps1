@@ -121,6 +121,7 @@ function Invoke-DBReaderQuery {
     .OUTPUTS
         The SqlDataReader.
     #>
+    [OutputType([System.Data.SqlClient.SqlDataReader])]
 	param (
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlClient.SqlConnection]$conn,
@@ -173,6 +174,7 @@ function Invoke-DBDataTableQuery {
     .OUTPUTS
         The DataTable.
     #>
+    [OutputType([System.Data.DataTable])]
 	param (
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlClient.SqlConnection]$conn,
@@ -222,6 +224,7 @@ function Invoke-DBDataSetQuery {
     .OUTPUTS
         The results of the query.
     #>
+    [OutputType([System.Data.DataSet])]
 	param (
 		[Parameter(Mandatory=$true)]
 		[System.Data.SqlClient.SqlConnection]$conn,

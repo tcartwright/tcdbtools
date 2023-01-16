@@ -22,7 +22,10 @@
         PS >Test-DBReadOnlyRouting -ServerInstances "listener1", "listener2" | format-table
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
 
+    .NOTES
+        Author: Tim Cartwright
     #>
     Param (
         [Parameter(Mandatory=$true)]

@@ -79,7 +79,7 @@ Will script out all Sql Agent objects to sql script files.
 ### Example
 
 ```powershell
-Invoke-DBSqlAgentScripter -ServerInstances "server1", "server2" -OutputPath "C:\temp\SqlAgentPS\Output" 
+Invoke-DBSqlAgentScripter -ServerInstances "server1", "server2" -OutputPath "C:\temp\SqlAgentPS\Output" -InformationAction Continue
 ```
 
 [Back](/README.md)

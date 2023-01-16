@@ -49,8 +49,7 @@
             return
         }
 
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstances[0] -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstances[0] -Credentials $Credentials
         $list = [System.Collections.ArrayList]::new()
 
         $compareServers =  $ServerInstances | ForEach-Object { ($_).ToUpper() }

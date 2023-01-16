@@ -39,7 +39,8 @@ Install-Module tcdbtools
 
 * [New-DBScripterObject](/docs/New-DBScripterObject.md) : Creates a database scripting object that can be modified and used by Invoke-DBScriptObjects.
 * [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
-* [New-DBSqlObjects](/docs/New-DBSqlObjects.md) : Creates two objects that can be used for connectivity.
+* [New-DBSMOServer](/docs/New-DBSqlCmdArguments.md) : Returns a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
+* [New-DBSqlCmdArguments](/docs/New-DBSqlCmdArguments.md) : Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
 * Invoke-DBScalarQuery : Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
 * Invoke-DBNonQuery : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
 * Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.

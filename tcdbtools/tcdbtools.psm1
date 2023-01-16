@@ -37,7 +37,8 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
 # helper functions
 . "$scriptDir\functions\New-DBScripterObject.ps1"
-. "$scriptDir\functions\New-DBSqlObjects.ps1"
+. "$scriptDir\functions\New-DBSMOServer.ps1"
+. "$scriptDir\functions\New-DBSqlCmdArguments.ps1"
 . "$scriptDir\functions\New-DBSQLConnection.ps1"
 . "$scriptDir\functions\Invoke-SqlQueries.ps1"
 
@@ -70,6 +71,7 @@ Export-ModuleMember -Function Get-DBInClauseString
 
 Export-ModuleMember -Function Write-InformationColorized
 Export-ModuleMember -Function New-DBScripterObject
-Export-ModuleMember -Function New-DBSqlObjects
+Export-ModuleMember -Function New-DBSqlCmdArguments
+Export-ModuleMember -Function New-DBSMOServer
 Export-ModuleMember -Function New-DBSQLConnection
 #Export-ModuleMember -Function Invoke-Telnet

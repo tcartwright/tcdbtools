@@ -137,8 +137,7 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
 
         $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
         $connection.Open();

@@ -50,6 +50,10 @@
         PS> Find-DBValue -ServerInstance "ServerName" -Database "DBName" -LookForValue "%tim%" -IncludeSchemas @("dbo") | Format-Table
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
+
+    .NOTES
+        Author: Tim Cartwright
 
     #>
     Param (

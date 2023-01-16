@@ -151,7 +151,7 @@ Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serv
 ```
 
 ### Example
-An example showing multiple servers with the example job script that also deploy resources to each server.
+An example showing multiple servers with the example job script that also deploy resources to each server. Server3 in this case is also using a custom port.
 
 ```powershell
 # global variables will be overwritten by server variables with the same name
@@ -169,12 +169,11 @@ $serverVariables = @{
         key1 = "server2_value1" 
         key2 = "server2_value2"
     }
-    "server3" = @{}
+    "server3,2866" = @{}
 } 
 
 $resources = @{
-    "c:\temp\SomeZipFile.zip"  = "\\<<server_name>>\ShareName\Jobs\FolderName" 
-    "c:\temp\SomeZipFile2.zip" = "\\<<server_name>>\ShareName\Jobs\FolderName2" 
+    "c:\temp\SomeZipFile.zip"  = "\\<<server_name>>\ShareName\Jobs\FolderName"  
 }
 
 Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "c:\example_path\job.sql" -Resources $resources

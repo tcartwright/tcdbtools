@@ -25,7 +25,10 @@
     .OUTPUTS
 
     .LINK
+        https://github.com/tcartwright/tcdbtools
 
+    .NOTES
+        Author: Tim Cartwright
     #>
     Param (
         [Parameter(Mandatory=$true)]
@@ -37,8 +40,7 @@
     )
 
     begin {
-        $sqlCon = New-DBSqlObjects -ServerInstance $ServerInstance -Credentials $Credentials
-        $SqlCmdArguments = $sqlCon.SqlCmdArguments
+        $SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance $ServerInstance -Credentials $Credentials
         $ret = New-Object 'System.Collections.Generic.List[System.Object]'
         $query = GetSQLFileContent -fileName "FindColumnDataTypeDifferences.sql"
     }
@@ -46,6 +48,7 @@
     process {
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
+            Write-Information "Querying: $Database"
             $results = Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -QueryTimeout $Timeout
             if ($results) {
                 $ret.AddRange($results)
@@ -54,6 +57,6 @@
     }
 
     end {
-        return $ret | Sort-Object -Property column_name, table_name, type_name_desc
+        return $ret | Sort-Object -Property db_name, column_name, table_name, type_name_desc
     }
 }
