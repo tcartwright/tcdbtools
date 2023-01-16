@@ -38,7 +38,7 @@ Moves indexes from one file group to another. Both file groups must exist, neith
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3

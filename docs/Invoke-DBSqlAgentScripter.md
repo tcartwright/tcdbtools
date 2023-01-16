@@ -29,7 +29,7 @@ Will script out all Sql Agent objects to sql script files.
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    2
@@ -48,7 +48,7 @@ Will script out all Sql Agent objects to sql script files.
 
     -DoNotScriptJobDrop <SwitchParameter>
         APPLIES TO JOBS ONLY: if this switch is present, then jobs wills be 
-		scripted without a drop.
+        scripted without a drop.
 
         Required?                    false
         Position?                    named
@@ -58,7 +58,7 @@ Will script out all Sql Agent objects to sql script files.
 
     -IncludeIfNotExists <SwitchParameter>
         If this switch is present an IF NOT EXISTS WILL be added to all scripts 
-		so they will only get created if they don't already exist
+        so they will only get created if they don't already exist
 
         Required?                    false
         Position?                    named
@@ -68,8 +68,8 @@ Will script out all Sql Agent objects to sql script files.
 
     -DoNotGenerateForSqlCmd <SwitchParameter>
         If this switch is present then $ tokens in the script will be left 
-		alone. Else they will be replaced with a token that will work for 
-		SqlCmd.
+        alone. Else they will be replaced with a token that will work for 
+        SqlCmd.
 
         Required?                    false
         Position?                    named

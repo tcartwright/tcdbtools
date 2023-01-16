@@ -88,17 +88,17 @@ This script automates those steps so you don't have to.
 
     -NewFileDirectory <DirectoryInfo>
         If passed, then this will be the directory that the new temporary file 
-		will be created in.
+        will be created in.
         
         Otherwise it will default to the same directory as the primary file. 
-		This directory will be created if it does not exist. If it already 
-		exists, then nothing happens. If the path is a local path, then the 
-		directory will be created on the server using xp_create_subdir.
+        This directory will be created if it does not exist. If it already 
+        exists, then nothing happens. If the path is a local path, then the 
+        directory will be created on the server using xp_create_subdir.
         
         NOTES:
             - The drive must exist, else an exception will occur
             - The SQL Server account must have write access to the target 
-			folder, else an exception will occur
+            folder, else an exception will occur
 
         Required?                    false
         Position?                    5
@@ -108,9 +108,9 @@ This script automates those steps so you don't have to.
 
     -Direction <String>
         If the direction is twoway then the the indexes are moved to the 
-		temporary file and back after the orginal file is shrunk. If the 
-		direction is oneway, then the indexes are moved to the temporary file, 
-		and the process will be complete.
+        temporary file and back after the orginal file is shrunk. If the 
+        direction is oneway, then the indexes are moved to the temporary file, 
+        and the process will be complete.
 
         Required?                    false
         Position?                    6
@@ -120,9 +120,9 @@ This script automates those steps so you don't have to.
 
     -AdjustRecovery <SwitchParameter>
         If this switch is enabled then the recovery model of the database 
-		will be temporarily changed to SIMPLE, then put back to the original 
-		recovery model. If the switch is missing, then the recovery model will 
-		not be changed.
+        will be temporarily changed to SIMPLE, then put back to the original 
+        recovery model. If the switch is missing, then the recovery model will 
+        not be changed.
 
         Required?                    false
         Position?                    named
@@ -132,8 +132,8 @@ This script automates those steps so you don't have to.
 
     -ShrinkTimeout <Int32>
         If the original requires shrinking in a twoway operation, then the 
-		shrinks will occur in very small chunks at a time. This timeout will 
-		control how long that operation can run before timing out.
+        shrinks will occur in very small chunks at a time. This timeout will 
+        control how long that operation can run before timing out.
         
         NOTES: This timeout is in minutes.
 
@@ -146,7 +146,7 @@ This script automates those steps so you don't have to.
     -ShrinkIncrementMB <Int32>
         The amount of MB to shrink the file each shrink attempt. If left as the 
         default of 0 then a simple formula will adjust the shrink increment 
-		based upon the file size.
+        based upon the file size.
 
         Required?                    false
         Position?                    8
@@ -169,9 +169,9 @@ This script automates those steps so you don't have to.
     -MinimumFreeSpaceMB <Int32>
         The file shrunk must have at least this amount of free space, otherwise
         the shrink operation will write out a warning and skip the shrink 
-		operation for this file. If there are multiple files in the filegroup, 
-		then the total free space of the all the files must be greater than 
-		this value.
+        operation for this file. If there are multiple files in the filegroup, 
+        then the total free space of the all the files must be greater than 
+        this value.
 
         Required?                    false
         Position?                    10
@@ -182,8 +182,8 @@ This script automates those steps so you don't have to.
     -TLogBackupJobName <String>
         The name of a TLOG back up job name. If passed in, then the job will be 
         temporarily disabled until the process finishes as TLOG backups will 
-		interfere with the file operations. The job will be re-enabled once the 
-		process finishes.
+        interfere with the file operations. The job will be re-enabled once the 
+        process finishes.
 
         Required?                    false
         Position?                    11

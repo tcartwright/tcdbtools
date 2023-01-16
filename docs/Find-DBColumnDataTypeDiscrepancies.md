@@ -38,7 +38,7 @@ Obviously, there are some columns with the same name that you do not care if the
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -48,7 +48,7 @@ Obviously, there are some columns with the same name that you do not care if the
 
     -Timeout <Int32>
         The wait time (in seconds) before terminating the attempt to execute a 
-		command and generating an error. The default is 30 seconds.
+        command and generating an error. The default is 30 seconds.
 
         Required?                    false
         Position?                    4

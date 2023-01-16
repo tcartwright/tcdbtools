@@ -25,7 +25,7 @@ Creates a database scripting object that can be customized and used by [Invoke-D
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3

@@ -36,8 +36,8 @@ Will extract all user defined files from SQL SERVER database as DLL files, and o
 
     -SavePath <DirectoryInfo>
         Specifies the directory where you want to store the generated dll 
-		object. If the SavePath is not supplied, then the users temp directory 
-		will be used.
+        object. If the SavePath is not supplied, then the users temp directory 
+        will be used.
 
         Required?                    false
         Position?                    3
@@ -47,7 +47,7 @@ Will extract all user defined files from SQL SERVER database as DLL files, and o
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    4

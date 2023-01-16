@@ -22,7 +22,7 @@ Editor: Tim Cartwright:
             │   ├───StoredProcedures
             │   │       dbo.proc1.sql
             │   │       dbo.proc2.sql
-            │   │		...
+            │   │       ...
             │   ├───Tables
             │   │       dbo.table1.sql
             │   │       dbo.table2.sql
@@ -53,7 +53,7 @@ Editor: Tim Cartwright:
 
     -Databases <String[]>
         Specifies the name of the databases you want to script. Each database 
-		will be scripted to its own directory.
+        will be scripted to its own directory.
 
         Required?                    true
         Position?                    3
@@ -63,7 +63,7 @@ Editor: Tim Cartwright:
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    named
@@ -73,9 +73,9 @@ Editor: Tim Cartwright:
 
     -Scripter <Scripter>
         An object of type [Microsoft.SqlServer.Management.Smo.Scripter]. Allows 
-		for custom scripter options to be set. If not provided a default 
-		scripter will be created. Can be created using New-DBScripterObject and 
-		then customized.
+        for custom scripter options to be set. If not provided a default 
+        scripter will be created. Can be created using New-DBScripterObject and 
+        then customized.
 
         Required?                    false
         Position?                    named
@@ -86,7 +86,7 @@ Editor: Tim Cartwright:
     -SavePath <String>
         Specifies the directory where you want to store the generated scripts. 
         If the SavePath is not supplied, then the users temp directory will be 
-		used.
+        used.
 
         Required?                    false
         Position?                    named

@@ -17,7 +17,7 @@ Tests read only routing for an availability group, and returns whether or not th
 ## Parameters
     -ServerInstances <String[]>
         The sql server instances to connect to. This should be the listener name 
-		of the AG group.
+        of the AG group.
 
         Required?                    true
         Position?                    1
@@ -27,7 +27,7 @@ Tests read only routing for an availability group, and returns whether or not th
 
     -Database <String>
         The database. This database must be a synchronized database. If left 
-		empty, the the script will attempt to discover a synchronized database.
+        empty, the the script will attempt to discover a synchronized database.
 
         Required?                    false
         Position?                    2
@@ -37,8 +37,8 @@ Tests read only routing for an availability group, and returns whether or not th
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used. This authentication will be used 
-		for each server.
+        then a trusted connection will be used. This authentication will be used 
+        for each server.
 
         Required?                    false
         Position?                    3

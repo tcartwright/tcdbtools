@@ -43,7 +43,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -53,7 +53,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -LookForValue <String>
         The value to search for in the database. This string supports LIKE 
-		clause syntax.
+        clause syntax.
 
         Required?                    true
         Position?                    4
@@ -63,8 +63,8 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -LookForValueType <String>
         The type of value being looked for. The valid values are "string" and 
-		"number". Use the appropriate one to scan the correct type of columns 
-		for the value you are looking for. Defaults to "string".
+        "number". Use the appropriate one to scan the correct type of columns 
+        for the value you are looking for. Defaults to "string".
 
         Required?                    false
         Position?                    5
@@ -74,7 +74,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -IncludeMaxWidthColumns <SwitchParameter>
         Max width columns are not scanned by default unless this switch is 
-		enabled.
+        enabled.
 
         Required?                    false
         Position?                    named
@@ -84,7 +84,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -IncludeSchemas <String[]>
         A list of schemas to include in the results. If not provided then all 
-		schemas will be returned.
+        schemas will be returned.
 
         Required?                    false
         Position?                    6
@@ -103,7 +103,7 @@ Scans a database for a value. Returns all tables and columns that contain that v
 
     -IncludeTables <String[]>
         A list of tables to include in the results. If not provided then all 
-		tables will be returned.
+        tables will be returned.
 
         Required?                    false
         Position?                    8

@@ -123,7 +123,7 @@ All user defined database objects are inspected for various SET options that wer
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used.
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    2
@@ -133,7 +133,7 @@ All user defined database objects are inspected for various SET options that wer
 
     -CollationName <String>
         The collation name you expect your server and databases to be using. 
-		Defaults to "SQL_Latin1_General_CP1_CI_AS"        
+        Defaults to "SQL_Latin1_General_CP1_CI_AS"        
 
         Required?                    false
         Position?                    3
@@ -143,7 +143,7 @@ All user defined database objects are inspected for various SET options that wer
 
     -Timeout <Int32>
         The wait time (in seconds) before terminating the attempt to execute a 
-		command and generating an error. The default is 30 seconds.
+        command and generating an error. The default is 30 seconds.
 
         Required?                    false
         Position?                    4

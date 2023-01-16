@@ -32,17 +32,17 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 ## Parameters
     -ServerVariables <Hashtable>
         The server variables define which server the job is deployed to, and 
-		what server specific variables there are. Any server variable that has 
-		the same name of a global variable will override the value for the 
-		global variable.
+        what server specific variables there are. Any server variable that has 
+        the same name of a global variable will override the value for the 
+        global variable.
         
         The server variables are a nested HashTable, where the key of the top 
-		level HashTable is the server name, and the  keys for the nested 
-		HashTable are the variable keys.
+        level HashTable is the server name, and the  keys for the nested 
+        HashTable are the variable keys.
         
         NOTE: A variable must be supplied for all $(tokens) in the script. On 
-		the flip side, a variable can be used that does not have an associated 
-		token. It will just end up being ignored.
+        the flip side, a variable can be used that does not have an associated 
+        token. It will just end up being ignored.
         
         Example:
         
@@ -59,11 +59,11 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
         } 
         
         When deploying to server1/instance1 each instance of $(key1) will be 
-		replaced with server1_value1 and $(key2) will be replaced with 
-		server1_value2 within the job script. 
+        replaced with server1_value1 and $(key2) will be replaced with 
+        server1_value2 within the job script. 
         
         As server3 defines no variables, then only global variables will be used 
-		for its deployment.
+        for its deployment.
 
         Required?                    true
         Position?                    1
@@ -73,12 +73,12 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 
     -AgentScriptFile <FileInfo>
         The path to the sql agent job file. Invoke-DBSqlAgentScripter can be 
-		used to script agent jobs out, or you can script your own. This file 
-		must exist.
+        used to script agent jobs out, or you can script your own. This file 
+        must exist.
         
         The special key word "example" can be passed here, and the 
-		file /sql/SqlAgentJobExample.sql will be used. The job created will be 
-		named DeployAgentJobExample when using this.
+        file /sql/SqlAgentJobExample.sql will be used. The job created will be 
+        named DeployAgentJobExample when using this.
 
         Required?                    true
         Position?                    2
@@ -88,7 +88,7 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 
     -GlobalVariables <Hashtable>
         Global variables are default values for variables that can be used when 
-		you only wish to override the globals sometimes with certain servers.
+        you only wish to override the globals sometimes with certain servers.
         
         Example:
         
@@ -105,9 +105,9 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 
     -Resources <Hashtable>
         Resources are also a HashTable. The key of the resource is path to a 
-		valid zip file. It must be a zip file. Then the value of the HashTable 
-		is a UNC path to a folder. If the folder resides on each server, then 
-		use the substitution token <<server_name>> in the path, and the script 
+        valid zip file. It must be a zip file. Then the value of the HashTable 
+        is a UNC path to a folder. If the folder resides on each server, then 
+        use the substitution token <<server_name>> in the path, and the script 
         will replace that token with the current server name.
         
         Example:
@@ -125,8 +125,8 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 
     -Credentials <PSCredential>
         Specifies credentials to connect to the database with. If not supplied 
-		then a trusted connection will be used. The credentials used will be the 
-		same for all the server connections.
+        then a trusted connection will be used. The credentials used will be the 
+        same for all the server connections.
 
         Required?                    false
         Position?                    5
