@@ -37,7 +37,8 @@ Obviously, there are some columns with the same name that you do not care if the
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied 
+		then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -46,7 +47,8 @@ Obviously, there are some columns with the same name that you do not care if the
         Accept wildcard characters?  false
 
     -Timeout <Int32>
-        The wait time (in seconds) before terminating the attempt to execute a command and generating an error. The default is 30 seconds.
+        The wait time (in seconds) before terminating the attempt to execute a 
+		command and generating an error. The default is 30 seconds.
 
         Required?                    false
         Position?                    4
@@ -55,5 +57,13 @@ Obviously, there are some columns with the same name that you do not care if the
         Accept wildcard characters?  false
 
 ### Example 
+
+```powershell
+Find-DBColumnDataTypeDiscrepancies `
+    -ServerInstance "ServerName" `
+    -Databases "db1", "db1" `
+    -Timeout 60 `
+    -InformationAction Continue
+```
 
 [Back](/README.md)

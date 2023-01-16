@@ -48,7 +48,9 @@ Creates a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used 
 
 ```powershell
 # this is the SMO server object
-$server = New-DBSMOServer -ServerInstance "ServerName"
+$server = New-DBSMOServer `
+    -ServerInstance "ServerName" `
+    -InformationAction Continue
 ```
 
 [Back](/README.md)

@@ -2,11 +2,11 @@
 function Invoke-DBDeployAgentJob {
     <#
     .SYNOPSIS
-        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for 
+        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for
         each server deployed to.
 
     .DESCRIPTION
-        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for 
+        This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for
         each server deployed to.
 
     .NOTES
@@ -100,7 +100,7 @@ function Invoke-DBDeployAgentJob {
         Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "example"
 
     .EXAMPLE
-        An example showing multiple servers with the example job script that also deploy resources to each server. Server3 in 
+        An example showing multiple servers with the example job script that also deploy resources to each server. Server3 in
         this case is also using a custom port.
 
         # global variables will be overwritten by ServerVariables with the same name

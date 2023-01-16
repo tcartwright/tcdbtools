@@ -67,7 +67,8 @@ When there are conflicts a number will be suffixed on to the end of the name unt
     -IncludeSchemaInNames <SwitchParameter>
         If enabled then all names will include the schema as part of the name.
     
-        The default naming conventions are as follows when this switch is enabled:
+        The default naming conventions are as follows when this switch is 
+		enabled:
 
         * Default Constraint = "DF_SchemaName_TableName_ColumnName"
         * Check Constraint = "CK_SchemaName_TableName_ColumnName"
@@ -94,20 +95,24 @@ When there are conflicts a number will be suffixed on to the end of the name unt
         Accept wildcard characters?  false
 
     -CustomGetObjectName <ScriptBlock>
-        This script block can be passed in to override the naming convention used.
+        This script block can be passed in to override the naming convention 
+		used.
         
         The method signature is as follows: 
             function GetObjectName($obj, [switch]$IncludeSchemaInNames)
         
-        Note: Each of the details properties holds different values based upon object type
+        Note: Each of the details properties holds different values based upon 
+		object type
         
         $obj is an objection with the following properties:
             schema_name: The schema name of the object
             table_name: The name of the view or table parent object
             object_name: The name of the constraint or index.
             details1: 
-                C       : The column name used or null if the column could not be determined
-                D       : The column name used or null if the column could not be determined
+                C       : The column name used or null if the column could not 
+						  be determined
+                D       : The column name used or null if the column could not 
+						  be determined
                 FK      : The schema of the remote table name
                 Index   : The first column used in the index key
                 PK      : The first column used in the index key
@@ -115,8 +120,10 @@ When there are conflicts a number will be suffixed on to the end of the name unt
                 C       : The check constraint definition
                 D       : NULL
                 FK      : The table name of the remote table name
-                Index   : A full list of the columns used in the index comma delimited
-                PK      : A full list of the columns used in the index comma delimited
+                Index   : A full list of the columns used in the index comma 
+						  delimited
+                PK      : A full list of the columns used in the index comma 
+						  delimited
             details3: 
                 C       : NULL
                 D       : NULL
@@ -132,19 +139,22 @@ When there are conflicts a number will be suffixed on to the end of the name unt
         Accept wildcard characters?  false
 
     -CustomNameExists <ScriptBlock>
-        This scriptblock can be passed in to override the base functionality when the 
-        names produced already exist and come into conflict. By default if the name 
-        already exists then a number will be suffixed to the name in the pattern: 000. 
-        Starting with 001. A unique name for this object should be returned. 
+        This scriptblock can be passed in to override the base functionality 
+		when the names produced already exist and come into conflict. By default 
+		if the name already exists then a number will be suffixed to the name in 
+		the pattern: 000. Starting with 001. A unique name for this object 
+		should be returned. 
         
-        EX: If a conflict occurs with IX_TableName_ColName then IX_TableName_ColName_001 
-        will be tried, then 002 and so on until a unique name can be found.
+        EX: If a conflict occurs with IX_TableName_ColName then 
+		IX_TableName_ColName_001 will be tried, then 002 and so on until a 
+		unique name can be found.
         
         The method signature is as follows: 
             function CustomNameExists($newName, $renames)
         
-        The parameter $renames will be a collection of names that have already been 
-        assigned to the table. The $newName parameter will be the name that was created.
+        The parameter $renames will be a collection of names that have already 
+		been assigned to the table. The $newName parameter will be the name that 
+		was created.
 
         Required?                    false
         Position?                    5

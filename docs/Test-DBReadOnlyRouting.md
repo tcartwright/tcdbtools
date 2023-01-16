@@ -16,7 +16,8 @@ Tests read only routing for an availability group, and returns whether or not th
 
 ## Parameters
     -ServerInstances <String[]>
-        The sql server instances to connect to. This should be the listener name of the AG group.
+        The sql server instances to connect to. This should be the listener name 
+		of the AG group.
 
         Required?                    true
         Position?                    1
@@ -25,7 +26,8 @@ Tests read only routing for an availability group, and returns whether or not th
         Accept wildcard characters?  false
 
     -Database <String>
-        The database. This database must be a synchronized database. If left empty, the the script will attempt to discover a synchronized database.
+        The database. This database must be a synchronized database. If left 
+		empty, the the script will attempt to discover a synchronized database.
 
         Required?                    false
         Position?                    2
@@ -34,8 +36,9 @@ Tests read only routing for an availability group, and returns whether or not th
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used. This authentication will
-        be used for each server.
+        Specifies credentials to connect to the database with. If not supplied 
+		then a trusted connection will be used. This authentication will be used 
+		for each server.
 
         Required?                    false
         Position?                    3
@@ -46,7 +49,9 @@ Tests read only routing for an availability group, and returns whether or not th
 ### Example 
 
 ```powershell
-Test-DBReadOnlyRouting -ServerInstances "listener1", "listener2" | Format-Table
+Test-DBReadOnlyRouting `
+    -ServerInstances "listener1", "listener2" `
+    -InformationAction Continue | Format-Table
 ```
 
 [Back](/README.md)

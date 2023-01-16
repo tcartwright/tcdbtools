@@ -19,7 +19,8 @@ Can be used to create a set of parameters that can be used with an IN clause.
 
 ## Parameters
     -prefix <String>
-        The prefix to place in front of the parameter name. Must make the parameter name unique.
+        The prefix to place in front of the parameter name. Must make the 
+		parameter name unique.
 
         Required?                    true
         Position?                    1
@@ -76,7 +77,11 @@ Can be used to create a set of parameters that can be used with an IN clause.
 
 ```powershell
 $list = 1..15
-$params = Get-DBInClauseParams -prefix "p" -values $list -type Int
+$params = Get-DBInClauseParams `
+    -prefix "p" `
+    -values $list `
+    -type Int `
+    -InformationAction Continue
 $params
 ```
 

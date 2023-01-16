@@ -48,7 +48,9 @@ Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other co
 ```powershell
 # this object can be splatted to Invoke-SqlCmd or other functions 
 # that take the same parameters
-$SqlCmdArguments = New-DBSqlCmdArguments -ServerInstance "ServerName"
+$SqlCmdArguments = New-DBSqlCmdArguments `
+    -ServerInstance "ServerName" `
+    -InformationAction Continue
 
 Invoke-SqlCmd @SqlCmdArguments -Query "SELECT @@SERVERNAME"
 ```

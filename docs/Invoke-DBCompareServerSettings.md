@@ -16,7 +16,8 @@ Compares all server settings for each instance passed in to generate a report sh
 
 ## Parameters
     -ServerInstances <String[]>
-        The sql server instances to connect to and compare.  At least two servers must be passed in.
+        The sql server instances to connect to and compare.  At least two 
+		servers must be passed in.
 
         Required?                    true
         Position?                    1
@@ -25,7 +26,8 @@ Compares all server settings for each instance passed in to generate a report sh
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied 
+		then a trusted connection will be used.
 
         Required?                    false
         Position?                    2
@@ -34,9 +36,10 @@ Compares all server settings for each instance passed in to generate a report sh
         Accept wildcard characters?  false
 
     -IgnoreVersionDifferences <SwitchParameter>
-        If a SQL Server does not support a particular setting because it is an older version 
-        then the value will be a dash: "-". If this switch is present, then any setting 
-        value with a dash will not be considered a difference.
+        If a SQL Server does not support a particular setting because it is an 
+		older version  then the value will be a dash: "-". If this switch is 
+		present, then any setting value with a dash will not be considered a 
+		difference.
 
         Required?                    false
         Position?                    named

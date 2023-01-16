@@ -36,8 +36,15 @@ Creates the string representation of the parameters that can be used with an IN 
 
 ```powershell
 $someList = "867", "5", "309"
-$params = Get-DBInClauseParams -prefix "p_" -values $someList -type VarChar -size 50
-$paramString = Get-DBInClauseString -parameters $params
+$params = Get-DBInClauseParams `
+    -prefix "p_" `
+    -values $someList `
+    -type VarChar `
+    -size 50 `
+    -InformationAction Continue
+$paramString = Get-DBInClauseString `
+    -parameters $params `
+    -InformationAction Continue
 
 # Assuming the list has 3 values in it, Get-DBInClauseParams should return "@p_0,@p_1,@p_2". This string can 
 # now be concatenated to the original query like so that the query looks like this example: 
@@ -53,8 +60,14 @@ Write-Information $query -InformationAction Continue
 
 ```powershell
 $list = 1..7
-$params = Get-DBInClauseParams -prefix "p" -values $list -type Int
-$paramStr = Get-DBInClauseString -parameters $params
+$params = Get-DBInClauseParams `
+    -prefix "p" `
+    -values $list `
+    -type Int `
+    -InformationAction Continue
+$paramStr = Get-DBInClauseString `
+    -parameters $params `
+    -InformationAction Continue
 # now you can concatenate the $paramStr to your in clause, and add $params to your commands parameters collection
 Write-Information $params -InformationAction Continue
 Write-Information $paramStr -InformationAction Continue
