@@ -126,7 +126,7 @@
                 $where += "`r`n`tAND t.object_id NOT IN ($paramStr)"
                 $parameters += $params
             }
-            $sql = $sql -ireplace "<<extra_where>>", $where
+            $sql = $sql -ireplace "--<<extra_where>>", $where
             $queryResults = Invoke-DBDataTableQuery -conn $connection -sql $sql -parameters $parameters
 
             <#
@@ -188,7 +188,7 @@
                     -Status “Job(s) $counter of $total done” `
                     -PercentComplete (([decimal][Math]::Min($total, $counter) / [decimal]$total) * 100.00)
 
-                Start-Sleep -Seconds 1
+                Start-Sleep -Milliseconds 500
             }
 
             Write-Progress -Activity $activity -Completed
@@ -207,7 +207,8 @@
             }
 
             return $ret |
-                Sort-Object server_name, db_name, schema_name, table_name, column_name
+                Sort-Object server_name, db_name, schema_name, table_name, column_name |
+                Select-Object db_name, schema_name, table_name, column_name, where_clause, value
         } finally {
             if ($connection) { $connection.Dispose() }
         }
