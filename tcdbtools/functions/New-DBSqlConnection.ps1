@@ -40,6 +40,7 @@
         Author: Tim Cartwright
 
     #>
+    [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     [OutputType([System.Data.SqlClient.SqlConnection])]
     param (

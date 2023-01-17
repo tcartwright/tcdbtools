@@ -23,7 +23,8 @@
     .NOTES
         Author: Tim Cartwright
     #>
-    Param (
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]

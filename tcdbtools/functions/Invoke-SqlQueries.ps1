@@ -21,15 +21,16 @@
     .OUTPUTS
         The results of the query.
     #>
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn,
-		[Parameter(Mandatory=$true)]
-		[string]$sql,
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlConnection]$conn,
+        [Parameter(Mandatory=$true)]
+        [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
-		[int]$timeout=30
-	)
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [int]$timeout=30
+    )
 
     process {
         try {
@@ -71,15 +72,16 @@ function Invoke-DBNonQuery {
     .OUTPUTS
         The results of the query.
     #>
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn,
-		[Parameter(Mandatory=$true)]
-		[string]$sql,
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlConnection]$conn,
+        [Parameter(Mandatory=$true)]
+        [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
-		[int]$timeout=30
-	)
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [int]$timeout=30
+    )
 
     process {
         try {
@@ -121,16 +123,18 @@ function Invoke-DBReaderQuery {
     .OUTPUTS
         The SqlDataReader.
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseOutputTypeCorrectly', '', Justification='Correct type')]
+    [CmdletBinding()]
     [OutputType([System.Data.SqlClient.SqlDataReader])]
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn,
-		[Parameter(Mandatory=$true)]
-		[string]$sql,
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlConnection]$conn,
+        [Parameter(Mandatory=$true)]
+        [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
-		[int]$timeout=30
-	)
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [int]$timeout=30
+    )
 
     process {
         try {
@@ -140,7 +144,7 @@ function Invoke-DBReaderQuery {
             foreach($p in $parameters){
                 $cmd.Parameters.Add($p) | Out-Null
             }
-            $reader = $cmd.ExecuteReader()
+            [System.Data.SqlClient.SqlDataReader]$reader = $cmd.ExecuteReader()
             # the comma before the reader object is on purpose to force powershell to return this object AS IS
             return ,$reader
         } finally {
@@ -174,16 +178,17 @@ function Invoke-DBDataTableQuery {
     .OUTPUTS
         The DataTable.
     #>
+    [CmdletBinding()]
     [OutputType([System.Data.DataTable])]
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn,
-		[Parameter(Mandatory=$true)]
-		[string]$sql,
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlConnection]$conn,
+        [Parameter(Mandatory=$true)]
+        [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
-		[int]$timeout=30
-	)
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [int]$timeout=30
+    )
 
     process {
         try {
@@ -224,16 +229,17 @@ function Invoke-DBDataSetQuery {
     .OUTPUTS
         The results of the query.
     #>
+    [CmdletBinding()]
     [OutputType([System.Data.DataSet])]
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlConnection]$conn,
-		[Parameter(Mandatory=$true)]
-		[string]$sql,
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlConnection]$conn,
+        [Parameter(Mandatory=$true)]
+        [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
-		[int]$timeout = 30
-	)
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [int]$timeout = 30
+    )
 
     process {
         try {
@@ -282,17 +288,19 @@ function New-DBSqlParameter {
     .OUTPUTS
         The SqlParameter.
     #>
+    [CmdletBinding()]
+    [OutputType([System.Data.SqlClient.SqlParameter])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     param (
-		[Parameter(Mandatory=$true)]
-		[string]$name,
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlDbType]$type,
-		$value,
+        [Parameter(Mandatory=$true)]
+        [string]$name,
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlDbType]$type,
+        $value,
         [int]$size ,
-		[int]$scale,
-		[int]$precision
-	)
+        [int]$scale,
+        [int]$precision
+    )
 
     process {
         if ($name[0] -ne "@") { $name = "@$name" }
@@ -347,25 +355,27 @@ function Get-DBInClauseParams {
 $params
 
     #>
-	param (
-		[Parameter(Mandatory=$true)]
-		[string]$prefix,
-		[Parameter(Mandatory=$true)]
-		$values,
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlDbType]$type,
+    [CmdletBinding()]
+    [OutputType([System.Data.SqlClient.SqlParameter[]])]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$prefix,
+        [Parameter(Mandatory=$true)]
+        $values,
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlDbType]$type,
         [int]$size,
-		[int]$scale,
-		[int]$precision
-	)
+        [int]$scale,
+        [int]$precision
+    )
 
     process {
-        $params = New-Object System.Collections.ArrayList
+        $params = New-Object 'System.Collections.Generic.List[System.Data.SqlClient.SqlParameter]'
         for  ($i=0; $i -le $values.Length -1; $i++) {
             $param = New-DBSqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
             $params.Add($param) | Out-Null
         }
-        return $params
+        return $params.ToArray()
     }
 }
 
@@ -405,11 +415,13 @@ function Get-DBInClauseString {
         PS> $paramStr
 
     #>
-	param (
-		[Parameter(Mandatory=$true)]
-		[System.Data.SqlClient.SqlParameter[]]$parameters,
+    [CmdletBinding()]
+    [OutputType([System.String])]
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Data.SqlClient.SqlParameter[]]$parameters,
         [string]$delimiter = ","
-	)
+    )
 
     process {
         $names = $parameters | ForEach-Object { $_.ParameterName }

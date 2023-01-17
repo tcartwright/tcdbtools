@@ -26,7 +26,7 @@ param()
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", '', Scope="Function", Target="*")]
 $modifyAgentScript = {
-    Param(
+    param (
         [string]$createScript,
         [string]$objectName,
         [switch]$DoNotScriptJobDrop,
@@ -44,7 +44,7 @@ $modifyAgentScript = {
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", '', Scope="Function", Target="*")]
 $modifyAgentJobScript = {
-    Param(
+    param (
         [string]$createScript,
         [string]$objectName,
         [switch]$DoNotScriptJobDrop,

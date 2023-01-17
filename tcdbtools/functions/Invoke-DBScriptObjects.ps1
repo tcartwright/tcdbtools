@@ -34,7 +34,7 @@
             │   ├───StoredProcedures
             │   │       dbo.proc1.sql
             │   │       dbo.proc2.sql
-            │   │		...
+            │   │        ...
             │   ├───Tables
             │   │       dbo.table1.sql
             │   │       dbo.table2.sql
@@ -67,7 +67,7 @@
 
     #>
     [CmdletBinding()]
-    Param (
+    param (
         [Parameter(Mandatory = $true, Position = 1)]
         [string]$ServerInstance,
         [Parameter(Mandatory = $true, Position = 2)]

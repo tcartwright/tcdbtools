@@ -28,7 +28,9 @@
     .NOTES
         Author: Tim Cartwright
     #>
+    [OutputType([System.Collections.Hashtable])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
+    [CmdletBinding()]
     param (
         [string]$ServerInstance,
         [pscredential]$Credentials,

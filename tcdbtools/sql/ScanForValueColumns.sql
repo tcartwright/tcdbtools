@@ -14,7 +14,7 @@ SELECT OBJECT_SCHEMA_NAME(t.object_id) AS [schema_name], t.name AS [table_name],
 FROM sys.tables t 
 INNER JOIN sys.columns c ON c.object_id = t.object_id
 INNER JOIN sys.types typ ON typ.system_type_id = c.system_type_id
-CROSS APPLY (
+OUTER APPLY ( /* Use an outer apply here in case of heaps */
 	SELECT CONCAT(' CONCAT(''', STUFF ((
 		SELECT CONCAT(','' AND ', col.[name], '='''''',', col.[name], ',''''''''') 
 		from sys.tables tab

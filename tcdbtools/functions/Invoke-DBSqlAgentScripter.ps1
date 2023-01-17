@@ -25,11 +25,11 @@
         If this switch is present then $ tokens in the script will be left alone. Else they will be replaced with a token that will work for SqlCmd.
 
     #>
-    Param (
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory=$true)]
         [string[]]$ServerInstances,
         [pscredential]$Credentials,
-        [ValidateScript({ Test-Path -Path $_ })]
         [System.IO.DirectoryInfo] $OutputPath,
         [switch] $DoNotScriptJobDrop,
         [switch] $IncludeIfNotExists,

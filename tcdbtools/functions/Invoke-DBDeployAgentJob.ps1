@@ -144,7 +144,8 @@ function Invoke-DBDeployAgentJob {
     .NOTES
         Author: Tim Cartwright
     #>
-    Param (
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory = $true)]
         [ValidateScript({$_.Count -ge 1})]
         [HashTable]$ServerVariables,

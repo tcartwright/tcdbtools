@@ -27,7 +27,9 @@
     .NOTES
         Author: Tim Cartwright
     #>
-    Param (
+    [OutputType([System.Collections.Generic.List[System.Object]])]
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory=$true)]
         [string[]]$ServerInstances,
         [string]$Database,
@@ -35,7 +37,7 @@
     )
 
     begin {
-        $ret = New-Object System.Collections.ArrayList
+        $ret = New-Object 'System.Collections.Generic.List[System.Object]'
     }
 
     process {

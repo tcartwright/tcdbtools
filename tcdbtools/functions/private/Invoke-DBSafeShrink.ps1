@@ -1,5 +1,5 @@
 ﻿function GetFreeSpace {
-    Param (
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [string]$Database,
         [string]$FileGroupName
@@ -25,7 +25,7 @@
 }
 
 function PerformFileOperation {
-    Param (
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [string]$sql
     )
@@ -56,7 +56,7 @@ function PerformFileOperation {
 }
 
 function MoveIndexes {
-    Param (
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         $db,
         [string]$fromFG,
@@ -119,7 +119,7 @@ function MoveIndexes {
 
 
 function ShrinkFile {
-    Param (
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [string] $fileName,
         [int]$size,
@@ -183,7 +183,7 @@ function ShrinkFile {
 
 
 function AdjustRecoveryModels {
-    Param(
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [string[]]$Databases,
         [System.Collections.HashTable]$recoveryModels,
@@ -221,7 +221,7 @@ function AdjustRecoveryModels {
 }
 
 function StopTLogBackupJob {
-    Param(
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [string]$TLogBackupJobName
     )
@@ -234,14 +234,14 @@ function StopTLogBackupJob {
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
 
     # now, lets wait a bit so that if the job is running we can let it finish up
-    $sql = (GetSQLFileContent -fileName "WaitForTsqlAgentJobToStop.sql"	) -f $TLogBackupJobName
+    $sql = (GetSQLFileContent -fileName "WaitForTsqlAgentJobToStop.sql"    ) -f $TLogBackupJobName
     Write-Verbose $sql
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] WAITING FOR JOB [$TLogBackupJobName] TO STOP"
     Invoke-Sqlcmd @SqlCmdArguments -query $sql
 }
 
 function RemoveTempFileGroupAndFile{
-    Param(
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         [int]$shrinkTimeOut
     )
@@ -256,7 +256,7 @@ function RemoveTempFileGroupAndFile{
 }
 
 function AddTempFileGroupAndFile {
-    Param(
+    param (
         [System.Collections.HashTable]$SqlCmdArguments,
         $OriginalFile,
         $NewFileName,
@@ -275,7 +275,7 @@ function AddTempFileGroupAndFile {
 }
 
 function CreateNewDirectory {
-    Param (
+    param (
         [System.IO.DirectoryInfo]$NewFileDirectory,
         [System.Collections.HashTable]$SqlCmdArguments
     )

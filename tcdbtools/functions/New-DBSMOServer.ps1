@@ -25,6 +25,7 @@
     .NOTES
         Author: Tim Cartwright
     #>
+    [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     [OutputType([Microsoft.SqlServer.Management.Smo.Server])]
     param (

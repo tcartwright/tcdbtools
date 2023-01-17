@@ -56,7 +56,8 @@
         Author: Tim Cartwright
 
     #>
-    Param (
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
@@ -127,6 +128,7 @@
                 $parameters += $params
             }
             $sql = $sql -ireplace "--<<extra_where>>", $where
+            Write-Verbose $sql
             $queryResults = Invoke-DBDataTableQuery -conn $connection -sql $sql -parameters $parameters
 
             <#
@@ -151,6 +153,7 @@
                 )
 
                 $jobName = "$jobPrefix - $counter"
+                Write-Verbose "JOB $jobName SQL: `r`n$sql`r`n`r`n"
 
                 Write-Progress -Activity $activity `
                     -Status “Starting Job $jobName of $total” `

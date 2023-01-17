@@ -35,7 +35,7 @@ $GetObjectNameFunction = {
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", '', Scope="Function", Target="*")]
 $NameExistsFunction = {
-    Param($newName, $renames)
+    param ($newName, $renames)
 
     for ($i = 1; $i -lt 1000; $i++) {
         $suffix = "00$i"

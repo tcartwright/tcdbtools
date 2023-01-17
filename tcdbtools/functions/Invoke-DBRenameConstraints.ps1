@@ -88,7 +88,7 @@
         Using a custom naming function:
 
         $GetObjectName = {
-            Param($obj, [switch]$IncludeSchemaInNames)
+            param ($obj, [switch]$IncludeSchemaInNames)
 
             $ret = ""
             $details = ""
@@ -124,7 +124,7 @@
         Author: Tim Cartwright
     #>
     [CmdletBinding()]
-    Param (
+    param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]

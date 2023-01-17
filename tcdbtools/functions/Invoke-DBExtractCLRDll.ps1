@@ -34,7 +34,7 @@
         Author: Tim Cartwright
     #>
     [CmdletBinding()]
-    Param (
+    param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
