@@ -3,10 +3,10 @@
 **Author** Tim Cartwright
 
 ## Synopsis
-Shrinks a Sql Server mdf database file while also rebuilding the indexes. 
+Shrinks a Sql Server mdf database file while also rebuilding the indexes. Does not cause fragmentation like a normal shrink.
 
 ## Description
-Shrinks a Sql Server mdf database file while also rebuilding the indexes. Can be used to migrate indexes to a new filegroup, or just shrink and move the indexes back to the original filegroup after the shrink is done. Typically runs faster than a normal shrink operation.
+Shrinks a Sql Server mdf database file while also rebuilding the indexes. Can be used to migrate indexes to a new filegroup, or just shrink and move the indexes back to the original filegroup after the shrink is done. Typically runs faster than a normal shrink operation. Does not cause fragmentation like a normal shrink.
 
 If, for whatever reason you stop the function before it completes, it can be restarted. The function will pick back up moving indexes as needed.
 
