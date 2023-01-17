@@ -20,6 +20,15 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\private\Find-DBValue.ps1"
 . "$scriptDir\functions\private\GenFuncs.ps1"
 . "$scriptDir\functions\private\Invoke-DBSqlAgentScripter.ps1"
+. "$scriptDir\functions\private\Find-DBInvalidSettings.ps1"
+. "$scriptDir\functions\private\Test-DBReadOnlyRouting.ps1"
+
+# helper functions
+. "$scriptDir\functions\New-DBScripterObject.ps1"
+. "$scriptDir\functions\New-DBSMOServer.ps1"
+. "$scriptDir\functions\New-DBSqlCmdArguments.ps1"
+. "$scriptDir\functions\New-DBSQLConnection.ps1"
+. "$scriptDir\functions\Invoke-SqlQueries.ps1"
 
 # public functions
 . "$scriptDir\functions\Invoke-DBMoveIndexes.ps1"
@@ -34,13 +43,6 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\Find-DBColumnDataTypeDiscrepancies.ps1"
 . "$scriptDir\functions\Invoke-DBDeployAgentJob.ps1"
 . "$scriptDir\functions\Invoke-DBSqlAgentScripter.ps1"
-
-# helper functions
-. "$scriptDir\functions\New-DBScripterObject.ps1"
-. "$scriptDir\functions\New-DBSMOServer.ps1"
-. "$scriptDir\functions\New-DBSqlCmdArguments.ps1"
-. "$scriptDir\functions\New-DBSQLConnection.ps1"
-. "$scriptDir\functions\Invoke-SqlQueries.ps1"
 
 # . "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
 

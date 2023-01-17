@@ -52,15 +52,8 @@
     begin {
         $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
 
-        $ret = [PSCustomObject] @{
-            ServerInstance = $ServerInstance
-            ServerOptions = $null
-            ServerSettings = $null
-            FileGrowths = $null
-            DatabaseSettings = $null
-            DatabaseObjects = $null
-        }
-
+        $ret = [InvalidSettings]::new()
+        $ret.ServerInstance = $ServerInstance
     }
 
     process {

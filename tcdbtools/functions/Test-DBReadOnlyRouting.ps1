@@ -43,14 +43,10 @@
     process {
         foreach ($ServerInstance in $ServerInstances) {
             try {
-                $serverTest = [PSCustomObject] @{
-                    ListenerName = $ServerInstance
-                    Database = $null
-                    ReadOnlyServer = $null
-                    ReadWriteServer = $null
-                    ReadOnlyIsValid = $false
-                    Reason = $null
-                }
+                $serverTest = [TestReadonlyRoutingResults]::new() 
+                $serverTest.ListenerName = $ServerInstance
+                $serverTest.ReadOnlyIsValid = $false
+
                 $ret.Add($serverTest) | Out-Null
 
                 $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
