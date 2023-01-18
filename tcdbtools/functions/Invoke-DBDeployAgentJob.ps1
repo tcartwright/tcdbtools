@@ -97,7 +97,7 @@ function Invoke-DBDeployAgentJob {
             "server3" = @{}
         }
 
-        Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "example"
+        Invoke-DBDeployAgentJob -GlobalVariables $globalVariables -ServerVariables $serverVariables -AgentScriptFile "example" -Verbose
 
     .EXAMPLE
         An example showing multiple servers with the example job script that also deploy resources to each server. Server3 in
@@ -164,6 +164,7 @@ function Invoke-DBDeployAgentJob {
         $variables = New-Object System.Collections.Generic.Dictionary"[string, string]" ([StringComparer]::CurrentCultureIgnoreCase)
         # this variable is ALWAYS added so that dollar signs can be encoded in the scripts and not interpreted as sqlcmd variables
         # EX, $(ESCAPE_SQUOTE(SRVR) should be written as $(dollar)(ESCAPE_SQUOTE(SRVR) so that it will be translated to the the desired result
+        # it won't hurt anything if the variable is added twice
         $variables.Add("dollar", "$") | Out-Null
 
         foreach ($key in $GlobalVariables.Keys) {

@@ -162,7 +162,8 @@ Invoke-DBDeployAgentJob `
     -GlobalVariables $globalVariables `
     -ServerVariables $serverVariables `
     -AgentScriptFile "example" `
-    -InformationAction Continue
+    -InformationAction Continue `
+    -Verbose
 ```
 
 ### Example
