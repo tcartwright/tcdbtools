@@ -26,6 +26,8 @@ VALUES
     ('NUMERIC_ROUNDABORT'),
     ('XACT_ABORT')
 
+SELECT 'server version' AS [name], @@VERSION AS [value]
+	UNION ALL
 SELECT [name], [value]
 FROM sys.configurations c
     UNION ALL

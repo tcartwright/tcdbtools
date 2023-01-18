@@ -82,7 +82,15 @@
         }
 
         # lets sort the list now that we have all the properties added
-        $list = $list | Sort-Object Name
+        $list = $list | Sort-Object { if ($_.Name -ieq "server version") { -1 } else { $_.Name } }
+
+        # shorten the server versions to just the number
+        $versions = $list | Where-Object { $_.Name -ieq "server version" }
+        foreach ( $srvr in $compareServers ) {
+            $version = $versions."$srvr"
+            $version -imatch "Microsoft\s+SQL\s+Server\s+(\d{4})?\s+"
+            $versions."$srvr" = $matches[1]
+        }
 
         # add the missing settings for older servers that do not support some settings
         foreach ($item in $list) {

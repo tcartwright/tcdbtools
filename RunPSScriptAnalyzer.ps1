@@ -1,7 +1,6 @@
 ﻿#requires -Module PSScriptAnalyzer
 Clear-Host
 
-Remove-Module PSScriptAnalyzer -ErrorAction SilentlyContinue
 Import-Module PSScriptAnalyzer
 
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent

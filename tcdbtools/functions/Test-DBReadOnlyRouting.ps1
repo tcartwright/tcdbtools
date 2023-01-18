@@ -43,7 +43,7 @@
     process {
         foreach ($ServerInstance in $ServerInstances) {
             try {
-                $serverTest = [TestReadonlyRoutingResults]::new() 
+                $serverTest = [TestReadonlyRoutingResults]::new()
                 $serverTest.ListenerName = $ServerInstance
                 $serverTest.ReadOnlyIsValid = $false
 

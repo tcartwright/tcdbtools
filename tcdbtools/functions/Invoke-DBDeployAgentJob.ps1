@@ -145,6 +145,7 @@ function Invoke-DBDeployAgentJob {
         Author: Tim Cartwright
     #>
     [CmdletBinding()]
+    [Alias("Invoke-DBDeploySqlAgentJob")]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateScript({$_.Count -ge 1})]
