@@ -88,8 +88,9 @@
         $versions = $list | Where-Object { $_.Name -ieq "server version" }
         foreach ( $srvr in $compareServers ) {
             $version = $versions."$srvr"
-            $version -imatch "Microsoft\s+SQL\s+Server\s+(\d{4})?\s+"
-            $versions."$srvr" = $matches[1]
+            if (($version -imatch "Microsoft\s+SQL\s+Server\s+(?<version>\d{4})?\s+")) {
+                $versions."$srvr" = $matches["version"]
+            }
         }
 
         # add the missing settings for older servers that do not support some settings
