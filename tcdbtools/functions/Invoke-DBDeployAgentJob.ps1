@@ -184,7 +184,7 @@ function Invoke-DBDeployAgentJob {
             $SqlCmdArguments.ServerInstance = $serverName
 
             # strip off the instance name if one is there
-            $hostName = ($serverName -split "\\", 2) | Select-Object -First 1
+            $hostName = ($serverName -split "\\|,", 2) | Select-Object -First 1
             foreach ($key in $Resources.Keys) {
                 $resource = $key
                 $destination = ($Resources[$key] -ireplace "<<server_name>>", $hostName)
