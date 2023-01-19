@@ -136,7 +136,7 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
 
 
 ### Example
-An example showing multiple servers with the example job script.
+An example showing multiple servers with the example job script. An example showing multiple servers with the example job script. When passing "example" for the script file, this file will be used [SqlAgentJobExample.sql](/tcdbtools/sql/SqlAgentJobExample.sql)
 
 ```powershell
 # global variables will be overwritten by server variables with the same name
