@@ -8,9 +8,9 @@ This function is designed to deploy SQL Agent jobs using variables that can cust
 This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server.
 
 ## Notes
-To signify custom variables in your script you will use the SqlCmd format of $(variable_name). Each one of these tokens will be replaced by variables that are provided in either the ServerVariables or the GlobalVariables.
+To signify custom variables in your script you will use the SqlCmd format of $(variable_name). Each one of these tokens will be replaced by variables that are provided in either the ServerVariables or the GlobalVariables. Variables can also be used anywhere within the script, not just in steps.
 
-If you need to use an $ in the sql that is NOT a token then you should replace the $ with $(dollar) in the sql file.
+If you need to use an $ in the sql that is NOT a token then you should replace the $ with $(dollar) in the SQL file.
 
 Example:
     $(dollar)(ESCAPE_SQUOTE(SRVR)
@@ -38,7 +38,10 @@ More info on [SQL Agent Job tokens](https://learn.microsoft.com/en-us/sql/ssms/a
         
         The server variables are a nested HashTable, where the key of the top 
         level HashTable is the server name, and the  keys for the nested 
-        HashTable are the variable keys.
+        HashTable are the variable keys. If you need to use a custom port, 
+        then you can comma delimit the server name and port. Like so:
+        
+        server3,2866
         
         NOTE: A variable must be supplied for all $(tokens) in the script. On 
         the flip side, a variable can be used that does not have an associated 
@@ -157,13 +160,51 @@ $serverVariables = @{
     "server3" = @{}
 } 
 
-# When passing "example" for the script file, this file will be used [SqlAgentJobExample.sql](/sql/SqlAgentJobExample.sql)
+# When passing "example" for the script file, this file will be used SqlAgentJobExample.sql
 Invoke-DBDeployAgentJob `
     -GlobalVariables $globalVariables `
     -ServerVariables $serverVariables `
     -AgentScriptFile "example" `
     -InformationAction Continue `
     -Verbose
+```
+
+
+#### Output
+
+After the job is deployed to the servers, the sql step for each job will look like so:
+
+##### server1\instance1
+
+```sql
+PRINT 'SERVERNAME = ' + @@SERVERNAME
+-- This line shows an example where a dollar sign is desired in the final results        
+PRINT 'escape = ''$(ESCAPE_SQUOTE(SRVR)'''
+-- These next two lines are variables that will get replaced during the deployment process with the values provided
+PRINT 'key1 = ''server1_value1'''
+PRINT 'key2 = ''server1_value2'''
+```
+
+##### server2\instance1
+
+```sql
+PRINT 'SERVERNAME = ' + @@SERVERNAME
+-- This line shows an example where a dollar sign is desired in the final results        
+PRINT 'escape = ''$(ESCAPE_SQUOTE(SRVR)'''
+-- These next two lines are variables that will get replaced during the deployment process with the values provided
+PRINT 'key1 = ''server2_value1'''
+PRINT 'key2 = ''server3_value2'''
+```
+
+##### server3
+
+```sql
+PRINT 'SERVERNAME = ' + @@SERVERNAME
+-- This line shows an example where a dollar sign is desired in the final results        
+PRINT 'escape = ''$(ESCAPE_SQUOTE(SRVR)'''
+-- These next two lines are variables that will get replaced during the deployment process with the values provided
+PRINT 'key1 = ''globals value 1'''
+PRINT 'key2 = ''globals value 2'''
 ```
 
 ### Example
