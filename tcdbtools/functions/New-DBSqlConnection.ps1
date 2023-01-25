@@ -79,7 +79,10 @@
 
         $connection = New-Object System.Data.SqlClient.SqlConnection($builder.ConnectionString);
         if ($Credentials) {
-            $connection.Credential = $Credentials
+            if (-not $Credentials.Password.IsReadOnly()) {
+                $Credentials.Password.MakeReadOnly()
+            }
+            $connection.Credential = New-Object System.Data.SqlClient.SqlCredential($Credentials.username, $Credentials.password)
         }
     }
 
