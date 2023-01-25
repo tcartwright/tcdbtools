@@ -193,3 +193,10 @@
 * added example outputs to functions that output object arrays* updated help with output
 * Merge branch 'main' of https://github.com/tcartwright/tcdbtools
 * Update Invoke-DBDeployAgentJob.md
+1.0.38
+* exposed function Get-AllUserDatabases
+* updated functions to use new Get-AllUserDatabases
+* added ALL_USER_DATABASES to Invoke-DBScriptObjects.ps1
+* extracted ALL_USER_DATABASES functionality to a new function
+* updated help for docs/Invoke-DBScriptObjects.md
+* added RELEASE_NOTES
