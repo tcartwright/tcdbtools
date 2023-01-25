@@ -58,10 +58,7 @@
 
     process {
         # if they passed in ALL_USER_DATABASES get all database names
-        if ($Databases[0] -ieq "ALL_USER_DATABASES") {
-            $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
-            $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows | Select-Object -ExpandProperty name
-        }
+        $Databases = GetAllUserDatabases -Databases $Databases
 
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database

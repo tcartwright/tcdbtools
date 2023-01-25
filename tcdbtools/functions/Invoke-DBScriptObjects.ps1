@@ -10,7 +10,7 @@
         Specifies the database server hostname.
 
     .PARAMETER Databases
-        Specifies the name of the databases you want to script. Each database will be scripted to its own directory.
+        Specifies the name of the databases you want to script. Each database will be scripted to its own directory. If the value ALL_USER_DATABASES is passed in then, the renames will be applied to all user databases.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
@@ -105,6 +105,9 @@
     }
 
     process {
+        # if they passed in ALL_USER_DATABASES get all database names
+        $Databases = GetAllUserDatabases -Databases $Databases
+
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]

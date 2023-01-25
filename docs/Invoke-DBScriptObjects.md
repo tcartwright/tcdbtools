@@ -53,7 +53,8 @@ Editor: Tim Cartwright:
 
     -Databases <String[]>
         Specifies the name of the databases you want to script. Each database 
-        will be scripted to its own directory.
+        will be scripted to its own directory. If the value ALL_USER_DATABASES 
+        is passed in then, the renames will be applied to all user databases.
 
         Required?                    true
         Position?                    3
@@ -120,6 +121,19 @@ Invoke-DBScriptObjects `
     -Databases "DatabaseName1", "DatabaseName2" `
     -SavePath "C:\db_scripts" `
     -Scripter $scripter `
+    -InformationAction Continue
+```
+
+### Example 
+Scripting all user databases:
+        
+```powershell
+$scripter = New-ScripterObject -ServerInstance "ServerName"
+$Scripter.Options.ExtendedProperties = $false
+Invoke-DBScriptObjects `
+    -ServerInstance "ServerName" `
+    -Databases "ALL_USER_DATABASES" `
+    -SavePath "C:\db_scripts" 
     -InformationAction Continue
 ```
 

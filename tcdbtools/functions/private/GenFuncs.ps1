@@ -177,3 +177,14 @@ function DataTableToCustomObject {
     # select the objects using the column name array so the properties will output in the same order
     return $Objects | Select-Object -Property $DataTable.Columns.ColumnName
 }
+
+function GetAllUserDatabases {
+    param ([string[]] $Databases) 
+
+    if ($Databases[0] -ieq "ALL_USER_DATABASES") {
+        $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
+        $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows | Select-Object -ExpandProperty name
+        Write-Information "ALL_USER_DATABASES specified. Databases found: `r`n$Databases"
+    }
+    return $Databases
+}
