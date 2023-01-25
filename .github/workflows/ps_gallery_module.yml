@@ -41,11 +41,16 @@ jobs:
         if (Test-Path "${{ github.workspace }}\${{ env.MY_REPO }}\RELEASE_NOTES") {
             # ignore this if we dont have release notes
             $releaseNotes = Get-Content "${{ github.workspace }}\${{ env.MY_REPO }}\RELEASE_NOTES" -raw
-            if ($releaseNotes -notmatch ([Regex]::Escape($inputsVersion))) {
+            $regexVersion = [Regex]::Escape($inputsVersion)
+            if ($releaseNotes -notmatch ($regexVersion)) {
                 throw "You must add release notes for the version ($inputsVersion) being pushed. Add the release notes to here: https://github.com/${{github.repository}}/blob/main/${{ env.MY_REPO }}/RELEASE_NOTES"
                 exit 1
             }
-            $manifestContents = [Regex]::Replace($manifestContents, '(^.*?ReleaseNotes\s*=\s*@'')[\w\W]*?(''@.*$)', "`${1}`r`n$releaseNotes`r`n`${2}", $regexoptions)
+            # get the last part of the release notes that only deals with this version
+            $releaseNotes -imatch "($regexVersion[\w\W]*)"
+            $releaseNotesTail = $matches[0]
+            # for this to work, your release notes in your psd1 must initially look like this: ReleaseNotes = @''@, then on build it will be replaced with the versions notes that you are building
+            $manifestContents = [Regex]::Replace($manifestContents, '(^.*?ReleaseNotes\s*=\s*@'')[\w\W]*?(''@.*$)', "`${1}`r`n$releaseNotesTail`r`n`${2}", $regexoptions)
         }
         #extract the existing version out of the psd1, into separate parts
         $matches = [Regex]::Matches($manifestContents, '(ModuleVersion\s*=\s*'')(.*?)(''.*$)', $regexoptions)
