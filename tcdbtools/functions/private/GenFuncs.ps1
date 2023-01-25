@@ -164,8 +164,12 @@ function DataTableToCustomObject {
     [OutputType([object])]
     param (
         [Parameter(Mandatory = $True)]
+        [AllowNull()]
         [System.Data.DataTable]$DataTable
     )
+    if (-not $DataTable) {
+        return $null
+    }
     $Objects = @()
     foreach ($row in $DataTable.Rows) {
         $Properties = @{}

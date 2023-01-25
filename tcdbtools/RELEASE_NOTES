@@ -200,3 +200,5 @@
 * extracted ALL_USER_DATABASES functionality to a new function
 * updated help for docs/Invoke-DBScriptObjects.md
 * added RELEASE_NOTES
+1.0.39
+* added AllowNull for function DataTableToCustomObject
