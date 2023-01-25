@@ -202,3 +202,14 @@
 * added RELEASE_NOTES
 1.0.39
 * added AllowNull for function DataTableToCustomObject
+1.0.40
+* Update tcdbtools.psd1
+* Update that will let the release notes auto add to the psd1 on build
+* Update Invoke-DBDeployAgentJob.md
+* updated help in Invoke-DBDeployAgentJob.md
+* added aliases for some of the parameters in the invoke ado functions
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+* Update Invoke-DBDeployAgentJob.md
+
+
+
