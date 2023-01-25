@@ -84,7 +84,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
-        git diff-index --quiet HEAD || git commit -m "Updating changes made by build"   
+        git diff-index --quiet HEAD || git commit -m "Updating changes made by build for version: ${{ github.event.inputs.ModuleVersion }}"   
     
     - name: Push changes  
       uses: ad-m/github-push-action@master
