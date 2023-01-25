@@ -193,7 +193,7 @@ PRINT 'SERVERNAME = ' + @@SERVERNAME
 PRINT 'escape = ''$(ESCAPE_SQUOTE(SRVR)'''
 -- These next two lines are variables that will get replaced during the deployment process with the values provided
 PRINT 'key1 = ''server2_value1'''
-PRINT 'key2 = ''server3_value2'''
+PRINT 'key2 = ''server2_value2'''
 ```
 
 ##### server3
