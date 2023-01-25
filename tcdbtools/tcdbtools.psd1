@@ -137,7 +137,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = @''@
 
     } # End of PSData hashtable
 
