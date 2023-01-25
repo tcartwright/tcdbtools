@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.39'
+ModuleVersion = '1.0.40'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -137,7 +137,20 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = @''@
+        ReleaseNotes = @'
+1.0.40
+* Update tcdbtools.psd1
+* Update that will let the release notes auto add to the psd1 on build
+* Update Invoke-DBDeployAgentJob.md
+* updated help in Invoke-DBDeployAgentJob.md
+* added aliases for some of the parameters in the invoke ado functions
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+* Update Invoke-DBDeployAgentJob.md
+
+
+
+
+'@
 
     } # End of PSData hashtable
 
