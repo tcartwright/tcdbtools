@@ -58,7 +58,7 @@
 
     process {
         # if they passed in ALL_USER_DATABASES get all database names
-        $Databases = GetAllUserDatabases -Databases $Databases
+        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
 
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database

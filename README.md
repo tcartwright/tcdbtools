@@ -2,9 +2,12 @@
 
 ## Table of Contents
 
-* [Description](#description) 
-* [Installation](#installation)
-* [Functions](#functions)
+- [TCDbTools](#tcdbtools)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Installation](#installation)
+  - [Functions](#functions)
+  - [Helper Functions](#helper-functions)
 
 ##  Description
 
@@ -46,6 +49,7 @@ Install-Module tcdbtools
 * Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.
 * Invoke-DBDataSetQuery : Executes a Transact-SQL statement against the connection and returns a DataSet containing a DataTable for each result set returned.
 * New-DBSqlParameter : Creates a new instance of a SqlParameter object.
+* Get-AllUserDatabases : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
 * [Get-DBInClauseParams](/docs/Get-DBInClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
 * [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 
