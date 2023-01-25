@@ -71,9 +71,12 @@ Export-ModuleMember -Function New-DBSqlParameter
 Export-ModuleMember -Function Get-DBInClauseParams
 Export-ModuleMember -Function Get-DBInClauseString
 
-Export-ModuleMember -Function Write-InformationColorized
 Export-ModuleMember -Function New-DBScripterObject
 Export-ModuleMember -Function New-DBSqlCmdArguments
 Export-ModuleMember -Function New-DBSMOServer
 Export-ModuleMember -Function New-DBSQLConnection
 #Export-ModuleMember -Function Invoke-Telnet
+
+# these functions were not really db related, but I needed to make use of them, so I am exposing them
+Export-ModuleMember -Function Write-InformationColorized
+Export-ModuleMember -Function ConvertTo-Markdown

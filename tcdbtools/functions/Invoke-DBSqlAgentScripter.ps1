@@ -28,6 +28,7 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateCount(1, 9999)]
         [string[]]$ServerInstances,
         [pscredential]$Credentials,
         [System.IO.DirectoryInfo] $OutputPath,

@@ -190,5 +190,14 @@ This script automates those steps so you don't have to.
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
- 
+
+### Example Output
+
+| Database | FileGroupName | FileName | SizeBefore | UsedBefore | FreeBefore | SizeAfter | UsedAfter | FreeAfter |
+| -------- | ------------- | -------- | ---------- | ---------- | ---------- | --------- | --------- | --------- |
+| SampleDB | PRIMARY | SampleDB_Data | 10765 | 764 | 10001 | 818 | 764 | 54 |
+
+<br/>
+<br/>
+
 [Back](/README.md)

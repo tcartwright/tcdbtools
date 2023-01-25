@@ -46,11 +46,12 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
+        [ValidateCount(1, 9999)]
         [string[]]$Databases,
         [pscredential]$Credentials,
-        [Parameter(Mandatory=$true)]
         [string]$SourceFileGroupName = "PRIMARY",
         [Parameter(Mandatory=$true)]
         [string]$TargetFileGroupName,

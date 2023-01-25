@@ -54,4 +54,16 @@ Test-DBReadOnlyRouting `
     -InformationAction Continue | Format-Table
 ```
 
+### Example Output
+
+| ListenerName | Database | ReadOnlyServer | ReadWriteServer | ReadOnlyIsValid | Reason |
+| ------------ | -------- | -------------- | --------------- | --------------- | ------ |
+| SERVER1 | SampleDB | SERVER1-1 | SERVER1-2 | False | SERVERS ARE EQUAL |
+| SERVER2 |  |  |  | False | EXCEPTION: Login failed. The login is from an untrusted domain and cannot be used with Integrated authentication. |
+| SERVER3 |  |  |  | False | NO SYNCHRONIZED DBS |
+| SERVER4 |  |  |  | False | NO SYNCHRONIZED DBS |
+
+<br/>
+<br/>
+  
 [Back](/README.md)

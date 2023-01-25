@@ -1,8 +1,9 @@
-class TestReadonlyRoutingResults {
-    [String]$ListenerName
-    [String]$Database
-    [String]$ReadOnlyServer
-    [String]$ReadWriteServer
-    [bool]$ReadOnlyIsValid
-    [String]$Reason
+
+class InvalidSettings {
+    [String]$ServerInstance
+    [object[]]$ServerOptions
+    [object[]]$ServerSettings
+    [object[]]$FileGrowths
+    [object[]]$DatabaseSettings
+    [object[]]$DatabaseObjects
 }

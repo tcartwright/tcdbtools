@@ -43,6 +43,7 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [pscredential]$Credentials,
         [string]$CollationName = "SQL_Latin1_General_CP1_CI_AS",
@@ -69,12 +70,12 @@
             )
 
             $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters -timeout $Timeout
-
-            $ret.ServerOptions = $results.Tables[1]
-            $ret.ServerSettings = $results.Tables[3]
-            $ret.FileGrowths = $results.Tables[5]
-            $ret.DatabaseSettings = $results.Tables[7]
-            $ret.DatabaseObjects = $results.Tables[9]
+                        
+            $ret.ServerOptions = DataTableToCustomObject -DataTable $results.Tables[1]
+            $ret.ServerSettings = DataTableToCustomObject -DataTable $results.Tables[3]
+            $ret.FileGrowths = DataTableToCustomObject -DataTable $results.Tables[5]
+            $ret.DatabaseSettings = DataTableToCustomObject -DataTable $results.Tables[7]
+            $ret.DatabaseObjects = DataTableToCustomObject -DataTable $results.Tables[9]
         } finally {
             if ($connection) { $connection.Dispose() }
         }

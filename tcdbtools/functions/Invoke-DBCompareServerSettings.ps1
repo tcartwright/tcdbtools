@@ -36,7 +36,7 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [ValidateCount(2,999)]
+        [ValidateCount(2, 9999)]
         [string[]]$ServerInstances,
         [pscredential]$Credentials,
         [switch]$IgnoreVersionDifferences

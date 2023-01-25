@@ -31,6 +31,7 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateCount(1, 9999)]
         [string[]]$ServerInstances,
         [string]$Database,
         [pscredential]$Credentials

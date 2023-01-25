@@ -46,7 +46,7 @@ When there are conflicts a number will be suffixed on to the end of the name unt
         Accept wildcard characters?  false
 
     -Databases <String[]>
-        The database.
+        The database. If the value ALL_USER_DATABASES is passed in then, the renames will be applied to all user databases.
 
         Required?                    true
         Position?                    2
@@ -165,12 +165,21 @@ When there are conflicts a number will be suffixed on to the end of the name unt
 ## Examples
 
 ### Example
+Rename all the constraints in all user databases.
+    
+```powershell
+Invoke-DBRenameConstraints `
+    -ServerInstance "ServerName" `
+    -Databases "ALL_USER_DATABASES"
+```
+
+### Example
 Rename all the constraints in the AdventureWorks2012 database
     
 ```powershell
 Invoke-DBRenameConstraints `
     -ServerInstance "ServerName" `
-    -Database "AdventureWorks2012"
+    -Databases "AdventureWorks2012"
 ```
 
 ### Example
@@ -211,11 +220,31 @@ $GetObjectName = {
     return $ret
 }
 
+# IF you provide a custom name function, you might also want to add a override for the duplicate name exists function
+$NameExistsFunction = {
+    param ($newName, $renames)
+
+    for ($i = 1; $i -lt 1000; $i++) {
+        $suffix = "00$i"
+        $suffix = $suffix.Substring($suffix.Length - 3)
+        $tmpName = "$($newName)_$suffix"
+        if (-not ($renames.Keys -icontains $tmpName)) {
+            $newName = $tmpName
+            break;
+        }
+    }
+    return $newName
+}
+
 Invoke-DBRenameConstraints `
     -ServerInstance "ServerName" `
     -Databases "AdventureWorks2012" `
     -InformationAction Continue `
-    -CustomGetObjectName $GetObjectName | Format-Table
+    -CustomGetObjectName $GetObjectName `
+    -CustomNameExists $NameExistsFunction | Format-Table
 ```
 
+<br/>
+<br/>
+  
 [Back](/README.md)

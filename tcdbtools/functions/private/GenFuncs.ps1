@@ -109,3 +109,71 @@ function ReplaceInvalidPathChars($str) {
     $str = $str -replace '\[|\]', ''
     return $str
 }
+
+function ConvertTo-Markdown {
+    [CmdletBinding()]
+    [OutputType([string])]
+    Param (
+        [Parameter(
+            Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true
+        )]
+        [PSObject[]]$InputObject
+    )
+
+    begin {
+        $sbMain = [System.Text.StringBuilder]::new()
+        $sbDivider = [System.Text.StringBuilder]::new()
+        $sbValues = [System.Text.StringBuilder]::new()
+    }
+
+    process {
+        # test this in case the object was piped in, as we only want to do this once
+        if ($sbMain.Length -eq 0) {
+            ($InputObject | Select-Object -First 1).PSObject.Properties | ForEach-Object { 
+                $sbMain.Append("| $($_.Name) ") | Out-Null           
+                $sbDivider.Append("| $("-" * $_.Name.Length) ") | Out-Null
+            }
+
+            $sbMain.AppendLine("|") | Out-Null
+            $sbDivider.Append("|") | Out-Null
+
+            $sbMain.AppendLine($sbDivider.ToString()) | Out-Null
+        }
+
+        $InputObject | ForEach-Object { 
+            $_.PSObject.Properties | ForEach-Object {
+                $sbValues.Append("| $($_.Value) ") | Out-Null
+            }
+            $sbValues.AppendLine("|") | Out-Null
+        }
+    }
+
+    end {
+        $sbMain.AppendLine($sbValues.ToString()) | Out-Null
+        return $sbMain.ToString()
+    }
+}
+
+function DataTableToCustomObject {
+    <#
+        .LINK https://www.stefanroth.net/2018/04/11/powershell-create-clean-customobjects-from-datatable-object/
+    #>
+    [CmdletBinding()]
+    [OutputType([object])]
+    param (
+        [Parameter(Mandatory = $True)]
+        [System.Data.DataTable]$DataTable
+    )
+    $Objects = @()
+    foreach ($row in $DataTable.Rows) {
+        $Properties = @{}
+        foreach ($name in $DataTable.Columns.ColumnName) {
+            $Properties.Add($name, $row[$name])
+        }
+        $Objects += New-Object -TypeName PSObject -Property $Properties  
+    }
+    # select the objects using the column name array so the properties will output in the same order
+    return $Objects | Select-Object -Property $DataTable.Columns.ColumnName
+}

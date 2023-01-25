@@ -88,4 +88,7 @@ Creates a SqlConnection
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+<br/>
+<br/>
+  
 [Back](/README.md)

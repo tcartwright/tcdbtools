@@ -66,4 +66,42 @@ Find-DBColumnDataTypeDiscrepancies `
     -InformationAction Continue
 ```
 
+### Example 
+Finds all column data type discrepancies across all user databases.
+    
+```powershell
+Find-DBColumnDataTypeDiscrepancies `
+    -ServerInstance "ServerName" `
+    -Databases "ALL_USER_DATABASES" `
+    -Timeout 60 `
+    -InformationAction Continue
+```
+
+### Example Output
+This is example output from running the command.
+
+| db_name | table_name | column_name | type_name_desc |
+| ------- | ---------- | ----------- | -------------- |
+| SampleDB | dbo.Table1 | area | DECIMAL (19,2) |
+| SampleDB | dbo.Table2 | area | INT |
+| SampleDB | dbo.Table1 | actionType | VARCHAR (1) |
+| SampleDB | dbo.Table2 | actionType | VARCHAR (1) |
+| SampleDB | dbo.Table3 | actionType | VARCHAR (1) |
+| SampleDB | dbo.Table4 | actionType | VARCHAR (1) |
+| SampleDB | dbo.Table5 | actionType | VARCHAR (1) |
+| SampleDB | dbo.Table6 | actionType | VARCHAR (25) |
+| SampleDB | dbo.Table7 | actionType | VARCHAR (5) |
+| SampleDB | dbo.Table1 | addDate | DATETIME |
+| SampleDB | dbo.Table2 | addDate | DATETIME |
+| SampleDB | dbo.Table3 | addDate | DATETIME |
+| SampleDB | dbo.Table4 | addDate | DATETIME2 (7) |
+| SampleDB | dbo.Table5 | addDate | SMALLDATETIME |
+| SampleDB | dbo.Table6 | addDate | SMALLDATETIME |
+| SampleDB | dbo.Table7 | addDate | SMALLDATETIME |
+
+  
+  
+<br/>
+<br/>
+  
 [Back](/README.md)

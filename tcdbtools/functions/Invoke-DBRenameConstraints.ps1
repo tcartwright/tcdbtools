@@ -20,7 +20,7 @@
         The sql server instance to connect to.
 
     .PARAMETER Databases
-        The database.
+        The databases operate on. If the value ALL_USER_DATABASES is passed in then, the renames will be applied to all user databases.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
@@ -81,6 +81,16 @@
 
         The parameter $renames will be a collection of names that have already been assigned to the table. The $newName parameter will be the name that was created.
 
+    .PARAMETER Force
+        If force is supplied, then all constraints will be renamed, regardless if they match the naming convention already or not.
+
+    .EXAMPLE 
+        Rename all constraints in all user databases.
+    
+        Invoke-DBRenameConstraints `
+            -ServerInstance "ServerName" `
+            -Databases "ALL_USER_DATABASES"
+
     .EXAMPLE
         PS> Invoke-DBRenameConstraints -ServerInstance "servername" -Database "AdventureWorks2012"
 
@@ -115,7 +125,27 @@
             return $ret
         }
 
-        Invoke-DBRenameConstraints -ServerInstance "server_name" -Databases "db1", "db2" -InformationAction Continue -CustomGetObjectName $GetObjectName | Format-Table
+        # IF you provide a custom name function, you might also want to add a duplicate name exists function
+        $NameExistsFunction = {
+            param ($newName, $renames)
+
+            for ($i = 1; $i -lt 1000; $i++) {
+                $suffix = "00$i"
+                $suffix = $suffix.Substring($suffix.Length - 3)
+                $tmpName = "$($newName)_$suffix"
+                if (-not ($renames -icontains $tmpName)) {
+                    $newName = $tmpName
+                    break;
+                }
+            }
+            return $newName
+        }
+
+        Invoke-DBRenameConstraints -ServerInstance "server_name" `
+            -Databases "db1", "db2" `
+            -InformationAction Continue `
+            -CustomGetObjectName $GetObjectName `
+            -CustomNameExists $NameExistsFunction | Format-Table
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -126,8 +156,10 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
+        [ValidateCount(1, 9999)]
         [string[]]$Databases,
         [pscredential]$Credentials,
         [switch]$IncludeSchemaInNames,
@@ -162,6 +194,12 @@
     }
 
     process {
+        # if they passed in ALL_USER_DATABASES get all database names
+        if ($Databases[0] -ieq "ALL_USER_DATABASES") {
+            $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
+            $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows | Select-Object -ExpandProperty name
+        }
+
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $results = Invoke-Sqlcmd @SqlCmdArguments -Query $query -OutputAs DataRows
@@ -175,10 +213,10 @@
                 foreach ($grp in $item.Group) {
                     $newName = $getName.Invoke($grp, $IncludeSchemaInNames.IsPresent) | Select-Object -Last 1
 
-                    if ($renames.ContainsKey($newName)) {
+                    if ($renames.Keys -icontains $newName) {
                         $newName = $nameExists.Invoke($newName, $renames) | Select-Object -Last 1
                         # even after trying to find a new custom name it still exists, then we have to bail... :|
-                        if ($renames.ContainsKey($newName)) {
+                        if ($renames.Keys -icontains $newName) {
                             throw "The $newName name returned by the custom name exists function is not unique and already exists."
                         }
                     }

@@ -69,8 +69,10 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 1)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory = $true, Position = 2)]
+        [ValidateCount(1, 9999)]
         [string[]]$Databases,
         [pscredential]$Credentials,
         [Microsoft.SqlServer.Management.Smo.Scripter]$Scripter,

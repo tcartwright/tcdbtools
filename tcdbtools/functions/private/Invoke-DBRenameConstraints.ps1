@@ -41,7 +41,7 @@ $NameExistsFunction = {
         $suffix = "00$i"
         $suffix = $suffix.Substring($suffix.Length - 3)
         $tmpName = "$($newName)_$suffix"
-        if (-not $renames.ContainsKey($tmpName)) {
+        if (-not ($renames.Keys -icontains $tmpName)) {
             $newName = $tmpName
             break;
         }

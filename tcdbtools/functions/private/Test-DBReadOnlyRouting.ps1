@@ -1,8 +1,9 @@
-﻿class InvalidSettings {
-    [String]$ServerInstance
-    [System.Data.DataTable]$ServerOptions
-    [System.Data.DataTable]$ServerSettings
-    [System.Data.DataTable]$FileGrowths
-    [System.Data.DataTable]$DatabaseSettings
-    [System.Data.DataTable]$DatabaseObjects
+﻿
+class TestReadonlyRoutingResults {
+    [String]$ListenerName
+    [String]$Database
+    [String]$ReadOnlyServer
+    [String]$ReadWriteServer
+    [bool]$ReadOnlyIsValid
+    [String]$Reason
 }

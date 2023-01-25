@@ -167,4 +167,70 @@ $result.DatabaseSettings | Format-Table
 $result.DatabaseObjects  | Format-Table
 ```
 
+### Example Output
+
+```powershell
+$result.ServerOptions | Format-Table
+```
+
+| setting_name | setting_value |
+| ------------ | ------------- |
+| DISABLE_DEF_CNST_CHK |  |
+| IMPLICIT_TRANSACTIONS |  |
+| CURSOR_CLOSE_ON_COMMIT |  |
+| ANSI_WARNINGS |  |
+| ANSI_PADDING |  |
+| ANSI_NULLS |  |
+| ARITHABORT | X |
+| ARITHIGNORE |  |
+| QUOTED_IDENTIFIER |  |
+| NOCOUNT |  |
+| ANSI_NULL_DFLT_ON |  |
+| ANSI_NULL_DFLT_OFF |  |
+| CONCAT_NULL_YIELDS_NULL |  |
+| NUMERIC_ROUNDABORT |  |
+| XACT_ABORT |  |
+
+```powershell
+$result.ServerSettings | Format-Table
+```
+
+| affinity_mask | affinity_IO_mask | affinity64_mask | affinity64_IO_mask | cost_of_parallelism | cross_db_owner_chaining | default_trace | disallow_results_from_triggers | fill_factor | locks | max_dop | max_server_memory_MB | ole_automation | user_connections | user_options | xp_cmdshell |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+|  |  |  |  |  |  |  | X |  |  |  |  |  |  |  |  |
+
+```powershell
+$result.FileGrowths | Format-Table
+```
+
+| database_name | file_name | growth_kb | growth_mb | is_percent_growth |
+| ------------- | --------- | --------- | --------- | ----------------- |
+| sample_Log | sample_Data | 10 % | True |
+| sample_Log | sample_Log | 8 MB | False |
+
+```powershell
+$result.DatabaseSettings | Format-Table
+```
+
+| database_name | owner_is_sa | collation_name | is_auto_close_on | page_verify_option | is_auto_create_stats_on | is_quoted_identifier_on | is_numeric_roundabort_on | is_recursive_triggers_on | is_trustworthy_on | is_auto_shrink_on |
+| ------------- | ----------- | -------------- | ---------------- | ------------------ | ----------------------- | ----------------------- | ------------------------ | ------------------------ | ----------------- | ----------------- |
+| SampleDB1 | X |  |  |  |  | X |  |  |  |  |
+| model |  |  |  |  |  | X |  |  |  |  |
+| SampleDB2 | X |  |  | X |  |  |  |  |  |  |
+
+```powershell
+$result.DatabaseObjects | Format-Table
+```
+
+| database_name | schema_name | object_name | object_type | column_name | uses_quoted_identifier | uses_ansi_nulls | is_ansi_padded | bad_data_type |
+| ------------- | ----------- | ----------- | ----------- | ----------- | ---------------------- | --------------- | -------------- | ------------- |
+| SampleDB | dbo | Table1 | COLUMN | addDate |   |   |   | X |
+| SampleDB | dbo | Table1 | COLUMN | endDate |   |   |   | X |
+| SampleDB | dbo | Table1 | TABLE |  |   | X |   |   |
+| SampleDB | dbo | vwTable1 | VIEW |  | X |   |   |   |
+
+<br/>
+<br/>
+  
 [Back](/README.md)
+

@@ -36,8 +36,10 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$Database,
         [pscredential]$Credentials,
         [System.IO.DirectoryInfo]$SavePath

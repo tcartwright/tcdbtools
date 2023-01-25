@@ -130,16 +130,14 @@ END
 CREATE TABLE #file_growths (
     [db_name] sysname,
     [file_name] sysname,
-    growth_kb DECIMAL(18,2),
-    growth_mb DECIMAL(18,2),
-    is_percent_growth BIT
+    [growth] varchar(100),
+    [is_percent_growth] BIT
 )
 
 INSERT INTO [#file_growths] (
     [db_name],
     [file_name],
-    [growth_kb],
-    [growth_mb],
+    [growth],
     [is_percent_growth]
 )
 EXEC sys.sp_MSforeachdb N' 
@@ -147,28 +145,26 @@ EXEC sys.sp_MSforeachdb N'
     IF DB_ID() <= 4 RETURN
     SELECT [db_name] = DB_NAME(), 
         [file_name] = df.name,
-        fn.growth_kb, 
-        fn.growth_mb, 
+        fn.growth,
         df.is_percent_growth
     FROM sys.database_files df
     CROSS APPLY (
-        SELECT [growth_kb] = df.growth * 8.0,
-            [growth_mb] = df.growth / 128.0
+        SELECT [growth_mb] = df.growth / 128.0,
+			[growth] = CASE WHEN
+				df.is_percent_growth = 0 THEN CONCAT(CAST(df.growth / 128 AS INT), '' MB'')
+				ELSE CONCAT(df.growth, '' %'')
+			END
     ) fn
     WHERE df.is_percent_growth = 1
         OR (
-            df.growth > 0
-            AND (
-                fn.growth_mb < 64 OR fn.growth_mb > 2000
-            )
+            fn.growth_mb < 64 OR fn.growth_mb > 3000
         )'
 
 -- find databases that have abnormal file growths. 
 SELECT 
     [fg].[db_name] AS [database_name],
     [fg].[file_name],
-    [fg].[growth_kb],
-    [fg].[growth_mb],
+    [fg].[growth],
     [fg].[is_percent_growth] 
 FROM #file_growths fg 
 ORDER BY fg.db_name, 

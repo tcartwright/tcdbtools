@@ -141,4 +141,26 @@ Find-DBValue `
     -InformationAction Continue | Format-Table
 ```
 
+### Example Output
+
+| db_name | schema_name | table_name | column_name | where_clause | value |
+| ------- | ----------- | ---------- | ----------- | ------------ | ----- |
+| SampleDB | dbo | Driver | first_name |  driverID='100' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='101' | TIMOTHY |
+| SampleDB | dbo | Driver | first_name |  driverID='102' | TIMOTHY |
+| SampleDB | dbo | Driver | first_name |  driverID='103' | TIMOTHY |
+| SampleDB | dbo | Driver | first_name |  driverID='104' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='105' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='106' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='107' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='108' | TIM |
+| SampleDB | dbo | Driver | first_name |  driverID='109' | TIMMY |
+| SampleDB | dbo | Driver | first_name |  driverID='110' | TIMMY |
+| SampleDB | dbo | Driver | first_name |  driverID='111' | TIM |
+
+
+
+<br/>
+<br/>
+  
 [Back](/README.md)

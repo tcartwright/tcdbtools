@@ -59,12 +59,15 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$Database,
         [pscredential]$Credentials,
         [Parameter(Mandatory=$true)]
         [ValidateLength(2, 256)]
+        [ValidateNotNullOrEmpty()]
         [string]$LookForValue,
         [ValidateSet("number", "string")]
         [string]$LookForValueType = "string",

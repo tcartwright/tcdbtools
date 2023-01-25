@@ -14,7 +14,7 @@
         The sql server instance to connect to.
 
     .PARAMETER Databases
-        The databases.
+        The databases operate on. If the value ALL_USER_DATABASES is passed in then, the renames will be applied to all user databases.
 
     .PARAMETER Credentials
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
@@ -23,6 +23,14 @@
          The wait time (in seconds) before terminating the attempt to execute a command and generating an error. The default is 30 seconds.
 
     .OUTPUTS
+
+    .EXAMPLE 
+        Finds all column data type discrepancies across all user databases.
+    
+        Find-DBColumnDataTypeDiscrepancies `
+            -ServerInstance "ServerName" `
+            -Databases "ALL_USER_DATABASES"
+
 
     .LINK
         https://github.com/tcartwright/tcdbtools
@@ -33,8 +41,10 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ServerInstance,
         [Parameter(Mandatory=$true)]
+        [ValidateCount(1, 9999)]
         [string[]]$Databases,
         [pscredential]$Credentials,
         [int]$Timeout = 30
@@ -47,10 +57,17 @@
     }
 
     process {
+        # if they passed in ALL_USER_DATABASES get all database names
+        if ($Databases[0] -ieq "ALL_USER_DATABASES") {
+            $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
+            $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows | Select-Object -ExpandProperty name
+        }
+
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             Write-Information "Querying: $Database"
-            $results = Invoke-SqlCmd @SqlCmdArguments -As DataRows -Query $query -QueryTimeout $Timeout
+            $tbl = Invoke-SqlCmd @SqlCmdArguments -As DataTables -Query $query -QueryTimeout $Timeout
+            $results = DataTableToCustomObject -DataTable $tbl
             if ($results) {
                 $ret.AddRange($results)
             }
