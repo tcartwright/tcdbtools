@@ -1,0 +1,195 @@
+1.0.5
+* Initial  release to PS Gallery
+* New functions:
+  * functions/Invoke-DBCompareServerSettings.ps1
+  * functions/Invoke-DBExtractCLRDll.ps1
+  * functions/Invoke-DBMoveIndexes.ps1
+  * functions/Invoke-DBSafeShrink.ps1
+  * functions/Invoke-DBScriptObjects.ps1
+  * functions/private/GenFuncs.ps1
+1.0.6
+* Switched to using PSCredentials instead of taking username and password
+1.0.7
+* added breakdown of options to server compare
+* removed last -foregroundcolors from old write-host statements
+1.0.8
+* changed write-verbose to write-information for file being written
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.10
+* minor code changes
+* removed testing code accidentally left in
+* added logic to server settings compare that will ensure all settings show up regardless of the version order of the servers in the list
+* added a switch to ignore old versions when comparing server properties
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.11
+* added progress bar to scripting objects
+* renamed private function files
+* removed connection timeout
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.13
+* added new Write-InformationColored function
+* converted existing calls of Write-Information to use new Write-InformationColored where I wanted coloring
+* renamed function InitSqlConnection to InitSqlObjects
+* moved MoveIndexes function to Invoke-DBSafeShrink-privates.ps1
+* refactored Invoke-DBCompareServerSettings.ps1 slightly to be more efficient and readable
+* added tags and other information to tcdbtools.psd1
+1.0.14
+* updated psd1 required modules
+* fixing ps analyzer errors
+* added new rename constraints function
+* doc change
+* more doc changes, sigh
+* fixed Invoke-DBCompareServerSettings as it had help for wrong function
+* doc changes
+* updated script objects help with proper credits, and example directory structure
+* changed external links to open in new window
+* add link to drop existing = on
+* Merge pull request #1 from tcartwright/docsDocs* more doc changes
+* updated link
+* updated docs further
+* minor doc changes
+* starting new docs
+* Update ps_gallery_module.yml
+* removing required modules as i cant get it to work
+* updated psd1 required modules
+1.0.15
+* fixed bug in rename when using a custom name function
+* updated help for rename function
+1.0.16
+* added newName parameter to NameExistsFunction
+1.0.18
+* made small fix when using NameExistsFunction function
+* updated help for functions/Invoke-DBRenameConstraints.ps1 to include default naming patterns
+1.0.19
+* Update Invoke-DBRenameConstraints.md
+* fixed a bug in renames where a missing column name could cause the rename to end with a _
+* added logic to add schema to remote table name if IncludeSchemaInNames is enabled
+* added logic to only load dbatools once if already loaded
+1.0.20
+* changed to rename help
+* fixed query to properly identify difference from UQ/UX/NC for functions/Invoke-DBRenameConstraints.ps1
+* added definition of check constraint output so that it could possibly used in determining name
+* updated help to reflect definition being added to query output
+* switched to using sys views for querying check and default constraints
+1.0.21
+* reworked shrink to be more aware of odd file sizes
+* added more cases to shrinkIncrement calculation
+* added validation to more parameters
+* removed dependency on invoke-sqlcmd2
+* updated help for renames
+1.0.22
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.23
+* refactored functions/Invoke-DBSafeShrink.ps1 and moved a lot of code to privates to be more readable
+* fixed logic bug when adjusting recovery so that it would properly reset all databases recovery
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.25
+* added missing parameters to function
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools fixed conflicts
+1.0.26
+* Update ps_gallery_module.yml
+* fixed link
+* huge code re-org. exposed these private functions:
+  * functions/New-DBScripterObject.ps1
+  * functions/New-DBSqlConnection.ps1
+  * functions/New-DBSqlObjects.ps1
+* help changes, added/removed examples, added a couple better examples
+* added new parameter to functions/Invoke-DBScriptObjects.ps1
+* some light spellchecking
+* added more logging info
+1.0.27
+* small doc change
+* another change to rename constraints help
+* changed default names to a table
+* small help change
+* minor code change
+* updated md help to be more readable on the web without having to scroll
+1.0.28
+* removed unused variable
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+* Update Invoke-DBScriptObjects.md
+* cut down on smo table fields being pulled to hopefully speed this up
+1.0.29
+* added help for new helper functions
+* ignoring PSAvoidGlobalVars in PSScriptAnalyzer
+* added a write information line to avoid error for unused var in template for PSScriptAnalyzer* fixed some issues in the invoke sql queries functions
+* converted usages of commands to using sql queries functions* added Invoke-SqlQueries.ps1
+* small update to help for Find-DBInvalidSettings.ps1
+* Update Find-DBInvalidSettings.md
+* added new Find-DBInvalidSettings.ps1
+* help cleanup
+* removed telnet command from psm1* extracted long sql queries into separate files to make code cleaner
+* removed -privates from private file names* added new TODO.md
+* added missing functions to psd1
+* fix for links in README.md
+* very minor doc changes
+1.0.30
+* added new function Find-DBValue
+* renamed:
+  * New-SqlParameter to New-DBSqlParameter
+  * Get-InClauseParams to Get-DBInClauseParams
+  * Get-InClauseString to Get-DBInClauseString
+* bug in yaml
+* fixed a bug that was causing an exception when using sql connections with Invoke-DBScriptObjects
+* added custom script so I can run RunPSScriptAnalyzer
+* added attributes block certain rules of the RunPSScriptAnalyzer for specific cases
+* modified the functions/Invoke-DBRenameConstraints.ps1 code to use scriptblocks so as to be a bit cleaner* fixed example so that it can be copy pasted and runs fine in Get-InClauseString.md
+* removed some whitespace from README.md
+* fixed up wrapping in examples for Get-InClauseString.md* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.31
+* changed the default for ARITHABORT to 1 for Find-DBInvalidSettings.md
+* fixed invalid validation for disallow results from triggers in FindInvalidSettings.sql
+* added collation name parameter to Find-DBInvalidSettings.ps1
+* updated sql and help for new parameter* fixed syntax casing...
+* updated help for Find-DBInvalidSettings.md
+* fixed a bug in New-DBSqlObjects.ps1 that would cause a credentials prompt* Update Find-DBValue.md
+* fixed function name in Find-DBValue.md
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.32
+* removed -ErrorAction Stop from db calls
+* added timeout parameter to functions/Find-DBInvalidSettings.ps1 and functions/Find-DBColumnDataTypeDiscrepancies.ps1
+* added missing sql queries function to tcdbtools.psd1* code cleanup from analyzer
+* added new functions/Find-DBColumnDataTypeDiscrepancies.ps1
+* changed invalid reasons for functions/Test-DBReadOnlyRouting.ps1
+* added functions/Test-DBReadOnlyRouting.ps1
+* analyzer fixes
+* added smo libraries
+* reworked the load to reference local libraries
+1.0.33
+* Merge pull request #2 from tcartwright/agent_job_deployAgent job deploy* On agent_job_deploy: analyzer fixes
+* index on agent_job_deploy: cf688ce added breakpoints
+* added breakpoints
+* updated example in docs/Invoke-DBSqlAgentScripter.md
+* new agent job deploy and scripter functions
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+1.0.34
+* replaced tabs with spaces in help files
+* added wraps into text for parameters in help files
+* Split apart the New-DBSqlObjects.ps1 into two seperate functions New-DBSMOServer.ps1 and New-DBSqlCmdArguments.ps1
+* Added applicationname to all connection types and splat object
+* Added code to ensure names of files do not contain invalid characters* added fixes / ignores for psscript analyzer warnings
+1.0.35
+* changed regex to use group name in functions/Invoke-DBCompareServerSettings.ps1
+* added server version to functions/Invoke-DBCompareServerSettings.ps1
+* added alias to functions/Invoke-DBDeployAgentJob.ps1
+* updated README.md slightly* added classes for some custom outputs
+* added CmdletBinding to all functions that were missing it
+* added OutputType to a lot of functions
+* changed the pk sub query to outer apply in case of heap tables for ScanForValueColumns.sql* added where clause to Find-DBValue.ps1 output
+* added testharness to ignore
+* Update Invoke-DBSafeShrink.md
+* Update README.md
+1.0.36
+* small changes to examples and comments
+* fixed a bug where I was not splitting the server name properly when a port was used
+* Update README.md
+1.0.37
+* fix for New-DBSqlConnection.ps1 when using a credential
+* Update Find-DBInvalidSettings.md
+* analyzer fixes
+* added ability to use ALL_USER_DATABASES when calling Invoke-DBRenameConstraints.ps1, and Find-DBColumnDataTypeDiscrepancies.ps1
+* added ValidateCount and ValidateNotNullOrEmpty attributes to many parameters
+* added two new helper functions ConvertTo-Markdown and DataTableToCustomObject
+* added example outputs to functions that output object arrays* updated help with output
+* Merge branch 'main' of https://github.com/tcartwright/tcdbtools
+* Update Invoke-DBDeployAgentJob.md
