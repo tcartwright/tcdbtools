@@ -203,8 +203,8 @@ $result.ServerSettings | Format-Table
 $result.FileGrowths | Format-Table
 ```
 
-| database_name | file_name | growth_kb | growth_mb | is_percent_growth |
-| ------------- | --------- | --------- | --------- | ----------------- |
+| database_name | file_name | growth | is_percent_growth |
+| ------------- | --------- | --------- | ----------------- |
 | sample_Log | sample_Data | 10 % | True |
 | sample_Log | sample_Log | 8 MB | False |
 
