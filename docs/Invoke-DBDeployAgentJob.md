@@ -172,9 +172,20 @@ Invoke-DBDeployAgentJob `
 
 #### Output
 
+The initial SQL of the job looks like this:
+
+```sql
+PRINT 'SERVERNAME = ' + @@SERVERNAME
+-- This line shows an example where a dollar sign is desired in the final results        
+PRINT 'escape = ''$(dollar)(ESCAPE_SQUOTE(SRVR)'''
+-- These next two lines are variables that will get replaced during the deployment process with the values provided
+PRINT 'key1 = ''$(key1)'''
+PRINT 'key2 = ''$(key2)'''
+```
+
 After the job is deployed to the servers, the sql step for each job will look like so:
 
-##### server1\instance1
+**server1\instance1**
 
 ```sql
 PRINT 'SERVERNAME = ' + @@SERVERNAME
@@ -185,7 +196,7 @@ PRINT 'key1 = ''server1_value1'''
 PRINT 'key2 = ''server1_value2'''
 ```
 
-##### server2\instance1
+**server2\instance1**
 
 ```sql
 PRINT 'SERVERNAME = ' + @@SERVERNAME
@@ -196,7 +207,7 @@ PRINT 'key1 = ''server2_value1'''
 PRINT 'key2 = ''server2_value2'''
 ```
 
-##### server3
+**server3**
 
 ```sql
 PRINT 'SERVERNAME = ' + @@SERVERNAME
