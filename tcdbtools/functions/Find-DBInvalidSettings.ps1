@@ -70,7 +70,7 @@
             )
 
             $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters -timeout $Timeout
-                        
+
             $ret.ServerOptions = DataTableToCustomObject -DataTable $results.Tables[1]
             $ret.ServerSettings = DataTableToCustomObject -DataTable $results.Tables[3]
             $ret.FileGrowths = DataTableToCustomObject -DataTable $results.Tables[5]

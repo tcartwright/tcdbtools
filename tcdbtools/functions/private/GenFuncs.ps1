@@ -131,8 +131,8 @@ function ConvertTo-Markdown {
     process {
         # test this in case the object was piped in, as we only want to do this once
         if ($sbMain.Length -eq 0) {
-            ($InputObject | Select-Object -First 1).PSObject.Properties | ForEach-Object { 
-                $sbMain.Append("| $($_.Name) ") | Out-Null           
+            ($InputObject | Select-Object -First 1).PSObject.Properties | ForEach-Object {
+                $sbMain.Append("| $($_.Name) ") | Out-Null
                 $sbDivider.Append("| $("-" * $_.Name.Length) ") | Out-Null
             }
 
@@ -142,7 +142,7 @@ function ConvertTo-Markdown {
             $sbMain.AppendLine($sbDivider.ToString()) | Out-Null
         }
 
-        $InputObject | ForEach-Object { 
+        $InputObject | ForEach-Object {
             $_.PSObject.Properties | ForEach-Object {
                 $sbValues.Append("| $($_.Value) ") | Out-Null
             }
@@ -172,7 +172,7 @@ function DataTableToCustomObject {
         foreach ($name in $DataTable.Columns.ColumnName) {
             $Properties.Add($name, $row[$name])
         }
-        $Objects += New-Object -TypeName PSObject -Property $Properties  
+        $Objects += New-Object -TypeName PSObject -Property $Properties
     }
     # select the objects using the column name array so the properties will output in the same order
     return $Objects | Select-Object -Property $DataTable.Columns.ColumnName

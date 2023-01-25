@@ -24,9 +24,9 @@
 
     .OUTPUTS
 
-    .EXAMPLE 
+    .EXAMPLE
         Finds all column data type discrepancies across all user databases.
-    
+
         Find-DBColumnDataTypeDiscrepancies `
             -ServerInstance "ServerName" `
             -Databases "ALL_USER_DATABASES"

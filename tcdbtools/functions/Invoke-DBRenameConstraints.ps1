@@ -84,9 +84,9 @@
     .PARAMETER Force
         If force is supplied, then all constraints will be renamed, regardless if they match the naming convention already or not.
 
-    .EXAMPLE 
+    .EXAMPLE
         Rename all constraints in all user databases.
-    
+
         Invoke-DBRenameConstraints `
             -ServerInstance "ServerName" `
             -Databases "ALL_USER_DATABASES"
