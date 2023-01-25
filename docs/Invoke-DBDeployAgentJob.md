@@ -172,7 +172,7 @@ Invoke-DBDeployAgentJob `
 
 #### Output
 
-The initial SQL of the job looks like this:
+The initial SQL of the agent job step looks like this:
 
 ```sql
 PRINT 'SERVERNAME = ' + @@SERVERNAME
