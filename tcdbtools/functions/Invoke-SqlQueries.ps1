@@ -158,10 +158,10 @@ function Invoke-DBReaderQuery {
 function Invoke-DBDataTableQuery {
     <#
     .SYNOPSIS
-        Sends the CommandText to the Connection and builds a DataTable.
+        Executes the query, and returns a DataTable of the results.
 
     .DESCRIPTION
-        Sends the CommandText to the Connection and builds a DataTable.
+        Executes the query, and returns a DataTable of the results.
 
     .PARAMETER conn
         The sql server connection to use when creating the command.

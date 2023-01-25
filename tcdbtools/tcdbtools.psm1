@@ -63,6 +63,7 @@ Export-ModuleMember -Function Find-DBColumnDataTypeDiscrepancies
 Export-ModuleMember -Function Invoke-DBDeployAgentJob
 Export-ModuleMember -Function Invoke-DBSqlAgentScripter
 
+Export-ModuleMember -Function Invoke-DBDataTableQuery
 Export-ModuleMember -Function Invoke-DBScalarQuery
 Export-ModuleMember -Function Invoke-DBNonQuery
 Export-ModuleMember -Function Invoke-DBReaderQuery
