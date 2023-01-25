@@ -180,26 +180,26 @@ function DataTableToCustomObject {
 
 function Get-AllUserDatabases {
     <#
-        .DESCRIPTION 
-            If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases 
-            is returned. Else the original list of databases is passed back. 
-        
+        .DESCRIPTION
+            If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases
+            is returned. Else the original list of databases is passed back.
+
         .PARAMETER Databases
             The list of databases.
-        
+
         .PARAMETER SqlCmdArguments
             The sqlcmd arguments to use. Can be created using New-DBSqlCmdArguments.
-        
-        .EXAMPLE 
+
+        .EXAMPLE
             Get all user databases:
             PS> Get-AllUserDatabases -Databases "ALL_USER_DATABASES" -SqlCmdArguments (New-DBSqlCmdArguments -ServerInstance "ServerName")
 
-        .EXAMPLE 
+        .EXAMPLE
             Just return the list of databases passed in
             PS> Get-AllUserDatabases -Databases "DBName1", "DBName2" -SqlCmdArguments (New-DBSqlCmdArguments -ServerInstance "ServerName")
 
     #>
-    param ([string[]] $Databases, $SqlCmdArguments) 
+    param ([string[]] $Databases, $SqlCmdArguments)
 
     if ($Databases[0] -ieq "ALL_USER_DATABASES") {
         $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
