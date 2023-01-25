@@ -24,8 +24,10 @@
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [Alias("Connection")]
         [System.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
+        [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
         [System.Data.SqlClient.SqlParameter[]]$parameters,
@@ -75,8 +77,10 @@ function Invoke-DBNonQuery {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
+        [Alias("Connection")]
         [System.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
+        [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
         [System.Data.SqlClient.SqlParameter[]]$parameters,
@@ -128,8 +132,10 @@ function Invoke-DBReaderQuery {
     [OutputType([System.Data.SqlClient.SqlDataReader])]
     param (
         [Parameter(Mandatory=$true)]
+        [Alias("Connection")]
         [System.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
+        [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
         [System.Data.SqlClient.SqlParameter[]]$parameters,
@@ -182,8 +188,10 @@ function Invoke-DBDataTableQuery {
     [OutputType([System.Data.DataTable])]
     param (
         [Parameter(Mandatory=$true)]
+        [Alias("Connection")]
         [System.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
+        [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
         [System.Data.SqlClient.SqlParameter[]]$parameters,
@@ -233,8 +241,10 @@ function Invoke-DBDataSetQuery {
     [OutputType([System.Data.DataSet])]
     param (
         [Parameter(Mandatory=$true)]
+        [Alias("Connection")]
         [System.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
+        [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
         [System.Data.SqlClient.SqlParameter[]]$parameters,
