@@ -24,7 +24,7 @@ Install-Module tcdbtools
 
 ## Functions
 
-* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : This is **NOT** a normal shrink. This is based upon Paul Randal's shrinking methodology. Can be used to shrink an mdf file ***and*** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file. Does not cause fragmentation like a normal shrink. 
+* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : This is **NOT** a normal shrink. This is based upon Paul Randal's shrinking methodology and will shrink an mdf file ***and*** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file. Does not cause fragmentation like a normal shrink. 
 * [Invoke-DBDeployAgentJob](/docs/Invoke-DBDeployAgentJob.md) : This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server. Can be used to quickly update all of your jobs across your entire network even if they need customization per server.
 * [Invoke-DBSqlAgentScripter](/docs/Invoke-DBSqlAgentScripter.md) : Will script out all Sql Agent objects to sql script files. 
 * [Invoke-DBMoveIndexes](/docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps.
