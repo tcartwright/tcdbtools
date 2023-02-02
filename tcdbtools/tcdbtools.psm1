@@ -22,6 +22,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\private\Invoke-DBSqlAgentScripter.ps1"
 . "$scriptDir\functions\private\Find-DBInvalidSettings.ps1"
 . "$scriptDir\functions\private\Test-DBReadOnlyRouting.ps1"
+. "$scriptDir\functions\private\Invoke-Credentials.ps1"
 
 # helper functions
 . "$scriptDir\functions\New-DBScripterObject.ps1"
@@ -43,6 +44,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\Find-DBColumnDataTypeDiscrepancies.ps1"
 . "$scriptDir\functions\Invoke-DBDeployAgentJob.ps1"
 . "$scriptDir\functions\Invoke-DBSqlAgentScripter.ps1"
+. "$scriptDir\functions\Invoke-Credentials.ps1"
 
 # . "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
 
@@ -71,6 +73,11 @@ Export-ModuleMember -Function Invoke-DBDataSetQuery
 Export-ModuleMember -Function New-DBSqlParameter
 Export-ModuleMember -Function Get-DBInClauseParams
 Export-ModuleMember -Function Get-DBInClauseString
+
+Export-ModuleMember -Function Get-DBUserCredential
+Export-ModuleMember -Function Set-DBUserCredential
+New-Alias -Name New-DBUserCredential -Value Set-DBUserCredential
+Export-ModuleMember -Alias New-DBUserCredential -Function Set-DBUserCredential
 
 Export-ModuleMember -Function New-DBScripterObject
 Export-ModuleMember -Function New-DBSqlCmdArguments

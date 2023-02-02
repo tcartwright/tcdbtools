@@ -97,6 +97,10 @@ FunctionsToExport = @(
     ,"New-DBSQLConnection"
     ,"Get-AllUserDatabases"
 
+    ,"Get-DBUserCredential"
+    ,"Set-DBUserCredential"
+    ,"New-DBUserCredential"
+
     ,"Write-InformationColorized"
     ,"ConvertTo-Markdown"
 )
@@ -128,7 +132,7 @@ PrivateData = @{
         Tags = @("sqlserver", "sql", "dba", "sql", "databases", "database", "smo")
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/tcartwright/tcdbtools/blob/main/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/tcartwright/tcdbtools'

@@ -8,6 +8,9 @@
   - [Installation](#installation)
   - [Functions](#functions)
   - [Helper Functions](#helper-functions)
+    - [General](#general)
+    - [Credentials](#credentials)
+    - [ADO Wrappers](#ado-wrappers)
 
 ##  Description
 
@@ -40,17 +43,28 @@ Install-Module tcdbtools
 
 ## Helper Functions
 
+### General 
+
 * [New-DBScripterObject](/docs/New-DBScripterObject.md) : Creates a database scripting object that can be modified and used by Invoke-DBScriptObjects.
-* [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
 * [New-DBSMOServer](/docs/New-DBSqlCmdArguments.md) : Returns a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 * [New-DBSqlCmdArguments](/docs/New-DBSqlCmdArguments.md) : Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
+* Get-AllUserDatabases : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
+
+### Credentials 
+
+* Get-DBUserCredential : Gets the credential stored under the application name.
+* Set-DBUserCredential : Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials, but not saved into a script. That way you can keep from storing passwords in your scripts.
+  * Alias: New-DBUserCredential
+
+### ADO Wrappers
+
+* [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
 * Invoke-DBDataTableQuery : Executes the query, and returns a DataTable of the results.
 * Invoke-DBScalarQuery : Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
 * Invoke-DBNonQuery : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
 * Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.
 * Invoke-DBDataSetQuery : Executes a Transact-SQL statement against the connection and returns a DataSet containing a DataTable for each result set returned.
 * New-DBSqlParameter : Creates a new instance of a SqlParameter object.
-* Get-AllUserDatabases : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
 * [Get-DBInClauseParams](/docs/Get-DBInClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
 * [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 

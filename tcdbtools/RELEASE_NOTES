@@ -210,6 +210,11 @@
 * added aliases for some of the parameters in the invoke ado functions
 * Merge branch 'main' of https://github.com/tcartwright/tcdbtools
 * Update Invoke-DBDeployAgentJob.md
+* 1.0.41
+* Added new functions:
+  * Get-DBUserCredential
+  * Set-DBUserCredential, alias: New-DBUserCredential
+
 
 
 
