@@ -5,7 +5,7 @@
 Will rename all indexes and constraints to match naming conventions.
 
 ## Description
-Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected convention will be skipped. Custom naming conventions can be used.
+Will rename all indexes and constraints to match naming conventions. Any constraint name that already matches the expected convention will be skipped unless -Force is supplied. Custom naming conventions can be used.
 
 The default naming conventions are as follows:
 
