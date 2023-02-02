@@ -53,8 +53,7 @@ Install-Module tcdbtools
 ### Credentials 
 
 * Get-DBUserCredential : Gets the credential stored under the application name.
-* Set-DBUserCredential : Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials, but not saved into a script. That way you can keep from storing passwords in your scripts.
-  * Alias: New-DBUserCredential
+* Set-DBUserCredential (Alias: New-DBUserCredential): Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials, but not saved into a script. That way you can keep from storing passwords in your scripts.
 
 ### ADO Wrappers
 
