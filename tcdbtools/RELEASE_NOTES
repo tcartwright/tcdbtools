@@ -210,11 +210,18 @@
 * added aliases for some of the parameters in the invoke ado functions
 * Merge branch 'main' of https://github.com/tcartwright/tcdbtools
 * Update Invoke-DBDeployAgentJob.md
-* 1.0.41
+1.0.41
 * Added new functions:
   * Get-DBUserCredential
   * Set-DBUserCredential, alias: New-DBUserCredential
-
+1.0.42
+* Added new parameters to the Invoke-DBMoveIndexes function to allow for more control of what it moved:
+  * ExcludeIndexes
+  * IncludeIndexes
+  * ExcludeTables
+  * IncludeTables
+  * ExcludeSchemas
+  * IncludeSchemas
 
 
 

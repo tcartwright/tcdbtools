@@ -62,15 +62,25 @@ function MoveIndexes {
         [string]$fromFG,
         [string]$toFG,
         [string]$indicator,
-        [int]$timeout
+        [int]$timeout,
+        [string]$whereClause,
+        [System.Data.SqlClient.SqlParameter[]]$parameters
     )
     # using sql to scan for the indexes to move instead of scanning SMO, as SMO is very, very slow scanning the tables
     # especially if some of the tables do not have indexes in the fromFG
 
     $sql = (GetSQLFileContent -fileName "GetIndexes.sql") -f ($db.Name), $fromFG
-
+    $sql = $sql -ireplace "--<<extra_where>>", $whereClause
+    
     Write-Verbose $sql
-    $indexes = Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $timeout
+    $connection = New-DBSqlConnection @SqlCmdArguments
+    try {
+        $connection.Open()
+        $indexes = Invoke-DBDataTableQuery -conn $connection -Query $sql -timeout $timeout -parameters $parameters
+    }
+    finally {
+        if ( $connection )  { $connection.Dispose() }
+    }
 
     $indexCounter = 0
     $indexCountTotal = $indexes.Count
