@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.41'
+ModuleVersion = '1.0.42'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -142,11 +142,14 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.41
-* Added new functions:
-  * Get-DBUserCredential
-  * Set-DBUserCredential, alias: New-DBUserCredential
-
+1.0.42
+* Added new parameters to the Invoke-DBMoveIndexes function to allow for more control of what it moved:
+  * ExcludeIndexes
+  * IncludeIndexes
+  * ExcludeTables
+  * IncludeTables
+  * ExcludeSchemas
+  * IncludeSchemas
 
 
 
