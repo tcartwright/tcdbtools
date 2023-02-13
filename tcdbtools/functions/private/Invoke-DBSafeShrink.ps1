@@ -71,7 +71,7 @@ function MoveIndexes {
 
     $sql = (GetSQLFileContent -fileName "GetIndexes.sql") -f ($db.Name), $fromFG
     $sql = $sql -ireplace "--<<extra_where>>", $whereClause
-    
+
     Write-Verbose $sql
     $connection = New-DBSqlConnection @SqlCmdArguments
     try {

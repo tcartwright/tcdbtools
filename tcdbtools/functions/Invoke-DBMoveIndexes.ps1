@@ -9,7 +9,7 @@
 
     .NOTES
         All of the include and exclude parameters are OR'ed together in the following order:
-        
+
         - ExcludeIndexes
         - IncludeIndexes
         - ExcludeTables
@@ -140,7 +140,7 @@
             $whereClause += "`r`n`t`tOR OBJECT_SCHEMA_NAME(i.[object_id]) IN ($(Get-DBInClauseString -parameters $params))"
             $parameters += $params
         }
-        
+
         if ($whereClause) {
             # strip off the first OR
             $whereClause = $whereClause.Substring(7)
