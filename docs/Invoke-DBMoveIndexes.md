@@ -8,7 +8,7 @@ Moves indexes from one file group to another including heaps.
 Moves indexes from one file group to another. Both file groups must exist, neither will be created for you. As the indexes are moved, they will be rebuilt.
 
 ## Notes
-All of the include and exclude parameters are OR'ed together in the following order:
+All of the include and exclude parameters are OR'ed together in the following order if any values are passed in for any of these parameters:
 
 - ExcludeIndexes
 - IncludeIndexes
@@ -16,6 +16,35 @@ All of the include and exclude parameters are OR'ed together in the following or
 - IncludeTables
 - ExcludeSchemas
 - IncludeSchemas
+
+This provides a lot of flexibility in narrowing the list down, but could also exclude indexes from the results you did not wish to exclude.
+
+So, if all of include / exclude parameters are supplied then the resulting SQL to find the indexes could look similar to this:
+
+```sql
+SELECT 
+    OBJECT_SCHEMA_NAME(i.[object_id]) AS [schema_name],
+    OBJECT_NAME(i.[object_id]) AS [object_name],
+    i.[index_id],
+    i.[name] AS [index_name],
+    i.[type_desc] AS [index_type]
+FROM [sys].[indexes] i
+INNER JOIN [sys].[filegroups] f
+    ON f.[data_space_id] = i.[data_space_id]
+WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
+    AND [f].[name] = 'file_group_name'
+    AND (
+        i.[name] NOT IN ('ExcludeIndexes1', 'ExcludeIndexes2', '...')
+        OR i.[name] IN ('IncludeIndexes1', 'IncludeIndexes2', '...')
+        OR i.[object_id] NOT IN (OBJECT_ID('ExcludeTables1'), OBJECT_ID('ExcludeTables2'), OBJECT_ID('...'))
+        OR i.[object_id] IN (OBJECT_ID('IncludeTables1'), OBJECT_ID('IncludeTables2'), OBJECT_ID('...'))
+        OR OBJECT_SCHEMA_NAME(i.[object_id]) NOT IN ('ExcludeSchemas1', 'ExcludeSchemas2', '...')
+        OR OBJECT_SCHEMA_NAME(i.[object_id]) IN ('IncludeSchemas1', 'IncludeSchemas2', '...')
+    )
+ORDER BY OBJECT_NAME(i.[object_id]),
+    i.[index_id]
+```
+
 
 ## Syntax
     Invoke-DBMoveIndexes 
@@ -143,6 +172,30 @@ All of the include and exclude parameters are OR'ed together in the following or
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
+
+
+## Examples
+
+### Example
+Move all of the indexes in the dbo schema. All other schemas will be ignored.
+    
+```powershell
+Invoke-DBMoveIndexes `
+    -ServerInstance "ServerName" `
+    -Databases "DatabaseName1", "DatabaseName2" `
+    -IncludeSchemas "dbo"
+```
+
+### Example
+Move all of the indexes for a specific set of tables except for the PK of each table.
+    
+```powershell
+Invoke-DBMoveIndexes `
+    -ServerInstance "ServerName" `
+    -Databases "DatabaseName1" `
+    -IncludeTables "dbo.Table1", "dbo.Table2"
+    -ExcludeIndexes "PK_Table1", "PK_Table2"
+```
 
 <br/>
 <br/>
