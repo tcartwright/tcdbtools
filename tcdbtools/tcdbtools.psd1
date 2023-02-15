@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.42'
+ModuleVersion = '1.0.43'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -142,15 +142,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.42
-* Added new parameters to the Invoke-DBMoveIndexes function to allow for more control of what it moved:
-  * ExcludeIndexes
-  * IncludeIndexes
-  * ExcludeTables
-  * IncludeTables
-  * ExcludeSchemas
-  * IncludeSchemas
-
+1.0.43
+* Fixed a bug when moving indexes and the include / exclude parameters were used that could cause too many indexes to be moved
+* Added a new internal GetPercentComplete function for use with progress bars
 
 
 
