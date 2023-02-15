@@ -213,3 +213,14 @@ function Get-AllUserDatabases {
     return $Databases
 }
 
+function GetPercentComplete {
+    [OutputType([int])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [int]$counter,
+        [Parameter(Mandatory = $true)]
+        [int]$total
+    )
+    $pct = ([decimal]$counter / [decimal]$total) * 100.00
+    return [Convert]::ToInt32([Math]::Min(100, $pct))
+}

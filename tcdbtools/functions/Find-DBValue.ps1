@@ -160,7 +160,7 @@
 
                 Write-Progress -Activity $activity `
                     -Status “Starting Job $jobName of $total” `
-                    -PercentComplete (([decimal][Math]::Min($total, $counter) / [decimal]$total) * 100.00)
+                    -PercentComplete (GetPercentComplete -counter $counter -total $total)
 
                 $PowerShell = [powershell]::Create()
                 $PowerShell.RunspacePool = $RunspacePool
@@ -192,7 +192,7 @@
 
                 Write-Progress -Activity $activity `
                     -Status “Job(s) $counter of $total done” `
-                    -PercentComplete (([decimal][Math]::Min($total, $counter) / [decimal]$total) * 100.00)
+                    -PercentComplete (GetPercentComplete -counter $counter -total $total)
 
                 Start-Sleep -Milliseconds 500
             }

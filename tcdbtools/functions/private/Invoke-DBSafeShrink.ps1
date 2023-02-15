@@ -105,12 +105,12 @@ function MoveIndexes {
         }
 
         foreach ($index in $table.Indexes) {
-            if ($index.FileGroup -ieq $fromFG) {
+            if ($index.FileGroup -ieq $fromFG -and $indexes.index_name -icontains $index.Name) {
                 $indexCounter++
 
                 Write-Progress -Activity $activity `
                     -Status “Moving index $indexCounter of $indexCountTotal [$($index.Name)] ” `
-                    -PercentComplete (([decimal]$indexCounter / [decimal]$indexCountTotal) * 100.00)
+                    -PercentComplete (GetPercentComplete -counter $indexCounter -total $indexCountTotal)
 
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 

@@ -51,7 +51,7 @@ function ScriptOutDbObj($scripter, $dbObj, $SavePath, $WriteProgressActivity, $W
     $partialPath = $scripter.Options.FileName -ireplace [regex]::escape($SavePath), "."
     Write-Progress -Activity $WriteProgressActivity `
         -Status “Scripting file $WriteProgressCount of $WriteProgressTotal [$($partialPath)] ” `
-        -PercentComplete (([decimal]$WriteProgressCount / [decimal]$WriteProgressTotal) * 100.00)
+        -PercentComplete (GetPercentComplete -counter $WriteProgressCount -total $WriteProgressTotal)
 
     # a bit of progress reporting...
     Write-Information $scripter.Options.FileName
