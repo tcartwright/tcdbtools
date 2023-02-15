@@ -222,6 +222,8 @@
   * IncludeTables
   * ExcludeSchemas
   * IncludeSchemas
-
+1.0.43
+* Fixed a bug when moving indexes and the include / exclude parameters were used that could cause too many indexes to be moved
+* Added a new internal GetPercentComplete function for use with progress bars
 
 
