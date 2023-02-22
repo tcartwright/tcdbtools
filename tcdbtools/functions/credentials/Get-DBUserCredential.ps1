@@ -26,6 +26,7 @@ function Get-DBUserCredential {
         Author: Tim Cartwright
     #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification='Must be a string')]
     param (
         [Parameter(Mandatory=$true)]
         [string]$ApplicationName

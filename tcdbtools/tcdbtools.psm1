@@ -14,13 +14,13 @@
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
 # functions
-$scripts = Get-ChildItem "$scriptDir\functions\" -Filter "*.ps1" -Recurse | 
-    Where-Object { $_.Name -inotmatch "(?:ModuleInit|template)\.ps1" } | 
-    Sort-Object FullName | 
+$scripts = Get-ChildItem "$scriptDir\functions\" -Filter "*.ps1" -Recurse |
+    Where-Object { $_.Name -inotmatch "(?:ModuleInit|template)\.ps1" } |
+    Sort-Object FullName |
     Select-Object -ExpandProperty FullName
 
 foreach($script in $scripts) {
-    . $script    
+    . $script
 }
 
 # INIT FUNCTION: this script MUST always be invoked last

@@ -19,7 +19,10 @@ function Get-AllUserDatabases {
             PS> Get-AllUserDatabases -Databases "DBName1", "DBName2" -SqlCmdArguments (New-DBSqlCmdArguments -ServerInstance "ServerName")
 
     #>
-    param ([string[]] $Databases, $SqlCmdArguments)
+    param (
+        [string[]] $Databases, 
+        $SqlCmdArguments
+    )
 
     if ($Databases[0] -ieq "ALL_USER_DATABASES") {
         $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
