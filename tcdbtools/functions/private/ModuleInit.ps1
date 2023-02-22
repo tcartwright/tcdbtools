@@ -1,4 +1,6 @@
-﻿<#
+﻿#Requires -Version 5.0
+
+<#
     Original credits: https://newbedev.com/powershell-assembly-binding-redirect-not-found-in-application-configuration-file
 
     Purpose: To provide an assembly resolve event that does not crash PowerShell with a stackoverflow exception, and works.

@@ -12,80 +12,24 @@
 #>
 
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-# private functions
-. "$scriptDir\functions\private\Invoke-DBSafeShrink.ps1"
-. "$scriptDir\functions\private\Invoke-DBScriptObjects.ps1"
-. "$scriptDir\functions\private\Invoke-DBCompareServerSettings.ps1"
-. "$scriptDir\functions\private\Invoke-DBRenameConstraints.ps1"
-. "$scriptDir\functions\private\Find-DBValue.ps1"
-. "$scriptDir\functions\private\GenFuncs.ps1"
-. "$scriptDir\functions\private\Invoke-DBSqlAgentScripter.ps1"
-. "$scriptDir\functions\private\Find-DBInvalidSettings.ps1"
-. "$scriptDir\functions\private\Test-DBReadOnlyRouting.ps1"
-. "$scriptDir\functions\private\Invoke-Credentials.ps1"
 
-# helper functions
-. "$scriptDir\functions\New-DBScripterObject.ps1"
-. "$scriptDir\functions\New-DBSMOServer.ps1"
-. "$scriptDir\functions\New-DBSqlCmdArguments.ps1"
-. "$scriptDir\functions\New-DBSQLConnection.ps1"
-. "$scriptDir\functions\Invoke-SqlQueries.ps1"
+# functions
+$scripts = Get-ChildItem "$scriptDir\functions\" -Filter "*.ps1" -Recurse | 
+    Where-Object { $_.Name -inotmatch "(?:ModuleInit|template)\.ps1" } | 
+    Sort-Object FullName | 
+    Select-Object -ExpandProperty FullName
 
-# public functions
-. "$scriptDir\functions\Invoke-DBMoveIndexes.ps1"
-. "$scriptDir\functions\Invoke-DBSafeShrink.ps1"
-. "$scriptDir\functions\Invoke-DBScriptObjects.ps1"
-. "$scriptDir\functions\Invoke-DBExtractCLRDLL.ps1"
-. "$scriptDir\functions\Invoke-DBCompareServerSettings.ps1"
-. "$scriptDir\functions\Invoke-DBRenameConstraints.ps1"
-. "$scriptDir\functions\Find-DBInvalidSettings.ps1"
-. "$scriptDir\functions\Find-DBValue.ps1"
-. "$scriptDir\functions\Test-DBReadOnlyRouting.ps1"
-. "$scriptDir\functions\Find-DBColumnDataTypeDiscrepancies.ps1"
-. "$scriptDir\functions\Invoke-DBDeployAgentJob.ps1"
-. "$scriptDir\functions\Invoke-DBSqlAgentScripter.ps1"
-. "$scriptDir\functions\Invoke-Credentials.ps1"
+foreach($script in $scripts) {
+    . $script    
+}
 
-. "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
-
-# INIT FUNCTION
-# this script MUST always be invoked last
+# INIT FUNCTION: this script MUST always be invoked last
 . "$scriptDir\functions\private\ModuleInit.ps1"
 
-Export-ModuleMember -Function Invoke-DBMoveIndexes
-Export-ModuleMember -Function Invoke-DBSafeShrink
-Export-ModuleMember -Function Invoke-DBScriptObjects
-Export-ModuleMember -Function Invoke-DBExtractCLRDLL
-Export-ModuleMember -Function Invoke-DBCompareServerSettings
-Export-ModuleMember -Function Invoke-DBRenameConstraints
-Export-ModuleMember -Function Find-DBInvalidSettings
-Export-ModuleMember -Function Find-DBValue
-Export-ModuleMember -Function Test-DBReadOnlyRouting
-Export-ModuleMember -Function Find-DBColumnDataTypeDiscrepancies
-Export-ModuleMember -Function Invoke-DBDeployAgentJob
-Export-ModuleMember -Function Invoke-DBSqlAgentScripter
+# export any and all functions with a dash in the name
+Export-ModuleMember -Function *-*
 
-Export-ModuleMember -Function Invoke-DBDataTableQuery
-Export-ModuleMember -Function Invoke-DBScalarQuery
-Export-ModuleMember -Function Invoke-DBNonQuery
-Export-ModuleMember -Function Invoke-DBReaderQuery
-Export-ModuleMember -Function Invoke-DBDataSetQuery
-Export-ModuleMember -Function New-DBSqlParameter
-Export-ModuleMember -Function Get-DBInClauseParams
-Export-ModuleMember -Function Get-DBInClauseString
-
-Export-ModuleMember -Function Get-DBUserCredential
-Export-ModuleMember -Function Set-DBUserCredential
+# add and export aliases
 New-Alias -Name New-DBUserCredential -Value Set-DBUserCredential
 Export-ModuleMember -Alias New-DBUserCredential -Function Set-DBUserCredential
 
-Export-ModuleMember -Function New-DBScripterObject
-Export-ModuleMember -Function New-DBSqlCmdArguments
-Export-ModuleMember -Function New-DBSMOServer
-Export-ModuleMember -Function New-DBSQLConnection
-Export-ModuleMember -Function Get-AllUserDatabases
-Export-ModuleMember -Function Invoke-Telnet
-
-# these functions were not really db related, but I needed to make use of them, so I am exposing them
-Export-ModuleMember -Function Write-InformationColorized
-Export-ModuleMember -Function ConvertTo-Markdown
