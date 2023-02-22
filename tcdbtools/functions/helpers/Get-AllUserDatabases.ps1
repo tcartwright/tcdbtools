@@ -1,4 +1,4 @@
-function Get-AllUserDatabases {
+﻿function Get-AllUserDatabases {
     <#
         .DESCRIPTION
             If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases
@@ -20,7 +20,7 @@ function Get-AllUserDatabases {
 
     #>
     param (
-        [string[]] $Databases, 
+        [string[]] $Databases,
         $SqlCmdArguments
     )
 

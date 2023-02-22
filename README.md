@@ -50,6 +50,7 @@ Install-Module tcdbtools
 * [New-DBSMOServer](/docs/New-DBSqlCmdArguments.md) : Returns a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 * [New-DBSqlCmdArguments](/docs/New-DBSqlCmdArguments.md) : Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
 * Get-AllUserDatabases : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
+* Test-DBSqlConnection : Tests connectivity to a sql server using a very lightweight query.
 
 ### Credentials 
 

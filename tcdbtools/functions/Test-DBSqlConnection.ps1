@@ -16,6 +16,12 @@
         Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used. This authentication will
         be used for each server.
 
+    .PARAMETER ConnectionTimeout
+        The time in seconds to wait for a successful connection to each server. Defaults to 10.
+
+    .PARAMETER QueryTimeout
+        The time in seconds to wait for the query to return results. Defaults to 5.
+
     .OUTPUTS
 
     .EXAMPLE
@@ -34,7 +40,11 @@
         [ValidateCount(1, 9999)]
         [string[]]$ServerInstances,
         [string]$Database = "master",
-        [pscredential]$Credentials
+        [pscredential]$Credentials,
+        [ValidateRange(2, 120)]
+        [int]$ConnectionTimeout = 10,
+        [ValidateRange(2, 120)]
+        [int]$QueryTimeout = 5
     )
 
     begin {
@@ -54,9 +64,9 @@
 
                 $results = Invoke-Sqlcmd @SqlCmdArguments `
                     -Query "SELECT @@SERVERNAME AS [ServerName], @@VERSION AS [Version], GETDATE() AS [DateTime]" `
-                    -QueryTimeout 5 `
+                    -QueryTimeout $QueryTimeout `
                     -ErrorAction Stop `
-                    -ConnectionTimeout 10
+                    -ConnectionTimeout $ConnectionTimeout
 
                 if ($results) {
                     $serverTest.ServerName = $results.ServerName
@@ -67,7 +77,7 @@
 
             } catch {
                 $serverTest.Error = "EXCEPTION: $($_.Exception.GetBaseException().Message)"
-            } 
+            }
         }
     }
 
