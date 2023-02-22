@@ -11,6 +11,7 @@
     - [General](#general)
     - [Credentials](#credentials)
     - [ADO Wrappers](#ado-wrappers)
+    - [Additional Miscellaneous Functions](#additional-miscellaneous-functions)
 
 ##  Description
 
@@ -68,6 +69,7 @@ Install-Module tcdbtools
 * [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 
 ### Additional Miscellaneous Functions
+
 * Write-InformationColorized : Writes to the information stream, but applies colors of your choice. Similar to Write-Host.
 * ConvertTo-Markdown : Converts an array of objects to a markdown string.
 * Invoke-Telnet : Allows for telnet connections, and telnet commands to be sent to a server. Can be used to test sql server connectivity.

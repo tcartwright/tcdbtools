@@ -96,6 +96,7 @@ FunctionsToExport = @(
     ,"New-DBSqlCmdArguments"
     ,"New-DBSQLConnection"
     ,"Get-AllUserDatabases"
+    ,"Test-DBSqlConnection"
 
     ,"Get-DBUserCredential"
     ,"Set-DBUserCredential"
