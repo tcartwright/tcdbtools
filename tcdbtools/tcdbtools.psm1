@@ -46,7 +46,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 . "$scriptDir\functions\Invoke-DBSqlAgentScripter.ps1"
 . "$scriptDir\functions\Invoke-Credentials.ps1"
 
-# . "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
+. "$scriptDir\functions\Invoke-Telnet.ps1" # debating on exposing this here. not really sql related.
 
 # INIT FUNCTION
 # this script MUST always be invoked last
@@ -84,7 +84,7 @@ Export-ModuleMember -Function New-DBSqlCmdArguments
 Export-ModuleMember -Function New-DBSMOServer
 Export-ModuleMember -Function New-DBSQLConnection
 Export-ModuleMember -Function Get-AllUserDatabases
-#Export-ModuleMember -Function Invoke-Telnet
+Export-ModuleMember -Function Invoke-Telnet
 
 # these functions were not really db related, but I needed to make use of them, so I am exposing them
 Export-ModuleMember -Function Write-InformationColorized

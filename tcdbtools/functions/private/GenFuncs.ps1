@@ -38,7 +38,10 @@ Function Write-InformationColorized {
 
 function GetSQLFileContent {
     param ([string]$fileName)
-    return Get-Content -Path ([System.IO.Path]::Combine($script:tcdbtools_SqlDir, $fileName)) -Raw
+    $sql = Get-Content -Path ([System.IO.Path]::Combine($script:tcdbtools_SqlDir, $fileName)) -Raw
+    # strip of the signature block if there is one.
+    $sql = $sql -ireplace "# SIG # Begin signature block[\W\w\d\r\n]*?# SIG # End signature block", ""
+    return $sql
 }
 
 function InstallPackage {
