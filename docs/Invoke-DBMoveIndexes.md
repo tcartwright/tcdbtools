@@ -19,18 +19,9 @@ All of the include and exclude parameters are OR'ed together in the following or
 
 This provides a lot of flexibility in narrowing the list down, but could also exclude indexes from the results you did not wish to exclude.
 
-So, if all of include / exclude parameters are supplied then the resulting SQL to find the indexes could look similar to this:
+So, if all of include / exclude parameters are supplied then the resulting SQL where clause to find the indexes should look similar to this:
 
 ```sql
-SELECT 
-    OBJECT_SCHEMA_NAME(i.[object_id]) AS [schema_name],
-    OBJECT_NAME(i.[object_id]) AS [object_name],
-    i.[index_id],
-    i.[name] AS [index_name],
-    i.[type_desc] AS [index_type]
-FROM [sys].[indexes] i
-INNER JOIN [sys].[filegroups] f
-    ON f.[data_space_id] = i.[data_space_id]
 WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
     AND [f].[name] = 'file_group_name'
     AND (
@@ -41,8 +32,6 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         OR OBJECT_SCHEMA_NAME(i.[object_id]) NOT IN ('ExcludeSchemas1', 'ExcludeSchemas2', '...')
         OR OBJECT_SCHEMA_NAME(i.[object_id]) IN ('IncludeSchemas1', 'IncludeSchemas2', '...')
     )
-ORDER BY OBJECT_NAME(i.[object_id]),
-    i.[index_id]
 ```
 
 
