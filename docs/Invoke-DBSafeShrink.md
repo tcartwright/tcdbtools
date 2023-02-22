@@ -2,6 +2,8 @@
 # Invoke-DBSafeShrink
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBSafeShrink.ps1)
+
 ## Synopsis
 Shrinks a Sql Server mdf database file while also rebuilding the indexes. Does not cause fragmentation like a normal shrink.
 
