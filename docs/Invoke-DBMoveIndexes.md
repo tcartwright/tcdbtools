@@ -182,7 +182,7 @@ Move all of the indexes for a specific set of tables except for the PK of each t
 Invoke-DBMoveIndexes `
     -ServerInstance "ServerName" `
     -Databases "DatabaseName1" `
-    -IncludeTables "dbo.Table1", "dbo.Table2"
+    -IncludeTables "dbo.Table1", "dbo.Table2" `
     -ExcludeIndexes "PK_Table1", "PK_Table2"
 ```
 
