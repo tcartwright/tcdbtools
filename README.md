@@ -27,18 +27,18 @@ Install-Module tcdbtools
 
 ## Functions
 
-* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : This is **NOT** a normal shrink. This is based upon Paul Randal's shrinking methodology and will shrink an mdf file ***and*** rebuild all indexes at the same time. Typically faster then a normal shrink. Can not be used to shrink an LDF file. Does not cause fragmentation like a normal shrink. 
+* [Invoke-DBSafeShrink](/docs/Invoke-DBSafeShrink.md) : This is **NOT** a normal shrink. This is based upon a methodolofy suggested by Paul Randal, and will shrink an mdf file ***and*** rebuild all indexes at the same time. Also this method is typically faster then a normal shrink. Can not be used to shrink an LDF file. Does not cause fragmentation like a normal shrink. 
 * [Invoke-DBDeployAgentJob](/docs/Invoke-DBDeployAgentJob.md) : This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server. Can be used to quickly update all of your jobs across your entire network even if they need customization per server.
 * [Invoke-DBSqlAgentScripter](/docs/Invoke-DBSqlAgentScripter.md) : Will script out all Sql Agent objects to sql script files. 
-* [Invoke-DBMoveIndexes](/docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps.
+* [Invoke-DBMoveIndexes](/docs/Invoke-DBMoveIndexes.md) : Moves all indexes from one file group to another, including heaps and removes fragmentation as they are moved.
 * [Invoke-DBCompareServerSettings](/docs/Invoke-DBCompareServerSettings.md) : Compares the server settings between two or more servers.
 * [Invoke-DBExtractCLRDLL](/docs/Invoke-DBExtractCLRDLL.md) : Extracts all user defined CLR objects from a SQL server.
 * [Invoke-DBScriptObjects](/docs/Invoke-DBScriptObjects.md) : Scripts all objects from a database to individual files per object in a schema\type\script hierarchy.
-* [Invoke-DBRenameConstraints](/docs/Invoke-DBRenameConstraints.md) : Will rename all indexes and constraints to match naming conventions. The naming conventions can be customized. 
+* [Invoke-DBRenameConstraints](/docs/Invoke-DBRenameConstraints.md) : Will rename all indexes and constraints to match naming conventions. The naming conventions can be customized using script block function overloads. 
 * [Find-DBInvalidSettings](/docs/Find-DBInvalidSettings.md) : Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated.
 * [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads. 
 * [Test-DBReadOnlyRouting](/docs/Test-DBReadOnlyRouting.md) : Tests read only routing for an availability group, and returns whether or not the routing is valid.
-* [Find-DBColumnDataTypeDiscrepancies](/docs/Find-DBColumnDataTypeDiscrepancies.md) : Scans the database for columns in different tables that have the same names, but differ by data type.
+* [Find-DBColumnDataTypeDiscrepancies](/docs/Find-DBColumnDataTypeDiscrepancies.md) : Scans the database for columns in different tables that have the same names, but differ by data type. This is typically indicative of a design flaw.
 
 
 ## Helper Functions
@@ -53,7 +53,7 @@ Install-Module tcdbtools
 ### Credentials 
 
 * Get-DBUserCredential : Gets the credential stored under the application name in the Windows Credential Manager.
-* Set-DBUserCredential (Alias: New-DBUserCredential): Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials, but not saved into a script. That way you can keep from storing passwords in your scripts.
+* Set-DBUserCredential (Alias: New-DBUserCredential): Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials as one time use, but not saved into a script. That way you can keep from storing passwords in your scripts.
 
 ### ADO Wrappers
 
@@ -67,5 +67,9 @@ Install-Module tcdbtools
 * [Get-DBInClauseParams](/docs/Get-DBInClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
 * [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 
+### Additional Miscellaneous Functions
+* Write-InformationColorized : Writes to the information stream, but applies colors of your choice. Similar to Write-Host.
+* ConvertTo-Markdown : Converts an array of objects to a markdown string.
+* Invoke-Telnet : Allows for telnet connections, and telnet commands to be sent to a server. Can be used to test sql server connectivity.
 
 [def]: https://www.powershellgallery.com/packages/tcdbtools
