@@ -3,6 +3,8 @@
 
 **Edits By** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBScriptObjects.ps1)
+
 ## Synopsis
 Generate file-per-object scripts of specified server and database.
 

@@ -1,6 +1,8 @@
 # Find-DBColumnDataTypeDiscrepancies
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Find-DBColumnDataTypeDiscrepancies.ps1)
+
 ## Synopsis
 Scans the database for columns in different tables that have the same names, but differ by data type.
 

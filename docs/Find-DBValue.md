@@ -1,6 +1,8 @@
 # Find-DBValue
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Find-DBValue.ps1)
+
 ## Synopsis
 Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads.
 

@@ -1,6 +1,8 @@
 # Invoke-DBMoveIndexes
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBMoveIndexes.ps1)
+
 ## Synopsis
 Moves indexes from one file group to another including heaps.
 

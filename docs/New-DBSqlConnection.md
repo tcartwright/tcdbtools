@@ -1,6 +1,8 @@
 # New-DBSqlConnection
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/ado/New-DBSqlConnection.ps1)
+
 ## Synopsis
 Creates a SqlConnection
 

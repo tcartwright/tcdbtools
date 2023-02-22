@@ -1,6 +1,8 @@
 # Get-DBInClauseString
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/ado/Get-DBInClauseString.ps1)
+
 ## Synopsis
 Creates the string representation of the parameters that can be used with an IN clause.
 

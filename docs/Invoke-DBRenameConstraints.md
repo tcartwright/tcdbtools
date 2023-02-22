@@ -1,6 +1,8 @@
 # Invoke-DBRenameConstraints
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBRenameConstraints.ps1)
+
 ## Synopsis
 Will rename all indexes and constraints to match naming conventions.
 

@@ -1,6 +1,8 @@
 # Find-DBInvalidSettings
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Find-DBInvalidSettings.ps1)
+
 ## Synopsis
 Finds settings and options that may or may not be invalid depending upon design choices. They are typically invalid however and should be investigated.
 

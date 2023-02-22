@@ -1,6 +1,8 @@
 # New-DBSMOServer
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/helpers/New-DBSMOServer.ps1)
+
 ## Synopsis
 Creates a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 

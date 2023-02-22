@@ -1,6 +1,8 @@
 # Get-DBInClauseParams
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/ado/Get-DBInClauseParams.ps1)
+
 ## Synopsis
 Can be used to create a set of parameters that can be used with an IN clause.
 

@@ -1,6 +1,8 @@
 # Test-DBReadOnlyRouting
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Test-DBReadOnlyRouting.ps1)
+
 ## Synopsis
 Tests read only routing for an availability group, and returns whether or not the routing is valid.
 

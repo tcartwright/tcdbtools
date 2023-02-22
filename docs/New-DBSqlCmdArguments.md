@@ -1,6 +1,8 @@
 # New-DBSqlCmdArguments
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/helpers/New-DBSqlCmdArguments.ps1)
+
 ## Synopsis
 Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
 

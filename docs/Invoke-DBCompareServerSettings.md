@@ -1,6 +1,8 @@
 # Invoke-DBCompareServerSettings
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBCompareServerSettings.ps1)
+
 ## Synopsis
 Compares all server settings for each instance passed in to generate a report showing differences. The user options are also compared individually. Any user option will have its name suffixed with (options).
 

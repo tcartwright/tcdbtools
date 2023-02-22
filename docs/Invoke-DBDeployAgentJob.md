@@ -1,6 +1,8 @@
 # Invoke-DBDeployAgentJob
 **Author** Tim Cartwright
 
+[Source Code](/tcdbtools/functions/Invoke-DBDeployAgentJob.ps1)
+
 ## Synopsis
 This function is designed to deploy SQL Agent jobs using variables that can customize the deployment for each server.
 
