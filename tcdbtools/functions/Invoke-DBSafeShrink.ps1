@@ -59,7 +59,11 @@
         after the original file is shrunk. If the direction is oneway, then the indexes are moved
         to the temporary file, and the process will be complete.
 
-    .PARAMETER AdjustRecovery
+    .PARAMETER Online
+        Specifies whether underlying tables and associated indexes are available for queries and data
+        modification during the index operation. The default is OFF.
+
+        .PARAMETER AdjustRecovery
         If this switch is enabled then the recovery model of the database will be temporarily changed
         to SIMPLE, then put back to the original recovery model. If the switch is missing, then the
         recovery model will not be changed.
@@ -121,6 +125,7 @@
         [System.IO.DirectoryInfo]$NewFileDirectory,
         [ValidateSet("oneway", "twoway")]
         [string]$Direction = "twoway",
+        [switch]$Online,
         [switch]$AdjustRecovery,
         [int]$ShrinkTimeout = 5,
         [ValidateRange(0, 20000)]
@@ -243,7 +248,7 @@
             <#
             # MOVE THE INDEXES FROM THE BASE FILEGROUP TO THE TARGET TEMP FILEGROUP
             #>
-            MoveIndexes -db $db -fromFG $fileGroupName -toFG "SHRINK_DATA_TEMP" -indicator "-->" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
+            MoveIndexes -db $db -fromFG $fileGroupName -toFG "SHRINK_DATA_TEMP" -indicator "-->" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments -Online:$Online.IsPresent
 
             <#
             # MOVE THE INDEXES BACK TO THE ORIGINAL FILEGROUP IF THE DIRECTION IS TWOWAY, AND REMOVE THE TEMP FILEGROUP AND FILE
@@ -263,7 +268,7 @@
                 }
                 Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED SHRINKING FILES IN FG $fileGroupName" -ForegroundColor Magenta
 
-                MoveIndexes -db $db -fromFG "SHRINK_DATA_TEMP" -toFG $fileGroupName -indicator "<--" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments
+                MoveIndexes -db $db -fromFG "SHRINK_DATA_TEMP" -toFG $fileGroupName -indicator "<--" -timeout $IndexMoveTimeout -SqlCmdArguments $SqlCmdArguments -Online:$Online.IsPresent
 
                 RemoveTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -shrinkTimeOut $shrinkTimeOut
             }

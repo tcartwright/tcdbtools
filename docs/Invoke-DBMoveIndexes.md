@@ -10,8 +10,14 @@ Moves indexes from one file group to another including heaps.
 Moves indexes from one file group to another. Both file groups must exist, neither will be created for you. As the indexes are moved, they will be rebuilt.
 
 ## Notes
-All of the include and exclude parameters are OR'ed together in the following order if any values are passed in for any of these parameters:
+These types of objects are moved:
+- Clustered Indexes
+- Non-Clustered Indexes
+- Heaps
+- LOB Data
 
+
+All of the include and exclude parameters are OR'ed together in the following order if any values are passed in for any of these parameters:
 - ExcludeIndexes
 - IncludeIndexes
 - ExcludeTables
@@ -44,6 +50,7 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         [[-Credentials] <PSCredential>] 
         [[-SourceFileGroupName] <String>] 
         [-TargetFileGroupName] <String> 
+        [-Online ] 
         [[-IndexMoveTimeout] <Int32>] 
         [[-IncludeSchemas] <String[]>] 
         [[-ExcludeSchemas] <String[]>] 
@@ -54,6 +61,7 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         [<CommonParameters>]
 
 ## Parameters
+Parameters
     -ServerInstance <String>
         The sql server instance to connect to.
 
@@ -73,7 +81,8 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         Accept wildcard characters?  false
 
     -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        Specifies credentials to connect to the database with. If not supplied 
+        then a trusted connection will be used.
 
         Required?                    false
         Position?                    3
@@ -99,6 +108,17 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+    -Online <SwitchParameter>
+        Specifies whether underlying tables and associated indexes are available 
+        for queries and data modification during the index operation. The default 
+        is OFF.
+
+        Required?                    false
+        Position?                    named
+        Default value                False
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
     -IndexMoveTimeout <Int32>
         The amount of time that controls how long a index move can run before timing out.
         
@@ -111,7 +131,8 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         Accept wildcard characters?  false
 
     -IncludeSchemas <String[]>
-        A list of schemas to include in the move. If not provided then all schemas will be returned.
+        A list of schemas to include in the move. If not provided then all schemas 
+        will be returned.
 
         Required?                    false
         Position?                    7
@@ -129,7 +150,8 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         Accept wildcard characters?  false
 
     -IncludeTables <String[]>
-        A list of tables to include in the move. If not provided then all tables will be returned.
+        A list of tables to include in the move. If not provided then all tables 
+        will be returned.
 
         Required?                    false
         Position?                    9
@@ -147,7 +169,8 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         Accept wildcard characters?  false
 
     -IncludeIndexes <String[]>
-        A list of indexes to include in the move. If not provided then all tables will be returned.
+        A list of indexes to include in the move. If not provided then all 
+        tables will be returned.
 
         Required?                    false
         Position?                    11

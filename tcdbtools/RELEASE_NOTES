@@ -225,5 +225,13 @@
 1.0.43
 * Fixed a bug when moving indexes and the include / exclude parameters were used that could cause too many indexes to be moved
 * Added a new internal GetPercentComplete function for use with progress bars
-
-
+1.0.44
+* added ability to use online operations to index moves
+* added code to move LOB_DATA with index moves #3
+* split all exported functions into their own files
+* rearranged files into a more sensible file structure
+* modified the psm1 to be generic in the loading of scripts and exporting of functions
+* added code to GetSQLFileContent to ignore signing code blocks if attached to the file. In preparation for code signing.
+* decided to expose Invoke-Telnet, going to add Test-SqlConnection
+* Update README.md
+* Update Invoke-DBMoveIndexes.md

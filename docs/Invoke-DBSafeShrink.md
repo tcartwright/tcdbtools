@@ -14,6 +14,13 @@ If, for whatever reason you stop the function before it completes, it can be res
 
 **IMPORTANT**: The second file that gets created will match the used size of the original filegroup. You must have enough disk space to support this.
 
+## Notes
+These types of objects are moved:
+- Clustered Indexes
+- Non-Clustered Indexes
+- Heaps
+- LOB Data
+
 ## More Information     
 Wrote this after I read this post by Paul Randal: <a href="https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/" target="_blank">Why you should not shrink your data files</a>  
     
@@ -41,6 +48,7 @@ This script automates those steps so you don't have to.
         [[-FileGroupName] <String>] 
         [[-NewFileDirectory] <DirectoryInfo>] 
         [[-Direction] <String>] 
+        [-Online ] 
         [-AdjustRecovery ] 
         [[-ShrinkTimeout] <Int32>] 
         [[-ShrinkIncrementMB] <Int32>] 
@@ -120,6 +128,17 @@ This script automates those steps so you don't have to.
         Accept pipeline input?       false
         Accept wildcard characters?  false
 
+    -Online <SwitchParameter>
+        Specifies whether underlying tables and associated indexes are available 
+        for queries and data modification during the index operation. The default 
+        is OFF.
+
+        Required?                    false
+        Position?                    named
+        Default value                False
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
     -AdjustRecovery <SwitchParameter>
         If this switch is enabled then the recovery model of the database 
         will be temporarily changed to SIMPLE, then put back to the original 
@@ -169,11 +188,9 @@ This script automates those steps so you don't have to.
         Accept wildcard characters?  false
 
     -MinimumFreeSpaceMB <Int32>
-        The file shrunk must have at least this amount of free space, otherwise
-        the shrink operation will write out a warning and skip the shrink 
-        operation for this file. If there are multiple files in the filegroup, 
-        then the total free space of the all the files must be greater than 
-        this value.
+        The file shrunk must have at least this amount of free space, otherwise 
+        the shrink operation will write out a warning and skip the shrink operation 
+        for this file.
 
         Required?                    false
         Position?                    10

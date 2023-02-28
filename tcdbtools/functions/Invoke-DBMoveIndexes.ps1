@@ -32,6 +32,10 @@
     .PARAMETER TargetFileGroupName
         The file group where the indexes will be moved to.
 
+    .PARAMETER Online
+        Specifies whether underlying tables and associated indexes are available for queries and data
+        modification during the index operation. The default is OFF.
+
     .PARAMETER IndexMoveTimeout
         The amount of time that controls how long a index move can run before timing out.
 
@@ -83,6 +87,7 @@
         [string]$SourceFileGroupName = "PRIMARY",
         [Parameter(Mandatory=$true)]
         [string]$TargetFileGroupName,
+        [switch]$Online,
         [int]$IndexMoveTimeout = 5,
         [string[]]$IncludeSchemas,
         [string[]]$ExcludeSchemas,
@@ -166,7 +171,8 @@
                 -timeout $IXMoveTimeout `
                 -SqlCmdArguments $SqlCmdArguments `
                 -whereClause $whereClause `
-                -parameters $parameters
+                -parameters $parameters `
+                -Online:$Online.IsPresent
         }
     }
 

@@ -55,6 +55,23 @@ function PerformFileOperation {
     } while ($tryAgain)
 }
 
+function ScriptIndex {
+    param(
+        $index,
+        [string]$toFG,
+        [bool]$Online
+    )
+    # set the new FileGroup, and the DropExistingIndex property so the script will generate properly
+    $index.FileGroup = $toFG
+    $index.DropExistingIndex = $true
+    # not all indexes support online rebuilds, so we need to determine that before enabling it
+    if ($index.IsOnlineRebuildSupported) {
+        $index.OnlineIndexOperation = $Online
+    }
+    $sql = $index.Script()
+    return $sql
+}
+
 function MoveIndexes {
     param (
         [System.Collections.HashTable]$SqlCmdArguments,
@@ -63,6 +80,7 @@ function MoveIndexes {
         [string]$toFG,
         [string]$indicator,
         [int]$timeout,
+        [switch]$Online,
         [string]$whereClause,
         [System.Data.SqlClient.SqlParameter[]]$parameters
     )
@@ -82,12 +100,26 @@ function MoveIndexes {
         if ( $connection )  { $connection.Dispose() }
     }
 
+    if ($Online.IsPresent -and $db.Parent.DatabaseEngineEdition -ine "Enterprise") {
+        Write-Warning "Online operations can only be used from Enterprise edition"
+        $Online = $false
+    }
+
     $indexCounter = 0
-    $indexCountTotal = $indexes.Count
+
+    $indexList = $indexes | Where-Object { $_.index_type -imatch "CLUSTERED|NONCLUSTERED|HEAP" -and $_.alloc_unit_type -ieq "IN_ROW_DATA" }
+    $indexCountTotal = 0
+    if ($indexList) {
+        if ($indexList -is [System.Data.DataRow]) {
+            $indexCountTotal = 1
+        } else {
+            $indexCountTotal = $indexList.Count
+        }
+    }
     $activity = "MOVING ($indexCountTotal) INDEXES FROM FILEGROUP [$fromFG] TO FILEGROUP [$toFG] FOR DATABASE: [$($db.Name)]"
     Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] $activity" -ForegroundColor Green
 
-    foreach ($tbl in ($indexes | Group-Object -Property schema_name,object_name)) {
+    foreach ($tbl in ($indexList | Group-Object -Property schema_name,object_name)) {
         $table = $db.Tables.Item($tbl.Group[0].object_name, $tbl.Group[0].schema_name)
         $tableName = "[$($table.Schema)].[$($table.Name)]"
 
@@ -97,7 +129,7 @@ function MoveIndexes {
         if (-not $table.HasClusteredIndex) {
             $firstColumn = $table.Columns | Select-Object -First 1
             $indexName =  "PK_$([Guid]::NewGuid().ToString("N"))"
-            $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($($firstColumn.Name)) WITH (DATA_COMPRESSION = PAGE) ON [$toFG];
+            $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($($firstColumn.Name)) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
                 DROP INDEX $indexName ON $tableName"
 
             Write-Verbose "$sql"
@@ -114,12 +146,38 @@ function MoveIndexes {
 
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 
-                # set the new FileGroup, and the DropExistingIndex property so the script will generate properly
-                $index.FileGroup = $toFG
-                $index.DropExistingIndex = $true
-                $sql = $index.Script()
-                Write-Verbose "$sql"
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
+                $MoveLobData = $index.IsClustered -and ($indexes | Where-Object { $_.index_name -ieq $index.Name -and $_.alloc_unit_type -ieq "LOB_DATA" })
+                $sql = New-Object System.Text.StringBuilder
+
+                if ($MoveLobData) {
+                    <#  http://sql10.blogspot.com/2013/07/easily-move-sql-tables-between.html
+
+                        If the table contains LOB data which does not reside where the caller would like it to reside, then use the Brad Hoff's neat
+                        partition scheme trick to move LOB data. Effectively, we simply create a partition function & scheme, rebuild the index on that
+			            scheme, and then allow the normal rebuild (without partitioning) to be done afterwards.
+                        For details, see Kimberly Tripp's site: http://www.sqlskills.com/blogs/kimberly/understanding-lob-data-20082008r2-2012/)
+	                #>
+
+                    $guid = [Guid]::NewGuid().ToString("N")
+                    $firstColumn = $index.IndexedColumns | Select-Object -First 1
+                    $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ([$($table.Columns[$firstColumn.Name].DataType.SqlDataType)]) AS RANGE RIGHT FOR VALUES (0);") | Out-Null
+                    $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
+
+                    # use a temp name as the script engine mangles the partition schemes name when scripted out
+                    $sqlScript = (ScriptIndex -index $index -toFG "REPLACE_ME_$guid" -Online $Online.IsPresent) -ireplace "ON\s+\[REPLACE_ME_$($guid)\]", "`r`nON PS_MOVE_HELPER_$guid([$($firstColumn.Name)]);"
+                    $sql.AppendLine($sqlScript) | Out-Null
+                    $sql.AppendLine("") | Out-Null
+                }
+
+                $sql.AppendLine((ScriptIndex -index $index -toFG $toFG -Online $Online.IsPresent)) | Out-Null
+
+                if ($MoveLobData) {
+                    $sql.AppendLine("`r`nDROP PARTITION SCHEME PS_MOVE_HELPER_$guid;") | Out-Null
+                    $sql.AppendLine("DROP PARTITION FUNCTION PF_MOVE_HELPER_$guid;") | Out-Null
+                }
+
+                Write-Verbose "$($sql.ToString())"
+                Invoke-Sqlcmd @SqlCmdArguments -Query "$($sql.ToString())" -QueryTimeout $timeout
             }
         }
     }
