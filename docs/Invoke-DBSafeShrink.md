@@ -14,13 +14,6 @@ If, for whatever reason you stop the function before it completes, it can be res
 
 **IMPORTANT**: The second file that gets created will match the used size of the original filegroup. You must have enough disk space to support this.
 
-## Notes
-These types of objects are moved:
-- Clustered Indexes
-- Non-Clustered Indexes
-- Heaps
-- LOB Data
-
 ## More Information     
 Wrote this after I read this post by Paul Randal: <a href="https://www.sqlskills.com/blogs/paul/why-you-should-not-shrink-your-data-files/" target="_blank">Why you should not shrink your data files</a>  
     
@@ -39,6 +32,13 @@ QUOTE (Paul Randal):
 > 4. Move the indexes back to the original filegroup if desired (added by me :))
 
 This script automates those steps so you don't have to.
+
+## Notes
+These types of objects are moved:
+- Clustered Indexes
+- Non-Clustered Indexes
+- Heaps
+- LOB Data
 
 ## Syntax
     Invoke-DBSafeShrink 
