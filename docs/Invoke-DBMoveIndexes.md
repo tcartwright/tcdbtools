@@ -61,7 +61,7 @@ WHERE OBJECTPROPERTY(i.[object_id], 'IsUserTable') = 1
         [<CommonParameters>]
 
 ## Parameters
-Parameters
+
     -ServerInstance <String>
         The sql server instance to connect to.
 
