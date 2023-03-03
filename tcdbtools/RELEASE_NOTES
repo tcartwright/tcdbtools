@@ -235,3 +235,6 @@
 * decided to expose Invoke-Telnet, going to add Test-SqlConnection
 * Update README.md
 * Update Invoke-DBMoveIndexes.md
+1.0.45
+* modified Invoke-DBSafeShrink.ps1 so that heaps with bad table design can still be moved
+* added #Requires statements to tcdbtools.psm1 so that module will not import without requirements
