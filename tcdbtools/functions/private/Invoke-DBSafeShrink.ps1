@@ -151,7 +151,7 @@ function MoveIndexes {
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 
                 $MoveLobData = $index.IsClustered -and ($indexes | Where-Object { $_.index_name -ieq $index.Name -and $_.alloc_unit_type -ieq "LOB_DATA" })
-                $sql = New-Object System.Text.StringBuilder | Out-Null
+                $sql = [System.Text.StringBuilder]::new()
 
                 if ($MoveLobData) {
                     <#  http://sql10.blogspot.com/2013/07/easily-move-sql-tables-between.html

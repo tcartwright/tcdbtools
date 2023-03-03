@@ -212,7 +212,7 @@ function Invoke-DBDeployAgentJob {
                     $serverVars[$key] = $value
                 }
             }
-            $sql = New-Object System.Text.StringBuilder
+            $sql = [System.Text.StringBuilder]::new()
 
             # Prepend the setvar statements to the job sql. I hate using the -Variable, can never get it to work right
             # plus this way I can eventually dump it out with -WhatIf when I get around to adding that
