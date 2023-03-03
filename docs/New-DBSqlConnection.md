@@ -22,7 +22,7 @@ Creates a SqlConnection
 
 ## Parameters
     -ServerInstance <String>
-        The name or network address of the instance of SQL Server to connect to.
+        The sql server instance to connect to.
 
         Required?                    true
         Position?                    1

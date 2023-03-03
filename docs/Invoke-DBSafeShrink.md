@@ -118,7 +118,7 @@ These types of objects are moved:
 
     -Direction <String>
         If the direction is twoway then the the indexes are moved to the 
-        temporary file and back after the orginal file is shrunk. If the 
+        temporary file and back after the original file is shrunk. If the 
         direction is oneway, then the indexes are moved to the temporary file, 
         and the process will be complete.
 

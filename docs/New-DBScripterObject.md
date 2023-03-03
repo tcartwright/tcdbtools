@@ -17,7 +17,7 @@ Creates a database scripting object that can be customized and used by [Invoke-D
 
 ## Parameters
     -ServerInstance <String>
-        Specifies the database server hostname.
+        The sql server instance to connect to.
 
         Required?                    true
         Position?                    1

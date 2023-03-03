@@ -46,7 +46,8 @@ Editor: Tim Cartwright:
 
 ## Parameters
     -ServerInstance <String>
-
+        The sql server instance to connect to.
+        
         Required?                    true
         Position?                    2
         Default value                
