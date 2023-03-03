@@ -1,4 +1,7 @@
-﻿<#
+﻿#Requires -Version 5.0
+#Requires -Modules SqlServer
+
+<#
     .Synopsis
         This Module contains functions to help with automating various SQL Server functionality.
 

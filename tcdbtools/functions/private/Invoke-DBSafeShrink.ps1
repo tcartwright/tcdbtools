@@ -127,10 +127,14 @@ function MoveIndexes {
 
         # the table is a heap so we have to basically create a non-unique clustered index to move it..... then drop the index
         if (-not $table.HasClusteredIndex) {
-            $firstColumn = $table.Columns | Select-Object -First 1
-            $indexName =  "PK_$([Guid]::NewGuid().ToString("N"))"
-            $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($($firstColumn.Name)) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
-                DROP INDEX $indexName ON $tableName"
+            $guid = [Guid]::NewGuid().ToString("N")
+            $indexName =  "PK_$guid"
+            $columnName = "TempCol_$guid"
+            # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
+            $sql = "ALTER TABLE $tableName ADD [$columnName] BIGINT NOT NULL IDENTITY
+                CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
+                DROP INDEX $indexName ON $tableName
+                ALTER TABLE $tableName DROP COLUMN [$columnName]"
 
             Write-Verbose "$sql"
             Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
@@ -147,7 +151,7 @@ function MoveIndexes {
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
 
                 $MoveLobData = $index.IsClustered -and ($indexes | Where-Object { $_.index_name -ieq $index.Name -and $_.alloc_unit_type -ieq "LOB_DATA" })
-                $sql = New-Object System.Text.StringBuilder
+                $sql = New-Object System.Text.StringBuilder | Out-Null
 
                 if ($MoveLobData) {
                     <#  http://sql10.blogspot.com/2013/07/easily-move-sql-tables-between.html
@@ -160,6 +164,7 @@ function MoveIndexes {
 
                     $guid = [Guid]::NewGuid().ToString("N")
                     $firstColumn = $index.IndexedColumns | Select-Object -First 1
+                    $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
                     $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ([$($table.Columns[$firstColumn.Name].DataType.SqlDataType)]) AS RANGE RIGHT FOR VALUES (0);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
 
