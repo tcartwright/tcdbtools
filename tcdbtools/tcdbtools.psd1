@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.44'
+ModuleVersion = '1.0.45'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -144,17 +144,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.44
-* added ability to use online operations to index moves
-* added code to move LOB_DATA with index moves #3
-* split all exported functions into their own files
-* rearranged files into a more sensible file structure
-* modified the psm1 to be generic in the loading of scripts and exporting of functions
-* added code to GetSQLFileContent to ignore signing code blocks if attached to the file. In preparation for code signing.
-* decided to expose Invoke-Telnet, going to add Test-SqlConnection
-* Update README.md
-* Update Invoke-DBMoveIndexes.md
-
+1.0.45
+* modified Invoke-DBSafeShrink.ps1 so that heaps with bad table design can still be moved
+* added #Requires statements to tcdbtools.psm1 so that module will not import without requirements
 '@
 
     } # End of PSData hashtable
