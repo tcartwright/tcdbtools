@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.45'
+ModuleVersion = '1.0.46'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,9 +147,11 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.45
-* modified Invoke-DBSafeShrink.ps1 so that heaps with bad table design can still be moved
-* added #Requires statements to tcdbtools.psm1 so that module will not import without requirements
+https://github.com/D:\a\tcdbtools\tcdbtools/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
+1.0.46
+* Added new function Invoke-DBScriptRunner to allow for running a script multithreaded against multiple target servers and databases
+* added help docs for credential functions
+* added helper functions ConvertFrom-DataRows, and ConvertFrom-DataTable
 '@
 
     } # End of PSData hashtable
