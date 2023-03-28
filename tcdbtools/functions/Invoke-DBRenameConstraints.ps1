@@ -191,13 +191,14 @@
         if ($CustomNameExists) {
             $nameExists = $CustomNameExists
         }
+
+        # if they passed in ALL_USER_DATABASES get all database names
+        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
     }
 
     process {
-        # if they passed in ALL_USER_DATABASES get all database names
-        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
-
         foreach ($Database in $Databases) {
+            Write-InformationColorized "Scanning database: [$Database]" -ForegroundColor Cyan
             $SqlCmdArguments.Database = $Database
             $results = Invoke-Sqlcmd @SqlCmdArguments -Query $query -OutputAs DataRows
             $grouped = $results | Group-Object -Property schema_name, table_name
@@ -271,7 +272,7 @@ $($renames.Values)"
 
                     $ErrorActionPreference = "Stop"
                     try {
-                        Write-Information $renameSql
+                        Write-Verbose $renameSql
                         $command.CommandText = $renameSql;
                         $command.ExecuteNonQuery() | Out-Null
                     } catch {

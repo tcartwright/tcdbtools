@@ -40,7 +40,7 @@ Install-Module tcdbtools
 * [Find-DBValue](/docs/Find-DBValue.md) : Scans a database for a value. Returns all tables and columns that contain that value, as well as the value itself. The scan is broken up into multiple threads. 
 * [Test-DBReadOnlyRouting](/docs/Test-DBReadOnlyRouting.md) : Tests read only routing for an availability group, and returns whether or not the routing is valid.
 * [Find-DBColumnDataTypeDiscrepancies](/docs/Find-DBColumnDataTypeDiscrepancies.md) : Scans the database for columns in different tables that have the same names, but differ by data type. This is typically indicative of a design flaw.
-
+* [Invoke-DBScriptRunner](/docs/Invoke-DBScriptRunner.md) : Runs a query against one or more servers and databases. Captures the results and any messages. The execution of the script is multi threaded.
 
 ## Helper Functions
 
@@ -54,8 +54,8 @@ Install-Module tcdbtools
 
 ### Credentials 
 
-* Get-DBUserCredential : Gets the credential stored under the application name in the Windows Credential Manager.
-* Set-DBUserCredential (Alias: New-DBUserCredential): Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials as one time use, but not saved into a script. That way you can keep from storing passwords in your scripts.
+* [Get-DBUserCredential](/docs/Get-DBUserCredential.md) : Gets the credential stored under the application name in the Windows Credential Manager.
+* [Set-DBUserCredential](/docs/Set-DBUserCredential.md) (Alias: New-DBUserCredential): Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials as one time use, but not saved into a script. That way you can keep from storing passwords in your scripts.
 
 ### ADO Wrappers
 

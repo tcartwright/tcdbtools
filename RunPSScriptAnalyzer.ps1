@@ -7,7 +7,7 @@ $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
 
 $scriptDir = [System.IO.Path]::Combine($scriptDir, "tcdbtools")
 
-Invoke-ScriptAnalyzer -path $scriptDir -Recurse -Fix -ExcludeRule "PSUseSingularNouns" | Format-Table # , "PSUseShouldProcessForStateChangingFunctions", "PSAvoidGlobalVars"
-
+# the exclusions here must match the exclusions in ps_gallery_module.yml
+Invoke-ScriptAnalyzer -path $scriptDir -Recurse -Fix -ExcludeRule "PSUseSingularNouns", "PSAvoidAssignmentToAutomaticVariable", "PSReviewUnusedParameter" | Format-Table 
 Write-Information "DONE" -InformationAction Continue
 

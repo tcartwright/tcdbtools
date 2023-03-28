@@ -77,31 +77,6 @@ function ReplaceInvalidPathChars($str) {
     return $str
 }
 
-function DataTableToCustomObject {
-    <#
-        .LINK https://www.stefanroth.net/2018/04/11/powershell-create-clean-customobjects-from-datatable-object/
-    #>
-    [CmdletBinding()]
-    [OutputType([object])]
-    param (
-        [Parameter(Mandatory = $True)]
-        [AllowNull()]
-        [System.Data.DataTable]$DataTable
-    )
-    if (-not $DataTable) {
-        return $null
-    }
-    $Objects = @()
-    foreach ($row in $DataTable.Rows) {
-        $Properties = @{}
-        foreach ($name in $DataTable.Columns.ColumnName) {
-            $Properties.Add($name, $row[$name])
-        }
-        $Objects += New-Object -TypeName PSObject -Property $Properties
-    }
-    # select the objects using the column name array so the properties will output in the same order
-    return $Objects | Select-Object -Property $DataTable.Columns.ColumnName
-}
 
 function GetPercentComplete {
     [OutputType([int])]

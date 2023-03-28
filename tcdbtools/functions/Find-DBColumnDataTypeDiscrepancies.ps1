@@ -64,7 +64,7 @@
             $SqlCmdArguments.Database = $Database
             Write-Information "Querying: $Database"
             $tbl = Invoke-SqlCmd @SqlCmdArguments -As DataTables -Query $query -QueryTimeout $Timeout
-            $results = DataTableToCustomObject -DataTable $tbl
+            $results = ConvertFrom-DataTable -DataTable $tbl
             if ($results) {
                 $ret.AddRange($results)
             }

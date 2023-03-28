@@ -71,11 +71,11 @@
 
             $results = Invoke-DBDataSetQuery -conn $connection -sql $sql -parameters $parameters -timeout $Timeout
 
-            $ret.ServerOptions = DataTableToCustomObject -DataTable $results.Tables[1]
-            $ret.ServerSettings = DataTableToCustomObject -DataTable $results.Tables[3]
-            $ret.FileGrowths = DataTableToCustomObject -DataTable $results.Tables[5]
-            $ret.DatabaseSettings = DataTableToCustomObject -DataTable $results.Tables[7]
-            $ret.DatabaseObjects = DataTableToCustomObject -DataTable $results.Tables[9]
+            $ret.ServerOptions = ConvertFrom-DataTable -DataTable $results.Tables[1]
+            $ret.ServerSettings = ConvertFrom-DataTable -DataTable $results.Tables[3]
+            $ret.FileGrowths = ConvertFrom-DataTable -DataTable $results.Tables[5]
+            $ret.DatabaseSettings = ConvertFrom-DataTable -DataTable $results.Tables[7]
+            $ret.DatabaseObjects = ConvertFrom-DataTable -DataTable $results.Tables[9]
         } finally {
             if ($connection) { $connection.Dispose() }
         }
