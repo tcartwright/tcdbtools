@@ -74,5 +74,7 @@ Install-Module tcdbtools
 * Write-InformationColorized : Writes to the information stream, but applies colors of your choice. Similar to Write-Host.
 * ConvertTo-Markdown : Converts an array of objects to a markdown string.
 * Invoke-Telnet : Allows for telnet connections, and telnet commands to be sent to a server. Can be used to test sql server connectivity.
-
+* ConvertFrom-DataRows : Converts an array of DataRows to normal PS objects removing ado properties
+* ConvertFrom-DataTable : Converts a DataTable to normal PS objects removing ado properties
+ 
 [def]: https://www.powershellgallery.com/packages/tcdbtools
