@@ -49,8 +49,8 @@ Install-Module tcdbtools
 * [New-DBScripterObject](/docs/New-DBScripterObject.md) : Creates a database scripting object that can be modified and used by Invoke-DBScriptObjects.
 * [New-DBSMOServer](/docs/New-DBSqlCmdArguments.md) : Returns a type of [Microsoft.SqlServer.Management.Common.ServerConnection] used for SMO connections.
 * [New-DBSqlCmdArguments](/docs/New-DBSqlCmdArguments.md) : Creates a custom PSObject, that can be splatted to Invoke-SqlCmd or any other command that takes similar arguments.
-* Get-AllUserDatabases : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
-* Test-DBSqlConnection : Tests connectivity to a sql server using a very lightweight query.
+* <span style="color:MediumAquaMarine">Get-AllUserDatabases</span> : If the first value in $Databases is "ALL_USER_DATABASES" then a list of all user databases is returned. Else the original list of databases is passed back. 
+* <span style="color:MediumAquaMarine">Test-DBSqlConnection</span> : Tests connectivity to a sql server using a very lightweight query.
 
 ### Credentials 
 
@@ -60,21 +60,21 @@ Install-Module tcdbtools
 ### ADO Wrappers
 
 * [New-DBSqlConnection](/docs/New-DBSqlConnection.md) : Creates a SqlConnection.
-* Invoke-DBDataTableQuery : Executes the query, and returns a DataTable of the results.
-* Invoke-DBScalarQuery : Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
-* Invoke-DBNonQuery : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
-* Invoke-DBReaderQuery : Sends the CommandText to the Connection and builds a SqlDataReader.
-* Invoke-DBDataSetQuery : Executes a Transact-SQL statement against the connection and returns a DataSet containing a DataTable for each result set returned.
-* New-DBSqlParameter : Creates a new instance of a SqlParameter object.
+* <span style="color:MediumAquaMarine">Invoke-DBDataTableQuery</span> : Executes the query, and returns a DataTable of the results.
+* <span style="color:MediumAquaMarine">Invoke-DBScalarQuery</span> : Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
+* <span style="color:MediumAquaMarine">Invoke-DBNonQuery</span> : Executes a Transact-SQL statement against the connection and returns the number of rows affected.
+* <span style="color:MediumAquaMarine">Invoke-DBReaderQuery</span> : Sends the CommandText to the Connection and builds a SqlDataReader.
+* <span style="color:MediumAquaMarine">Invoke-DBDataSetQuery</span> : Executes a Transact-SQL statement against the connection and returns a DataSet containing a DataTable for each result set returned.
+* <span style="color:MediumAquaMarine">New-DBSqlParameter</span> : Creates a new instance of a SqlParameter object.
 * [Get-DBInClauseParams](/docs/Get-DBInClauseParams.md) : Can be used to create a set of parameters that can be used with an IN clause.
 * [Get-DBInClauseString](/docs/Get-DBInClauseString.md) : Creates the string representation of the parameters that can be used with an IN clause.
 
 ### Additional Miscellaneous Functions
 
-* Write-InformationColorized : Writes to the information stream, but applies colors of your choice. Similar to Write-Host.
-* ConvertTo-Markdown : Converts an array of objects to a markdown string.
-* Invoke-Telnet : Allows for telnet connections, and telnet commands to be sent to a server. Can be used to test sql server connectivity.
-* ConvertFrom-DataRows : Converts an array of DataRows to normal PS objects removing ado properties
-* ConvertFrom-DataTable : Converts a DataTable to normal PS objects removing ado properties
+* <span style="color:MediumAquaMarine">Write-InformationColorized</span> : Writes to the information stream, but applies colors of your choice. Similar to Write-Host.
+* <span style="color:MediumAquaMarine">ConvertTo-Markdown</span> : Converts an array of objects to a markdown string.
+* <span style="color:MediumAquaMarine">Invoke-Telnet</span> : Allows for telnet connections, and telnet commands to be sent to a server. Can be used to test sql server connectivity.
+* <span style="color:MediumAquaMarine">ConvertFrom-DataRows</span> : Converts an array of DataRows to normal PS objects removing ado properties
+* <span style="color:MediumAquaMarine">ConvertFrom-DataTable</span> : Converts a DataTable to normal PS objects removing ado properties
  
 [def]: https://www.powershellgallery.com/packages/tcdbtools
