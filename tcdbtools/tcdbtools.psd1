@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.46'
+ModuleVersion = '1.0.47'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,11 +147,11 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-https://github.com/D:\a\tcdbtools\tcdbtools/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
-1.0.46
-* Added new function Invoke-DBScriptRunner to allow for running a script multithreaded against multiple target servers and databases
-* added help docs for credential functions
-* added helper functions ConvertFrom-DataRows, and ConvertFrom-DataTable
+https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
+1.0.47
+* converted from using System.Data to Microsoft.Data
+* fixed bug when moving a heap with a preexisting identity column
+* added many new parameters to New-DBSqlConnection
 '@
 
     } # End of PSData hashtable
