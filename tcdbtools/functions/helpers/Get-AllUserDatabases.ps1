@@ -26,7 +26,7 @@
 
     if ($Databases[0] -ieq "ALL_USER_DATABASES") {
         $dbsQuery = GetSQLFileContent -fileName "AllUserDatabases.sql"
-        $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows | Select-Object -ExpandProperty name -Unique
+        $Databases = Invoke-Sqlcmd @SqlCmdArguments -Query $dbsQuery -OutputAs DataRows -Encrypt Optional | Select-Object -ExpandProperty name -Unique
         Write-Information "ALL_USER_DATABASES specified. Databases found: `r`n$Databases"
     }
     return $Databases

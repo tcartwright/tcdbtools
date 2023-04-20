@@ -66,6 +66,7 @@
                     -Query "SELECT @@SERVERNAME AS [ServerName], @@VERSION AS [Version], GETDATE() AS [DateTime]" `
                     -QueryTimeout $QueryTimeout `
                     -ErrorAction Stop `
+                    -Encrypt Optional `
                     -ConnectionTimeout $ConnectionTimeout
 
                 if ($results) {

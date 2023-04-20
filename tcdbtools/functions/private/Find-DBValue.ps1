@@ -2,7 +2,7 @@
 $QueryTableScriptBlock = {
     param($connection, $sql, $parameters)
     try {
-        $cmd = New-Object system.Data.SqlClient.SqlCommand($sql, $connection)
+        $cmd = New-Object Microsoft.Data.SqlClient.SqlCommand($sql, $connection)
         $cmd.CommandType = "Text"
         $cmd.CommandTimeout = 300
         foreach($p in $parameters){

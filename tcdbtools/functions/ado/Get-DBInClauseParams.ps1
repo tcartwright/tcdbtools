@@ -35,7 +35,7 @@ $params
 
     #>
     [CmdletBinding()]
-    [OutputType([System.Data.SqlClient.SqlParameter[]])]
+    [OutputType([Microsoft.Data.SqlClient.SqlParameter[]])]
     param (
         [Parameter(Mandatory=$true)]
         [string]$prefix,
@@ -49,7 +49,7 @@ $params
     )
 
     process {
-        $params = New-Object 'System.Collections.Generic.List[System.Data.SqlClient.SqlParameter]'
+        $params = New-Object 'System.Collections.Generic.List[Microsoft.Data.SqlClient.SqlParameter]'
         for  ($i=0; $i -le $values.Length -1; $i++) {
             $param = New-DBSqlParameter -name "@$prefix$i" -type $type -value $values[$i] -size $size -scale $scale -precision $precision
             $params.Add($param) | Out-Null

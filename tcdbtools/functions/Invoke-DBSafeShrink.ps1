@@ -281,7 +281,7 @@
                 $fileName = $file.Name
                 $sql = "DBCC SHRINKFILE($fileName, TRUNCATEONLY) WITH NO_INFOMSGS"
                 Write-Verbose "$sql"
-                Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut | Format-Table
+                Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut -Encrypt Optional | Format-Table
             }
 
             <#
@@ -310,7 +310,7 @@
             $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TLogBackupJobName', @enabled = 1 ;"
             Write-Information "[$($sw.Elapsed.ToString($swFormat))] ENABLING JOB [$TLogBackupJobName]"
             Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -query $sql
+            Invoke-Sqlcmd @SqlCmdArguments -query $sql -Encrypt Optional
         }
 
         Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] FINISHED" -ForegroundColor Yellow

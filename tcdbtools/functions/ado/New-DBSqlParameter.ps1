@@ -41,7 +41,7 @@ function New-DBSqlParameter {
     process {
         if ($name[0] -ne "@") { $name = "@$name" }
 
-        $param = New-Object System.Data.SqlClient.SqlParameter($name, $type)
+        $param = New-Object Microsoft.Data.SqlClient.SqlParameter($name, $type)
 
         if ($null -ne $value) { $param.Value = $value }
         if ($null -ne $size)  {

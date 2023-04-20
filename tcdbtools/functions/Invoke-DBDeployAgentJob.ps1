@@ -225,7 +225,7 @@ function Invoke-DBDeployAgentJob {
             Write-InformationColorized "Deploying sql for [$serverName]" -ForegroundColor Yellow
             Write-Verbose $sql
 
-            Invoke-SqlCmd @SqlCmdArguments -Query ($sql.ToString())
+            Invoke-SqlCmd @SqlCmdArguments -Query ($sql.ToString()) -Encrypt Optional
         }
     }
 

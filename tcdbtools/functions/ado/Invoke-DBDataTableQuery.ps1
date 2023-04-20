@@ -26,12 +26,12 @@ function Invoke-DBDataTableQuery {
     param (
         [Parameter(Mandatory=$true)]
         [Alias("Connection")]
-        [System.Data.SqlClient.SqlConnection]$conn,
+        [Microsoft.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
         [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [Microsoft.Data.SqlClient.SqlParameter[]]$parameters,
         [int]$timeout=30
     )
 

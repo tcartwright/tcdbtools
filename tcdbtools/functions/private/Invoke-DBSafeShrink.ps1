@@ -7,7 +7,7 @@
 
     begin {
         $sql = (GetSQLFileContent -fileName "GetFreeSpace.sql") -f $Database
-        [System.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
+        [Microsoft.Data.SqlClient.SqlConnection]$connection = New-DBSQLConnection @SqlCmdArguments
     }
     process {
         $connection.Open()
@@ -40,7 +40,7 @@ function PerformFileOperation {
         $tryAgain = $false
         try {
             Write-Verbose "$sql"
-            Invoke-Sqlcmd @SqlCmdArguments -Query $sql
+            Invoke-Sqlcmd @SqlCmdArguments -Query $sql -Encrypt Optional
         } catch {
             $msg = $_.Exception.GetBaseException().Message
             if (++$tryAgainCount -lt $tryAgainCountMax -and $msg -imatch "Backup,\s+file\s+manipulation\s+operations\s+\(such\s+as .*?\)\s+and\s+encryption\s+changes\s+on\s+a\s+database\s+must\s+be\s+serialized\.") {
@@ -82,7 +82,7 @@ function MoveIndexes {
         [int]$timeout,
         [switch]$Online,
         [string]$whereClause,
-        [System.Data.SqlClient.SqlParameter[]]$parameters
+        [Microsoft.Data.SqlClient.SqlParameter[]]$parameters
     )
     # using sql to scan for the indexes to move instead of scanning SMO, as SMO is very, very slow scanning the tables
     # especially if some of the tables do not have indexes in the fromFG
@@ -130,14 +130,24 @@ function MoveIndexes {
             $guid = [Guid]::NewGuid().ToString("N")
             $indexName =  "PK_$guid"
             $columnName = "TempCol_$guid"
-            # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
-            $sql = "ALTER TABLE $tableName ADD [$columnName] BIGINT NOT NULL IDENTITY
-                CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
-                DROP INDEX $indexName ON $tableName
-                ALTER TABLE $tableName DROP COLUMN [$columnName]"
+            $identityColumn = $table.Columns | Where-Object { $_.Identity } 
+
+            # if the table has an existing identity column add the clustered index to that, else we add an identity column
+            if ($identityColumn) {
+                $columnName = $identityColumn.Name
+
+                # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
+                $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
+                    DROP INDEX $indexName ON $tableName"            
+            } else {
+                $sql = "ALTER TABLE $tableName ADD [$columnName] BIGINT NOT NULL IDENTITY
+                    CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
+                    DROP INDEX $indexName ON $tableName
+                    ALTER TABLE $tableName DROP COLUMN [$columnName]"            
+            }
 
             Write-Verbose "$sql"
-            Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
+            Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout -Encrypt Optional
         }
 
         foreach ($index in $table.Indexes) {
@@ -182,7 +192,7 @@ function MoveIndexes {
                 }
 
                 Write-Verbose "$($sql.ToString())"
-                Invoke-Sqlcmd @SqlCmdArguments -Query "$($sql.ToString())" -QueryTimeout $timeout
+                Invoke-Sqlcmd @SqlCmdArguments -Query "$($sql.ToString())" -QueryTimeout $timeout -Encrypt Optional
             }
         }
     }
@@ -242,7 +252,7 @@ function ShrinkFile {
         $counter++;
         Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING SHRINK ($counter of $loops) : $sql"
         Write-Verbose $sql
-        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout
+        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $timeout -Encrypt Optional
     }
     $size = $x + $shrinkIncrement
 
@@ -250,7 +260,7 @@ function ShrinkFile {
         $sql = $rawsql -f $targetSize
         Write-Information "[$($sw.Elapsed.ToString($swFormat))] PERFORMING FINAL SHRINK: $sql"
         Write-Verbose $sql
-        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
+        Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut -Encrypt Optional
     }
 }
 
@@ -287,7 +297,7 @@ function AdjustRecoveryModels {
             Write-Information "[$($sw.Elapsed.ToString($swFormat))] SETTING RECOVERY FOR DATABASE [$Database] TO $TargetRecoveryModel"
             $sql = "ALTER DATABASE [$Database] SET RECOVERY $TargetRecoveryModel"
             Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -Query "$sql"
+            Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -Encrypt Optional
         }
     }
     return $recoveryModels
@@ -304,13 +314,13 @@ function StopTLogBackupJob {
     $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$TLogBackupJobName', @enabled = 0 ;"
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] DISABLING JOB [$TLogBackupJobName]"
     Write-Verbose $sql
-    Invoke-Sqlcmd @SqlCmdArguments -query $sql
+    Invoke-Sqlcmd @SqlCmdArguments -query $sql -Encrypt Optional
 
     # now, lets wait a bit so that if the job is running we can let it finish up
     $sql = (GetSQLFileContent -fileName "WaitForTsqlAgentJobToStop.sql"    ) -f $TLogBackupJobName
     Write-Verbose $sql
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] WAITING FOR JOB [$TLogBackupJobName] TO STOP"
-    Invoke-Sqlcmd @SqlCmdArguments -query $sql
+    Invoke-Sqlcmd @SqlCmdArguments -query $sql -Encrypt Optional
 }
 
 function RemoveTempFileGroupAndFile{
@@ -321,7 +331,7 @@ function RemoveTempFileGroupAndFile{
     # there have been occasions when an error occurred saying the file was not empty, until an empty file was issued. even though all of the indexes had been moved back
     $sql = "DBCC SHRINKFILE(SHRINK_DATA_TEMP, 'EMPTYFILE') WITH NO_INFOMSGS;"
     Write-Verbose $sql
-    Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut
+    Invoke-Sqlcmd @SqlCmdArguments -Query "$sql" -QueryTimeout $shrinkTimeOut -Encrypt Optional
 
     Write-Information "[$($sw.Elapsed.ToString($swFormat))] REMOVING SHRINK_DATA_TEMP FG AND FILE"
     $sql = (GetSQLFileContent -fileName "RemoveShrinkTempObjects.sql") -f  ($SqlCmdArguments.Database)
@@ -361,7 +371,7 @@ function CreateNewDirectory {
             # create the directory on the sql server if it does not exist. has no effect if the directory is already created. Throws an exception if the path is invalid, usually the drive
             $sql = "EXECUTE master.dbo.xp_create_subdir '$($NewFileDirectory.FullName)'"
             Write-Verbose $sql
-            Invoke-Sqlcmd @SqlCmdArguments -query $sql
+            Invoke-Sqlcmd @SqlCmdArguments -query $sql -Encrypt Optional
         } catch {
             throw
             exit 1

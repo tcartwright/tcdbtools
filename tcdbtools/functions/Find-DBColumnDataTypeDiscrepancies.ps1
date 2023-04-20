@@ -63,7 +63,7 @@
         foreach($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             Write-Information "Querying: $Database"
-            $tbl = Invoke-SqlCmd @SqlCmdArguments -As DataTables -Query $query -QueryTimeout $Timeout
+            $tbl = Invoke-SqlCmd @SqlCmdArguments -As DataTables -Query $query -QueryTimeout $Timeout -Encrypt Optional
             $results = ConvertFrom-DataTable -DataTable $tbl
             if ($results) {
                 $ret.AddRange($results)

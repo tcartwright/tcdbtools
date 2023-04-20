@@ -27,24 +27,24 @@ function Invoke-DBReaderQuery {
     param (
         [Parameter(Mandatory=$true)]
         [Alias("Connection")]
-        [System.Data.SqlClient.SqlConnection]$conn,
+        [Microsoft.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
         [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [Microsoft.Data.SqlClient.SqlParameter[]]$parameters,
         [int]$timeout=30
     )
 
     process {
         try {
-            $cmd = New-Object system.Data.SqlClient.SqlCommand($sql,$conn)
+            $cmd = New-Object Microsoft.Data.SqlClient.SqlCommand($sql, $conn)
             $cmd.CommandType = $CommandType
             $cmd.CommandTimeout = $timeout
             foreach($p in $parameters){
                 $cmd.Parameters.Add($p) | Out-Null
             }
-            [System.Data.SqlClient.SqlDataReader]$reader = $cmd.ExecuteReader()
+            [Microsoft.Data.SqlClient.SqlDataReader]$reader = $cmd.ExecuteReader()
             # the comma before the reader object is on purpose to force powershell to return this object AS IS
             return ,$reader
         } finally {

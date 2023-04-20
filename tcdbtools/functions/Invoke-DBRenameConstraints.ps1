@@ -200,7 +200,7 @@
         foreach ($Database in $Databases) {
             Write-InformationColorized "Scanning database: [$Database]" -ForegroundColor Cyan
             $SqlCmdArguments.Database = $Database
-            $results = Invoke-Sqlcmd @SqlCmdArguments -Query $query -OutputAs DataRows
+            $results = Invoke-Sqlcmd @SqlCmdArguments -Query $query -OutputAs DataRows -Encrypt Optional
             $grouped = $results | Group-Object -Property schema_name, table_name
 
             foreach ($item in $grouped) {

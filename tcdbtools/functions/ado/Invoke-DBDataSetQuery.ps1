@@ -28,25 +28,25 @@ function Invoke-DBDataSetQuery {
     param (
         [Parameter(Mandatory=$true)]
         [Alias("Connection")]
-        [System.Data.SqlClient.SqlConnection]$conn,
+        [Microsoft.Data.SqlClient.SqlConnection]$conn,
         [Parameter(Mandatory=$true)]
         [Alias("Query")]
         [string]$sql,
         [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
-        [System.Data.SqlClient.SqlParameter[]]$parameters,
+        [Microsoft.Data.SqlClient.SqlParameter[]]$parameters,
         [int]$timeout = 30
     )
 
     process {
         try {
-            $cmd = New-Object System.Data.SqlClient.SqlCommand($sql, $conn)
+            $cmd = New-Object Microsoft.Data.SqlClient.SqlCommand($sql, $conn)
             $cmd.CommandType = $CommandType
             $cmd.CommandTimeout=$timeout
             foreach($p in $parameters){
                 $cmd.Parameters.Add($p) | Out-Null
             }
             $ds = New-Object System.Data.DataSet
-            $da = New-Object System.Data.SqlClient.SqlDataAdapter($cmd)
+            $da = New-Object Microsoft.Data.SqlClient.SqlDataAdapter($cmd)
             $da.Fill($ds) | Out-Null
 
             return $ds
