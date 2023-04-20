@@ -51,7 +51,7 @@
     )
 
     begin {
-        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials 
+        $connection = New-DBSQLConnection -ServerInstance $ServerInstance -Database "master" -Credentials $Credentials
 
         $ret = [InvalidSettings]::new()
         $ret.ServerInstance = $ServerInstance

@@ -130,7 +130,7 @@ function MoveIndexes {
             $guid = [Guid]::NewGuid().ToString("N")
             $indexName =  "PK_$guid"
             $columnName = "TempCol_$guid"
-            $identityColumn = $table.Columns | Where-Object { $_.Identity } 
+            $identityColumn = $table.Columns | Where-Object { $_.Identity }
 
             # if the table has an existing identity column add the clustered index to that, else we add an identity column
             if ($identityColumn) {
@@ -138,12 +138,12 @@ function MoveIndexes {
 
                 # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
                 $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
-                    DROP INDEX $indexName ON $tableName"            
+                    DROP INDEX $indexName ON $tableName"
             } else {
                 $sql = "ALTER TABLE $tableName ADD [$columnName] BIGINT NOT NULL IDENTITY
                     CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
                     DROP INDEX $indexName ON $tableName
-                    ALTER TABLE $tableName DROP COLUMN [$columnName]"            
+                    ALTER TABLE $tableName DROP COLUMN [$columnName]"
             }
 
             Write-Verbose "$sql"

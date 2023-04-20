@@ -242,3 +242,7 @@
 * Added new function Invoke-DBScriptRunner to allow for running a script multithreaded against multiple target servers and databases
 * added help docs for credential functions
 * added helper functions ConvertFrom-DataRows, and ConvertFrom-DataTable
+1.0.47
+* converted from using System.Data to Microsoft.Data
+* fixed bug when moving a heap with a preexisting identity column
+* added many new parameters to New-DBSqlConnection

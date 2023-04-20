@@ -78,7 +78,7 @@
         [string]$WorkstationID,
         [int]$MinPoolSize,
         [int]$MaxPoolSize,
-        [bool]$Pooling 
+        [bool]$Pooling
     )
 
     begin {
