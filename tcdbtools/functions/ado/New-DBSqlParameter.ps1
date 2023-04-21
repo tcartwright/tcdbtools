@@ -25,7 +25,7 @@ function New-DBSqlParameter {
         The SqlParameter.
     #>
     [CmdletBinding()]
-    [OutputType([System.Data.SqlClient.SqlParameter])]
+    [OutputType([Microsoft.Data.SqlClient.SqlParameter])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
     param (
         [Parameter(Mandatory=$true)]
