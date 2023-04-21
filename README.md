@@ -61,7 +61,7 @@ Install-Module tcdbtools
 | Name | Definition |
 | :--- | :--------- |
 | [Get-DBUserCredential](/docs/Get-DBUserCredential.md) | Gets the credential stored under the application name in the Windows Credential Manager. |
-| [Set-DBUserCredential](/docs/Set-DBUserCredential.md) (Alias: New-DBUserCredential) | Saves a user credential to the Windows Credential Manager that can be retried later, and passed in to functions that require credentials. Should be run to store the credentials as one time use, but not saved into a script. That way you can keep from storing passwords in your scripts. |
+| [Set-DBUserCredential](/docs/Set-DBUserCredential.md) (Alias: New-DBUserCredential) | Saves a user credential to the Windows Credential Manager that can be retrieved later, and passed in to functions that require credentials. Should be run to store the credentials as one time use, but not saved into a script. That way you can keep from storing passwords in your scripts. |
 | [GMSACredential](https://www.powershellgallery.com/packages/GMSACredential/) | This is not my module, nor have I tested it out. However, I am a big fan of GMSA accounts, and this could provide a very nice alternative to storing the credentials in the Windows Credential Manager. Here is a [demo page](https://www.ephingadmin.com/PasswordlessPowerShell/) from the module owner Ryan Ephgrave. |
 
 ### ADO Wrappers
