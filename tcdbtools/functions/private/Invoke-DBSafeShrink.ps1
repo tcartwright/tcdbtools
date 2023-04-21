@@ -136,10 +136,11 @@ function MoveIndexes {
             if ($identityColumn) {
                 $columnName = $identityColumn.Name
 
-                # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
+                # they have an existing identity, so lets use that to move to the new FG
                 $sql = "CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
                     DROP INDEX $indexName ON $tableName"
             } else {
+                # add our own column to cover the chance that none of the columns are appropriate for a PK (bad design)
                 $sql = "ALTER TABLE $tableName ADD [$columnName] BIGINT NOT NULL IDENTITY
                     CREATE CLUSTERED INDEX $indexName ON $tableName ($columnName) WITH (DATA_COMPRESSION = NONE) ON [$toFG];
                     DROP INDEX $indexName ON $tableName
