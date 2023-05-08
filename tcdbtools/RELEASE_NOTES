@@ -246,3 +246,5 @@
 * converted from using System.Data to Microsoft.Data
 * fixed bug when moving a heap with a preexisting identity column
 * added many new parameters to New-DBSqlConnection
+1.0.48
+* fixed a bug leftover from the System.Data to Microsoft.Data conversion in Invoke-DBScriptRunner.ps1
