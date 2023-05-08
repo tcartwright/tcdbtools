@@ -22,7 +22,7 @@ $ScriptRunnerBlock = {
         $connection = New-DBSqlConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
         $connection.Open()
 
-        $handler = [System.Data.SqlClient.SqlInfoMessageEventHandler] {
+        $handler = [Microsoft.Data.SqlClient.SqlInfoMessageEventHandler] {
             param($sender, $event)
             $sb.AppendLine($event.Message) | Out-Null
         };
