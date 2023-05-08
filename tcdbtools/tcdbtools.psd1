@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.47'
+ModuleVersion = '1.0.48'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -148,10 +148,8 @@ PrivateData = @{
         # ReleaseNotes of this module
         ReleaseNotes = @'
 https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
-1.0.47
-* converted from using System.Data to Microsoft.Data
-* fixed bug when moving a heap with a preexisting identity column
-* added many new parameters to New-DBSqlConnection
+1.0.48
+* fixed a bug leftover from the System.Data to Microsoft.Data conversion in Invoke-DBScriptRunner.ps1
 '@
 
     } # End of PSData hashtable
