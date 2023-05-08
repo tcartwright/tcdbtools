@@ -48,7 +48,7 @@ jobs:
             }
             # get the last part of the release notes that only deals with this version
             $releaseNotes -imatch "($regexVersion[\w\W]*)"
-            $releaseNotesTail = "https://github.com/${{github.repository}}/blob/main/${{ env.MY_REPO }}/RELEASE_NOTES`r`n$($matches[0])".Trim()
+            $releaseNotesTail = "Full Release Notes: https://github.com/${{github.repository}}/blob/main/${{ env.MY_REPO }}/RELEASE_NOTES`r`n$($matches[0])".Trim()
             
             # for this to work, your release notes in your psd1 must initially look like this: ReleaseNotes = @''@, then on build it will be replaced with the versions notes that you are building
             $manifestContents = [Regex]::Replace($manifestContents, '(^.*?ReleaseNotes\s*=\s*@'')[\w\W]*?(''@.*$)', "`${1}`r`n$releaseNotesTail`r`n`${2}", $regexoptions)
