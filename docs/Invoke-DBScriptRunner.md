@@ -20,19 +20,13 @@ Runs a query against one or more servers and databases. Captures the results and
 
 ## Parameters
     -Servers <DBServer[]>
-        Collection of server / database names to run the query against.
+        Collection of server / database names to run the query against. An array of type TCDbTools.DbServer. 
+
+        NOTE: The ctor has this signature:
+        public DBServer(string serverInstance, string database = "master", PSCredential credentials = null)
 
         Required?                    true
         Position?                    1
-        Default value                
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-    -Credentials <PSCredential>
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
-
-        Required?                    false
-        Position?                    2
         Default value                
         Accept pipeline input?       false
         Accept wildcard characters?  false
@@ -78,10 +72,10 @@ Runs a query against one or more servers and databases. Captures the results and
 # Scans all string columns in all user defined tables in the dbo schema for the value "%tim%"
 
 $servers = @()
-$servers += New-DBServer -ServerInstance "Server1" -Database "DbName1"
-$servers += New-DBServer -ServerInstance "Server1" -Database "DbName2"
-$servers += New-DBServer -ServerInstance "Server2" -Database "DbName1"
-$servers += New-DBServer -ServerInstance "Server2" -Database "DbName2"
+$servers += [TCDbTools.DBServer]::new("Server1", "DbName1")
+$servers += [TCDbTools.DBServer]::new("Server1", "DbName2")
+$servers += [TCDbTools.DBServer]::new("Server2", "DbName1")
+$servers += [TCDbTools.DBServer]::new("Server2", "DbName2")
 
 $query = "
     SET NOCOUNT ON

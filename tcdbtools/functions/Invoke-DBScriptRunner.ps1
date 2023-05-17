@@ -7,10 +7,10 @@
         Runs a query against one or more servers and databases. Captures the results and any messages.
 
     .PARAMETER Servers
-        Collection of server / database names to run the query against.
+        Collection of server / database names to run the query against. An array of type TCDbTools.DbServer. 
 
-    .PARAMETER Credentials
-        Specifies credentials to connect to the database with. If not supplied then a trusted connection will be used.
+        NOTE: The ctor has this signature:
+        public DBServer(string serverInstance, string database = "master", PSCredential credentials = null)
 
     .PARAMETER Query
         The query to run against each server / database combo.
@@ -35,10 +35,10 @@
         Runs the query against all of the server / databases specified.
 
         $servers = @()
-        $servers += New-DBServer -ServerInstance "Server1" -Database "DbName1"
-        $servers += New-DBServer -ServerInstance "Server1" -Database "DbName2"
-        $servers += New-DBServer -ServerInstance "Server2" -Database "DbName1"
-        $servers += New-DBServer -ServerInstance "Server2" -Database "DbName2"
+        $servers += [TCDbTools.DBServer]::new("Server1", "DbName1")
+        $servers += [TCDbTools.DBServer]::new("Server1", "DbName2")
+        $servers += [TCDbTools.DBServer]::new("Server2", "DbName1")
+        $servers += [TCDbTools.DBServer]::new("Server2", "DbName2")
 
         $query = "
             SET NOCOUNT ON
@@ -66,7 +66,7 @@
     param (
         [Parameter(Mandatory=$true)]
         [ValidateCount(1, 999)]
-        [DBServer[]]$Servers,
+        [TCDbTools.DBServer[]]$Servers,
         [pscredential]$Credentials,
         [string]$Query,
         [ValidateRange(1, 16)]
@@ -110,7 +110,7 @@
                 $PowerShell.AddScript($ScriptRunnerBlock) | Out-Null
                 $PowerShell.AddArgument($server.ServerInstance) | Out-Null
                 $PowerShell.AddArgument($server.Database) | Out-Null
-                $PowerShell.AddArgument($Credentials) | Out-Null
+                $PowerShell.AddArgument($server.Credentials) | Out-Null
                 $PowerShell.AddArgument($query) | Out-Null
                 $PowerShell.AddArgument($CommandTimeout) | Out-Null
                 $Handle = $PowerShell.BeginInvoke()
@@ -168,18 +168,3 @@
     }
 }
 
-class DBServer {
-    [String]$ServerInstance
-    [String]$Database = "master"
-
-    DBServer ([String]$ServerInstance, [String]$Database) {
-        $this.ServerInstance = $ServerInstance
-        $this.Database = $Database
-    }
-}
-
-function New-DBServer() {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification='Not needed')]
-    param([String]$ServerInstance, [String]$Database = "master")
-    return [DBServer]::new($ServerInstance, $Database)
-}
