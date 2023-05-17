@@ -7,7 +7,7 @@
         Runs a query against one or more servers and databases. Captures the results and any messages.
 
     .PARAMETER Servers
-        Collection of server / database names to run the query against. An array of type TCDbTools.DbServer. 
+        Collection of server / database names to run the query against. An array of type TCDbTools.DbServer.
 
         NOTE: The ctor has this signature:
         public DBServer(string serverInstance, string database = "master", PSCredential credentials = null)
