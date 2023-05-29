@@ -250,4 +250,8 @@
 * fixed a bug leftover from the System.Data to Microsoft.Data conversion in Invoke-DBScriptRunner.ps1
 1.0.49
 * fixed a bug where a class was not usable when using Invoke-DBScriptRunner
+1.0.50
+* Added new function Invoke-DBSynchronizeSQLLogins and help file
+* Removed the credentials parameter from Invoke-DBScriptRunner as that is encapsulated in TCDbTools.DBServer allowing for servers with different credentials to be be used
+* Removed the mandatory attribute from the database parameter in New-DBSqlConnection. Now defaults to "master"
 

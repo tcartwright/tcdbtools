@@ -60,8 +60,7 @@
     param (
         [Parameter(Mandatory=$true)]
         [string]$ServerInstance,
-        [Parameter(Mandatory=$true)]
-        [string]$Database,
+        [string]$Database = "master",
         [pscredential]$Credentials,
         [Microsoft.Data.SqlClient.SqlAuthenticationMethod]$AuthenticationMethod,
         [switch]$MultipleActiveResultSets,

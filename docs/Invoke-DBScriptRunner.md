@@ -12,7 +12,6 @@ Runs a query against one or more servers and databases. Captures the results and
 ## Syntax
     Invoke-DBScriptRunner 
         [-Servers] <DBServer[]> 
-        [[-Credentials] <PSCredential>] 
         [[-Query] <String>] 
         [[-MaxThreads] <Int32>] 
         [[-CommandTimeout] <Int32>] 
