@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.51'
+ModuleVersion = '1.0.52'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,10 +147,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.51
-* Altered Invoke-DBSynchronizeSQLLogins so that if any of the logins / pwds / sids are the same when not using an authority then those logins are skipped as they do not need to synch
-* Fixed a bug in the safe shrink that could happen when moving tables with LOB data, and the first column in the key had a maxlength, scale, or precision
-* modified the RemoveShrinkTempObjects.sql file to remove any lingering Partition functions or schemes
+1.0.52
+* Fixed a bug in safe shrink when the database contained special characters EX: AspNet-Identity
+* Added the ability to use ALL_USER_DATABASES when calling safe shrink
 Full Release Notes: https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
 '@
 
