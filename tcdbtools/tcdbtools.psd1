@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.50'
+ModuleVersion = '1.0.51'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,10 +147,10 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.50
-* Added new function Invoke-DBSynchronizeSQLLogins and help file
-* Removed the credentials parameter from Invoke-DBScriptRunner as that is encapsulated in TCDbTools.DBServer allowing for servers with different credentials to be be used
-* Removed the mandatory attribute from the database parameter in New-DBSqlConnection. Now defaults to "master"
+1.0.51
+* Altered Invoke-DBSynchronizeSQLLogins so that if any of the logins / pwds / sids are the same when not using an authority then those logins are skipped as they do not need to synch
+* Fixed a bug in the safe shrink that could happen when moving tables with LOB data, and the first column in the key had a maxlength, scale, or precision
+* modified the RemoveShrinkTempObjects.sql file to remove any lingering Partition functions or schemes
 Full Release Notes: https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
 '@
 

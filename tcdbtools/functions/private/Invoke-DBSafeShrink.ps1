@@ -92,7 +92,7 @@ function MoveIndexes {
     # we will reflect into this object when moving lob data to get the string representation of a data type
     $method = [Microsoft.SqlServer.Management.Smo.UserDefinedDataType].GetMethod('GetTypeDefinitionScript', [Reflection.BindingFlags]::NonPublic -bor [Reflection.BindingFlags]::Static)
     $scriptMakerPreferences = ([Microsoft.SqlServer.Management.Smo.ScriptMaker]::new()).Preferences
-    
+
     Write-Verbose $sql
     $connection = New-DBSqlConnection @SqlCmdArguments
     try {
@@ -184,7 +184,7 @@ function MoveIndexes {
 
                     $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
                     $partitionValue = "0"
-                    if ($smoColumn.DataType.IsStringType) { $partitionValue = "''" } 
+                    if ($smoColumn.DataType.IsStringType) { $partitionValue = "''" }
                     $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES ($partitionValue);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
 

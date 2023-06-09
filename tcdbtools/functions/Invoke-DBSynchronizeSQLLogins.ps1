@@ -192,7 +192,7 @@
         $sql = (GetSQLFileContent -fileName "GetSqlLogins.sql")
         $ret = [System.Collections.ArrayList]::new()
         $list = New-Object System.Collections.Generic.Dictionary"[String,Object]"
-        $logins = [System.Collections.Generic.List[System.Object]]::new() 
+        $logins = [System.Collections.Generic.List[System.Object]]::new()
     }
 
     process {
@@ -219,7 +219,7 @@
             throw "No logins were found to synchronize."
         }
 
-        # if we did not use an authority server remove any from the list where we cant find any differences on the other servers by SID, PASSWORD, 
+        # if we did not use an authority server remove any from the list where we cant find any differences on the other servers by SID, PASSWORD,
         # if the login count matches the server count, as we do not need to deploy out any logins that match across all of the servers
         if (-not $AuthorityServer) {
             $grouped = $logins | Group-Object name | Where-Object { $_.Count -eq $servers.Count }
@@ -229,7 +229,7 @@
                 # all of the sids / passwords match for this login across all the servers, so remove it
                 if ($diffs.Count -eq 1) {
                     foreach ($item in $grp.Group) {
-                        $logins.Remove($item) 
+                        $logins.Remove($item)
                     }
                 }
             }
