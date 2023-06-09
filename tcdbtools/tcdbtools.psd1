@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.49'
+ModuleVersion = '1.0.50'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,8 +147,10 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.49
-* fixed a bug where a class was not usable when using Invoke-DBScriptRunner
+1.0.50
+* Added new function Invoke-DBSynchronizeSQLLogins and help file
+* Removed the credentials parameter from Invoke-DBScriptRunner as that is encapsulated in TCDbTools.DBServer allowing for servers with different credentials to be be used
+* Removed the mandatory attribute from the database parameter in New-DBSqlConnection. Now defaults to "master"
 Full Release Notes: https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
 '@
 
