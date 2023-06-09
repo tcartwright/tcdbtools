@@ -191,8 +191,8 @@
     begin {
         $sql = (GetSQLFileContent -fileName "GetSqlLogins.sql")
         $ret = [System.Collections.ArrayList]::new()
-        $list = @{}
-        $resultsArr = $null
+        $list = New-Object System.Collections.Generic.Dictionary"[String,Object]"
+        $logins = [System.Collections.Generic.List[System.Object]]::new() 
     }
 
     process {
@@ -205,9 +205,9 @@
                     (New-DBSqlParameter -name "@gen_auto_fix" -type Bit -value (-not $DoNotAddAutoFix.IsPresent)),
                     (New-DBSqlParameter -name "@drop_if_exists" -type Bit -value ($DropIfExists.IsPresent))
                 )
-                Write-Information "Processing server: $($server.ServerInstance))"
+                Write-Information "Processing server: $($server.ServerInstance)"
                 $queryResults = Invoke-DBDataTableQuery -conn $connection -sql $sql -parameters $parameters
-                $resultsArr += ($queryResults | ConvertFrom-DataRows)
+                $logins.AddRange(($queryResults | ConvertFrom-DataRows)) | Out-Null
             } catch {
                 throw
             } finally {
@@ -215,12 +215,28 @@
             }
         }
 
-        if (-not $resultsArr) {
+        if (-not $logins) {
             throw "No logins were found to synchronize."
         }
 
+        # if we did not use an authority server remove any from the list where we cant find any differences on the other servers by SID, PASSWORD, 
+        # if the login count matches the server count, as we do not need to deploy out any logins that match across all of the servers
+        if (-not $AuthorityServer) {
+            $grouped = $logins | Group-Object name | Where-Object { $_.Count -eq $servers.Count }
+
+            foreach ($grp in $grouped) {
+                $diffs = $grp.Group | Group-Object login_sid, pwd_hash
+                # all of the sids / passwords match for this login across all the servers, so remove it
+                if ($diffs.Count -eq 1) {
+                    foreach ($item in $grp.Group) {
+                        $logins.Remove($item) 
+                    }
+                }
+            }
+        }
+
         # now lets build up the latest unique list based upon modify date.
-        foreach ($row in $resultsArr | Sort-Object Name ) {
+        foreach ($row in $logins | Sort-Object Name ) {
             if ( $IgnoreRegex -and $row.name -imatch $IgnoreRegex ) { continue }
             if (-not $list.ContainsKey($row.Name)) {
                 $list.Add($row.Name, $row)
@@ -231,6 +247,11 @@
                     $list[$row.Name] = $row
                 }
             }
+        }
+
+        if ($list.Count -eq 0) {
+            Write-Warning "No suitable logins found to synchronize."
+            return $null
         }
 
         [string]$sql = $list.Values.create_or_alter_sql -join "`r`n"
@@ -265,6 +286,10 @@
     }
 
     end {
-        Write-Output $ret | Sort-Object -property @{ Expression={$_.ServerInstance} }
+        if ($ret -and $ret.Count -gt 0) {
+            Write-Output $ret | Sort-Object -property @{ Expression={$_.ServerInstance} }
+        } else {
+            Write-Warning "No suitable logins found to synchronize."
+        }
     }
 }

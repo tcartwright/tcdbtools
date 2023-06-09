@@ -89,7 +89,10 @@ function MoveIndexes {
 
     $sql = (GetSQLFileContent -fileName "GetIndexes.sql") -f ($db.Name), $fromFG
     $sql = $sql -ireplace "--<<extra_where>>", $whereClause
-
+    # we will reflect into this object when moving lob data to get the string representation of a data type
+    $method = [Microsoft.SqlServer.Management.Smo.UserDefinedDataType].GetMethod('GetTypeDefinitionScript', [Reflection.BindingFlags]::NonPublic -bor [Reflection.BindingFlags]::Static)
+    $scriptMakerPreferences = ([Microsoft.SqlServer.Management.Smo.ScriptMaker]::new()).Preferences
+    
     Write-Verbose $sql
     $connection = New-DBSqlConnection @SqlCmdArguments
     try {
@@ -175,8 +178,11 @@ function MoveIndexes {
 
                     $guid = [Guid]::NewGuid().ToString("N")
                     $firstColumn = $index.IndexedColumns | Select-Object -First 1
+                    $methodParams = @($scriptMakerPreferences, $table.Columns[$firstColumn.Name], "DataType", $true)
+                    $dataTypeString = $method.Invoke($null, $methodParams)
+
                     $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
-                    $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ([$($table.Columns[$firstColumn.Name].DataType.SqlDataType)]) AS RANGE RIGHT FOR VALUES (0);") | Out-Null
+                    $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES (0);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
 
                     # use a temp name as the script engine mangles the partition schemes name when scripted out

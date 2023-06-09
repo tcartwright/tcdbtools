@@ -5,7 +5,7 @@
 DECLARE @tab VARCHAR(1) = CASE WHEN @drop_if_exists = 1 THEN CHAR(9) ELSE '' END,
 	@crlf CHAR(2) = CONCAT(CHAR(13), CHAR(10))
 
-SELECT [sp].[name], [sp].[create_date], [sp].[modify_date], [sp].[is_disabled], [sp].[type_desc], @@SERVERNAME AS [server_name], [create_or_alter_sql] = 
+SELECT [sp].[name], [sp].[create_date], [sp].[modify_date], [sp].[is_disabled], [sp].[type_desc], [fn].[login_sid], [fn].[pwd_hash], @@SERVERNAME AS [server_name], [create_or_alter_sql] = 
 @tab + '/*' + REPLICATE('*', 30) + REPLICATE('*', LEN(fn.generated_context) + 1) + REPLICATE('*', 30)  + '*/' + @crlf +
 @tab + '/*' + REPLICATE('*', 30) + fn.generated_context + REPLICATE('*', 30)  + '*/' + @crlf +
 @tab + '/*' + REPLICATE('*', 30) + REPLICATE('*', LEN(fn.generated_context) + 1) + REPLICATE('*', 30)  + '*/' + @crlf +
@@ -59,5 +59,5 @@ WHERE [sp].[type_desc] = 'SQL_LOGIN' COLLATE SQL_Latin1_General_CP1_CI_AS
 	AND [sp].[name] NOT LIKE 'NT Service%' COLLATE SQL_Latin1_General_CP1_CI_AS
     AND [sp].[name] NOT LIKE 'NT AUTHORITY%' COLLATE SQL_Latin1_General_CP1_CI_AS
     AND [sp].[name] NOT LIKE '##%'
-	AND [sp].[name] NOT LIKE 'dbo' COLLATE SQL_Latin1_General_CP1_CI_AS
+	AND [sp].[name] COLLATE SQL_Latin1_General_CP1_CI_AS NOT IN ('dbo', 'sa') 
 ORDER BY [sp].[name]
