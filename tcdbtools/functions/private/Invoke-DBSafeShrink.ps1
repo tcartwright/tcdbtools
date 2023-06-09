@@ -178,11 +178,14 @@ function MoveIndexes {
 
                     $guid = [Guid]::NewGuid().ToString("N")
                     $firstColumn = $index.IndexedColumns | Select-Object -First 1
-                    $methodParams = @($scriptMakerPreferences, $table.Columns[$firstColumn.Name], "DataType", $true)
+                    $smoColumn = $table.Columns[$firstColumn.Name]
+                    $methodParams = @($scriptMakerPreferences, $smoColumn, "DataType", $true)
                     $dataTypeString = $method.Invoke($null, $methodParams)
 
                     $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
-                    $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES (0);") | Out-Null
+                    $partitionValue = "0"
+                    if ($smoColumn.DataType.IsStringType) { $partitionValue = "''" } 
+                    $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES ($partitionValue);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
 
                     # use a temp name as the script engine mangles the partition schemes name when scripted out

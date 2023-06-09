@@ -5,7 +5,7 @@
 
 ## Synopsis
 Will synchronize sql logins between servers. Synchronizes both the [HASHED](https://sqlity.net/en/2344/create-login-with-hashed-password/) password and the SID.
-Very useful for synchronizing logins between Availability Group Servers.
+Very useful for synchronizing logins between Availability Group Servers. SA and DBO are not synchronized.
 
 ## Description
 Will synchronize sql logins between servers. Synchronizes:
