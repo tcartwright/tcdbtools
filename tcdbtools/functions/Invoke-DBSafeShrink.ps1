@@ -172,6 +172,9 @@
         if ($AdjustRecovery.IsPresent) {
             $recoveryModels = AdjustRecoveryModels -AdjustRecovery $AdjustRecovery -SqlCmdArguments $SqlCmdArguments -Databases $Databases -recoveryModels @{} -TargetRecoveryModel "SIMPLE"
         }
+
+        # if they passed in ALL_USER_DATABASES get all database names
+        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
     }
 
     process {
@@ -279,7 +282,7 @@
             Write-Information "[$($sw.Elapsed.ToString($swFormat))] SHRINKING FILES IN FG [$fileGroupName] WITH TRUNCATEONLY"
             foreach($file in $originalFiles) {
                 $fileName = $file.Name
-                $sql = "DBCC SHRINKFILE($fileName, TRUNCATEONLY) WITH NO_INFOMSGS"
+                $sql = "DBCC SHRINKFILE([$fileName], TRUNCATEONLY) WITH NO_INFOMSGS"
                 Write-Verbose "$sql"
                 Invoke-Sqlcmd @SqlCmdArguments -Query $sql -QueryTimeout $shrinkTimeOut -Encrypt Optional | Format-Table
             }

@@ -102,12 +102,12 @@
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::SqlAssembly +
             [long][Microsoft.SqlServer.Management.Smo.DatabaseObjectTypes]::DatabaseScopedConfiguration
         )
+
+        # if they passed in ALL_USER_DATABASES get all database names
+        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
     }
 
     process {
-        # if they passed in ALL_USER_DATABASES get all database names
-        $Databases = Get-AllUserDatabases -Databases $Databases -SqlCmdArguments $SqlCmdArguments
-
         foreach ($Database in $Databases) {
             $SqlCmdArguments.Database = $Database
             $db = $server.Databases[$Database]
