@@ -103,6 +103,10 @@ function MoveIndexes {
         if ( $connection )  { $connection.Dispose() }
     }
 
+    # I must query the db for this as SMO may not be refreshed, and this is quicker
+    $sql = (GetSQLFileContent -fileName "GetLobFileGroupNames.sql") 
+    $LOBFileGroupNames = Invoke-Sqlcmd @SqlCmdArguments -Query $sql -Encrypt Optional
+
     if ($Online.IsPresent -and $db.Parent.DatabaseEngineEdition -ine "Enterprise") {
         Write-Warning "Online operations can only be used from Enterprise edition"
         $Online = $false
@@ -163,8 +167,9 @@ function MoveIndexes {
                     -PercentComplete (GetPercentComplete -counter $indexCounter -total $indexCountTotal)
 
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
-
-                $MoveLobData = $index.IsClustered -and ($indexes | Where-Object { $_.index_name -ieq $index.Name -and $_.alloc_unit_type -ieq "LOB_DATA" })
+                
+                $LOBFileGroupName = $LOBFileGroupNames | Where-Object { $_.schema_name -ieq $table.schema -and $_.table_name -ieq $table.name }
+                $MoveLobData = $index.IsClustered -and ($LOBFileGroupName -and $LOBFileGroupName.filegroup_name -ine $toFG)
                 $sql = [System.Text.StringBuilder]::new()
 
                 if ($MoveLobData) {
@@ -187,7 +192,7 @@ function MoveIndexes {
                     if ($dataTypeString -imatch "uniqueidentifier") 
                         { $partitionValue = "'00000000-0000-0000-0000-000000000000'" }
                     elseif ($dataTypeString -imatch "hierarchyid") 
-                        { $partitionValue = "'/1/'" }
+                        { $partitionValue = "'/'" }
                     elseif ($dataTypeString -imatch "date") 
                         { $partitionValue = "'1990-01-01'" }
                     elseif ($smoColumn.DataType.IsStringType) 

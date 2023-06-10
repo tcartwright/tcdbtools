@@ -155,8 +155,13 @@
         # IF THEY PASSED IN A NEW DIRECTORY, MAKE SURE IT IS CREATED
         #>
         if ($NewFileDirectory) {
-            Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING DIRECTORY ($($NewFileDirectory.FullName))"
-            CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
+            try {
+                Write-Information "[$($sw.Elapsed.ToString($swFormat))] CREATING DIRECTORY ($($NewFileDirectory.FullName))"
+                CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
+            } catch {
+                throw
+                return 
+            }
         }
 
         Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] STARTING" -ForegroundColor Yellow
@@ -241,12 +246,34 @@
                 $newFileName = [System.IO.Path]::Combine($NewFileDirectory.FullName, ([System.IO.FileInfo]$newFileName).Name)
             }
 
+            # if they point to a local drive lets check free space, if unc then hopefully it succeeds
+            if ([IO.Path]::IsPathRooted($newFileName)) {
+                $pathRoot = [IO.Path]::GetPathRoot($newFileName) -replace ":\\", ""
+                $drives = Invoke-Sqlcmd @SqlCmdArguments -query "EXEC xp_fixeddrives" -Encrypt Optional
+
+                $drive = $drives | Where-Object { $_.drive -imatch $pathRoot }
+
+                if ($drive) {
+                    $mbFree = $drive."MB free"
+
+                    if ($usedTotalSize -ge ($mbFree - 10)) {
+                        Write-Error "Drive $($pathRoot):\ ($mbFree MB) does not have enough space to create a file of size $usedTotalSize MB"
+                        continue      
+                    }
+                } 
+            }
+
             Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan
 
             <#
             # SETUP THE NEW FILEGROUP AND FILE, BACKUP OPERATIONS CAN CONFLICT, ITS BEST TO STOP BACK JOBS AHEAD OF TIME
             #>
-            AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -NewFileName $newFileName -Size $usedTotalSize -OriginalFile $originalFile
+            try {
+                AddTempFileGroupAndFile -SqlCmdArguments $SqlCmdArguments -NewFileName $newFileName -Size $usedTotalSize -OriginalFile $originalFile
+            } catch {
+                throw
+                continue
+            }
 
             <#
             # MOVE THE INDEXES FROM THE BASE FILEGROUP TO THE TARGET TEMP FILEGROUP
