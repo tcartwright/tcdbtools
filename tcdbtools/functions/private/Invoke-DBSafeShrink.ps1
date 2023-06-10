@@ -184,7 +184,14 @@ function MoveIndexes {
 
                     $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
                     $partitionValue = "0"
-                    if ($smoColumn.DataType.IsStringType) { $partitionValue = "''" }
+                    if ($dataTypeString -imatch "uniqueidentifier") 
+                        { $partitionValue = "'00000000-0000-0000-0000-000000000000'" }
+                    elseif ($dataTypeString -imatch "hierarchyid") 
+                        { $partitionValue = "'/1/'" }
+                    elseif ($dataTypeString -imatch "date") 
+                        { $partitionValue = "'1990-01-01'" }
+                    elseif ($smoColumn.DataType.IsStringType) 
+                        { $partitionValue = "''" }
                     $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES ($partitionValue);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
 
