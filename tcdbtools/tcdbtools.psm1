@@ -33,7 +33,7 @@ foreach($script in $scripts) {
 Export-ModuleMember -Function *-*
 
 # add and export aliases
-New-Alias -Name New-DBUserCredential -Value Set-DBUserCredential
+Set-Alias -Name New-DBUserCredential -Value Set-DBUserCredential -ErrorAction SilentlyContinue
 Export-ModuleMember -Alias New-DBUserCredential -Function Set-DBUserCredential
 
 
