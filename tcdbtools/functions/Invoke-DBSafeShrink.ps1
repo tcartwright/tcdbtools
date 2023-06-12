@@ -160,7 +160,7 @@
                 CreateNewDirectory -NewFileDirectory $NewFileDirectory -SqlCmdArguments $SqlCmdArguments
             } catch {
                 throw
-                return 
+                return
             }
         }
 
@@ -258,9 +258,9 @@
 
                     if ($usedTotalSize -ge ($mbFree - 10)) {
                         Write-Error "Drive $($pathRoot):\ ($mbFree MB) does not have enough space to create a file of size $usedTotalSize MB"
-                        continue      
+                        continue
                     }
-                } 
+                }
             }
 
             Write-InformationColorized "[$($sw.Elapsed.ToString($swFormat))] SHRINKING SERVER: $ServerInstance, DATABASE: $Database, FILEGROUP: $fileGroupName" -ForegroundColor Cyan

@@ -104,7 +104,7 @@ function MoveIndexes {
     }
 
     # I must query the db for this as SMO may not be refreshed, and this is quicker
-    $sql = (GetSQLFileContent -fileName "GetLobFileGroupNames.sql") 
+    $sql = (GetSQLFileContent -fileName "GetLobFileGroupNames.sql")
     $LOBFileGroupNames = Invoke-Sqlcmd @SqlCmdArguments -Query $sql -Encrypt Optional
 
     if ($Online.IsPresent -and $db.Parent.DatabaseEngineEdition -ine "Enterprise") {
@@ -167,7 +167,7 @@ function MoveIndexes {
                     -PercentComplete (GetPercentComplete -counter $indexCounter -total $indexCountTotal)
 
                 Write-Information "[$($sw.Elapsed.ToString($swFormat))] `t`tINDEX: [$($index.Name)] ($indexCounter of $indexCountTotal)"
-                
+
                 $LOBFileGroupName = $LOBFileGroupNames | Where-Object { $_.schema_name -ieq $table.schema -and $_.table_name -ieq $table.name }
                 $MoveLobData = $index.IsClustered -and ($LOBFileGroupName -and $LOBFileGroupName.filegroup_name -ine $toFG)
                 $sql = [System.Text.StringBuilder]::new()
@@ -189,13 +189,13 @@ function MoveIndexes {
 
                     $sql.AppendLine("--LOB_DATA encountered. Creating partition to move LOB_DATA.")  | Out-Null
                     $partitionValue = "0"
-                    if ($dataTypeString -imatch "uniqueidentifier") 
+                    if ($dataTypeString -imatch "uniqueidentifier")
                         { $partitionValue = "'00000000-0000-0000-0000-000000000000'" }
-                    elseif ($dataTypeString -imatch "hierarchyid") 
+                    elseif ($dataTypeString -imatch "hierarchyid")
                         { $partitionValue = "'/'" }
-                    elseif ($dataTypeString -imatch "date") 
+                    elseif ($dataTypeString -imatch "date")
                         { $partitionValue = "'1990-01-01'" }
-                    elseif ($smoColumn.DataType.IsStringType) 
+                    elseif ($smoColumn.DataType.IsStringType)
                         { $partitionValue = "''" }
                     $sql.AppendLine("CREATE PARTITION FUNCTION PF_MOVE_HELPER_$guid ($dataTypeString) AS RANGE RIGHT FOR VALUES ($partitionValue);") | Out-Null
                     $sql.AppendLine("CREATE PARTITION SCHEME PS_MOVE_HELPER_$guid AS PARTITION PF_MOVE_HELPER_$guid TO ([$toFG], [$toFG]);`r`n") | Out-Null
