@@ -57,8 +57,19 @@ $binPath = [System.IO.Path]::Combine($scriptDir, "..\..\bin")
 $script:tcdbtools_SqlDir = [System.IO.Path]::Combine($scriptDir, "..\..\sql")
 
 # load up SMO by default for all scripts.... hopefully. MSFT recently changed SMO to a nuget package which really jacks with finding it, or downloading it automatically
-[System.Reflection.Assembly]::LoadFrom("$binPath\smo\Microsoft.SqlServer.Smo.dll") | Out-Null
-[System.Reflection.Assembly]::LoadFrom("$binPath\smo\Microsoft.SqlServer.ConnectionInfo.dll") | Out-Null
+try {
+    [System.Reflection.Assembly]::LoadFrom("$binPath\smo\Microsoft.SqlServer.Smo.dll") | Out-Null    
+}
+catch {
+    Write-Warning "${$_.Exception.Message}: Microsoft.SqlServer.Smo.dll"
+}
+try {
+    [System.Reflection.Assembly]::LoadFrom("$binPath\smo\Microsoft.SqlServer.ConnectionInfo.dll") | Out-Null    
+}
+catch {
+    Write-Warning "${$_.Exception.Message}: Microsoft.SqlServer.ConnectionInfo.dll"
+}
+
 
 
 
