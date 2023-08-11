@@ -12,7 +12,7 @@
 RootModule = 'tcdbtools.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.53'
+ModuleVersion = '1.0.54'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -147,10 +147,8 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-1.0.53
-* Fixed two major bugs in safe shrink:
-  * When trying to create the file group and not enough hard drive space was available the script would continue on and not move any indexes and start shrinking with indexes on the filegroup. Drive free space can only be checked when the path to the files are a local drive. UNC paths cannot be checked.
-  * When a table did not have any LOB data, but the tables lob_dataspace_id was pointed to a file group, the index could get orphaned in the new file group. Causing the file group to be impossible to drop
+1.0.54
+* Added the ability to have sql cmd arguments per server for Invoke-DBScriptRunner
 Full Release Notes: https://github.com/tcartwright/tcdbtools/blob/main/tcdbtools/RELEASE_NOTES
 '@
 
