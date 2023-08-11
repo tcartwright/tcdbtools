@@ -142,9 +142,8 @@ $results.Results | Format-Table
 | ServerInstance | Database | Results | Messages | Success | Exception |
 | -------------- | -------- | ------- | -------- | ------- | --------- |
 | Server1 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
-| Server1 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
 | Server2 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
-| Server2 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
+| Server3 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
 
 | SERVERNAME | DB_NAME | arg1 | arg2 |
 | ---------- | ------- | ---- | ---- |
