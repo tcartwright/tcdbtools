@@ -6,6 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
   - [Installation](#installation)
+  - [Classes](#classes)
   - [Functions](#functions)
   - [Helper Functions](#helper-functions)
     - [General](#general)
@@ -26,6 +27,11 @@ and can be installed as follows:
 Install-Module tcdbtools
 ```
 
+## Classes
+| Name | Definition |
+| :--- | :--------- |
+| [TCDbTools.DBServer](/docs/Classes.md#tcdbtoolsdbserver-class) | Class utilized for connectivity in some functions |
+
 ## Functions
 
 | Name | Definition |
@@ -44,7 +50,6 @@ Install-Module tcdbtools
 | [Find-DBColumnDataTypeDiscrepancies](/docs/Find-DBColumnDataTypeDiscrepancies.md) | Scans the database for columns in different tables that have the same names, but differ by data type. This is typically indicative of a design flaw. |
 | [Invoke-DBScriptRunner](/docs/Invoke-DBScriptRunner.md) | Runs a query against one or more servers and databases. Captures the results and any messages. The execution of the script is multi threaded. |
 | [Invoke-DBSynchronizeSQLLogins](/docs/Invoke-DBSynchronizeSQLLogins.md) | Will synchronize sql logins between servers. Synchronizes both the [HASHED](https://sqlity.net/en/2344/create-login-with-hashed-password/) password and the SID. Very useful for synchronizing logins between Availability Group Servers. |
-
 
 ## Helper Functions
 

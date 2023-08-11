@@ -17,9 +17,9 @@
 - [RefreshAllSqlModules.sql](https://gist.github.com/tcartwright/0baa5cf4792be613f0e5286616f60347)
     - [RefreshDBObjects.sql](https://gist.github.com/tcartwright/12994135de3b841c64f20906bee2fbab)
 - [GenerateAlerts.sql](https://gist.github.com/tcartwright/d21c63e46a6e6335d7d2e3843359c0a4)
-- [Script Logins.sql](https://gist.github.com/tcartwright/3a5d5b5f0f9b00fd7c018e749e5e7439)
+- [~~Script Logins.sql~~](https://gist.github.com/tcartwright/3a5d5b5f0f9b00fd7c018e749e5e7439)
     - Compare Logins?
-- [ExtractDacPacFromDatabase.ps1](https://gist.github.com/tcartwright/8ec04327d9a82aba368fef2a69365870)
+- [~~ExtractDacPacFromDatabase.ps1~~](https://gist.github.com/tcartwright/8ec04327d9a82aba368fef2a69365870)
 - [RemoveDiagramObjects.sql](https://gist.github.com/tcartwright/2c27a8e7b368963aeb9c89305a4f5f28)
 - [ClearSingleUsePlansFromCache.sql](https://gist.github.com/tcartwright/dcacdf46d2c20466c243aad429666503)
 - [Run SQLIO Tests.bat](https://gist.github.com/tcartwright/a03441f8f7a80ab34029aeb221501cb6)

@@ -107,9 +107,7 @@
                 $PowerShell.AddScript(".\functions\ado\New-DBSqlConnection.ps1") | Out-Null
                 $PowerShell.AddScript(".\functions\ado\Invoke-DBDataTableQuery.ps1") | Out-Null
                 $PowerShell.AddScript($ScriptRunnerBlock) | Out-Null
-                $PowerShell.AddArgument($server.ServerInstance) | Out-Null
-                $PowerShell.AddArgument($server.Database) | Out-Null
-                $PowerShell.AddArgument($server.Credentials) | Out-Null
+                $PowerShell.AddArgument($server) | Out-Null
                 $PowerShell.AddArgument($query) | Out-Null
                 $PowerShell.AddArgument($CommandTimeout) | Out-Null
                 $Handle = $PowerShell.BeginInvoke()

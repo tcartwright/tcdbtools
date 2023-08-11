@@ -9,6 +9,9 @@ Runs a query against one or more servers and databases. Captures the results and
 ## Description
 Runs a query against one or more servers and databases. Captures the results and any messages. The execution of the scripts is multi threaded.
 
+## Important
+Only the first table of the query is captured. If the query returns multiple tables, then every table after the first one is discarded.
+
 ## Syntax
     Invoke-DBScriptRunner 
         [-Servers] <DBServer[]> 
@@ -66,9 +69,9 @@ Runs a query against one or more servers and databases. Captures the results and
 - Exception: A [System.Exception] if the query fails for any reason.
 
 ### Example 
+Run a simple query against multiple servers and capture both messages and results.
 
 ```powershell
-# Scans all string columns in all user defined tables in the dbo schema for the value "%tim%"
 
 $servers = @()
 $servers += [TCDbTools.DBServer]::new("Server1", "DbName1")
@@ -105,6 +108,53 @@ $results.Results | Format-Table
 | Server1 | DbName2 |
 | Server2 | DbName1 |
 | Server2 | DbName2 |
+
+
+### Example 
+Run a simple query against multiple servers and capture both messages and results. SqlCmd arguments are utilized to customize the query per server.
+
+
+```powershell
+
+# the fourth argument in the DBServer class is a Hashtable. You must pass in a named value for every argument in the query.
+
+$servers = @()
+$servers += [TCDbTools.DBServer]::new("Server1", "master", $null, @{ arg1 = "server1"; arg2 = "more info..." })
+$servers += [TCDbTools.DBServer]::new("Server2", "master", $null, @{ arg1 = "server2"; arg2 = "more info......" })
+$servers += [TCDbTools.DBServer]::new("Server3", "master", $null, @{ arg1 = "server3"; arg2 = "more info........." })
+
+$query = "
+    SET NOCOUNT ON
+    PRINT CONCAT('HELLO WORLD FROM USER: ', ORIGINAL_LOGIN())
+    SELECT @@SERVERNAME AS [SERVERNAME],
+        DB_NAME() AS [DB_NAME], '`$(arg1)' AS [arg1], '`$(arg2)' AS [arg2]
+    "
+$results = Invoke-DBScriptRunner -Servers $servers -Query $query 
+
+# the metadata return for each query invoked
+$results
+# output the total DataTable results of each query
+$results.Results | Format-Table
+```
+
+### Example Output
+
+| ServerInstance | Database | Results | Messages | Success | Exception |
+| -------------- | -------- | ------- | -------- | ------- | --------- |
+| Server1 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
+| Server1 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
+| Server2 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
+| Server2 | master | System.Data.DataRow | HELLO WORLD FROM USER: tim.cartwright | True |  |
+
+| SERVERNAME | DB_NAME | arg1 | arg2 |
+| ---------- | ------- | ---- | ---- |
+| Server1 | master | server1 | more info...       |
+| Server2 | master | server1 | more info......    |
+| Server3 | master | server3 | more info......... |
+
+### See Also
+ - [TCDbTools.DBServer](/docs/Classes.md#tcdbtoolsdbserver-class)
+
 
 <br/>
 <br/>

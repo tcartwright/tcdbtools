@@ -3,15 +3,13 @@ $ScriptRunnerBlock = {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("AvoidAssignmentToAutomaticVariable", '', Scope="Function", Target="*")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", '', Scope="Function", Target="*")]
     param(
-        [String]$ServerInstance,
-        [String]$Database,
-        [pscredential]$Credentials,
+        [TCDbTools.DBServer]$server,
         [string]$Query,
         [int]$timeout = 300
     )
     $ret = [PSCustomObject] @{
-        ServerInstance = $ServerInstance
-        Database = $Database
+        ServerInstance = $server.ServerInstance
+        Database = $server.Database
         Results = [System.Data.DataTable]$null
         Messages = [string]$null
         Success = $false
@@ -19,7 +17,7 @@ $ScriptRunnerBlock = {
     }
     try {
         $sb = [System.Text.StringBuilder]::new()
-        $connection = New-DBSqlConnection -ServerInstance $ServerInstance -Database $Database -Credentials $Credentials
+        $connection = New-DBSqlConnection -ServerInstance $server.ServerInstance -Database $server.Database -Credentials $server.Credentials
         $connection.Open()
 
         $handler = [Microsoft.Data.SqlClient.SqlInfoMessageEventHandler] {
@@ -27,6 +25,11 @@ $ScriptRunnerBlock = {
             $sb.AppendLine($event.Message) | Out-Null
         };
         $connection.add_InfoMessage($handler);
+
+        # we are imitating sql cmd args. we don't really want to use sql cmd, just the args part
+        foreach ($arg in $server.SqlCmdArgs.GetEnumerator()) {
+            $Query = $Query -ireplace "\$\($($arg.Name)\)", $arg.Value
+        }
 
         $ret.Results = Invoke-DBDataTableQuery -conn $connection -sql $Query -CommandType Text -timeout $timeout
         $ret.Messages = $sb.ToString()

@@ -230,6 +230,9 @@ CREATE LOGIN [FOO]
 IF @checked = 1 BEGIN ALTER LOGIN [FOO] WITH CHECK_POLICY = ON END;
 ```
 
+### See Also
+ - [TCDbTools.DBServer](/docs/Classes.md#tcdbtoolsdbserver-class)
+  
 <br/>
 <br/>
   
