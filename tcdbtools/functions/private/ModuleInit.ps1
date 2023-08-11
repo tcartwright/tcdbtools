@@ -15,32 +15,35 @@
 
     [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object { $_.Location } | Out-GridView # USE FILTER AT THE TOP OF WINDOW
 #>
-if (!("TCAssemblyRedirector" -as [type])) {
+if (!("TCDbTools.TCAssemblyRedirector" -as [type])) {
     $source = @'
         using System;
         using System.Linq;
         using System.Reflection;
 
-        public class TCAssemblyRedirector
+        namespace TCDbTools
         {
-            public TCAssemblyRedirector()
+            public class TCAssemblyRedirector
             {
-                this.AssemblyResolver += new ResolveEventHandler(AssemblyResolve);
-            }
+                public TCAssemblyRedirector()
+                {
+                    this.AssemblyResolver += new ResolveEventHandler(AssemblyResolve);
+                }
 
-            public ResolveEventHandler AssemblyResolver;
+                public ResolveEventHandler AssemblyResolver;
 
-            protected Assembly AssemblyResolve(object sender, ResolveEventArgs resolveEventArgs)
-            {
-                // Console.WriteLine("Resolver called with {0}", resolveEventArgs.Name);
-                var name = resolveEventArgs.Name.Split(',').FirstOrDefault();
-                var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => string.Compare(a.GetName().Name, name, true) == 0);
+                protected Assembly AssemblyResolve(object sender, ResolveEventArgs resolveEventArgs)
+                {
+                    // Console.WriteLine("Resolver called with {0}", resolveEventArgs.Name);
+                    var name = resolveEventArgs.Name.Split(',').FirstOrDefault();
+                    var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => string.Compare(a.GetName().Name, name, true) == 0);
 
-                //if (assembly != null)
-                //{
-                //    Console.WriteLine("Redirecting {0} to {1}", resolveEventArgs.Name, assembly.GetName().FullName);
-                //}
-                return assembly;
+                    //if (assembly != null)
+                    //{
+                    //    Console.WriteLine("Redirecting {0} to {1}", resolveEventArgs.Name, assembly.GetName().FullName);
+                    //}
+                    return assembly;
+                }
             }
         }
 '@
@@ -48,7 +51,7 @@ if (!("TCAssemblyRedirector" -as [type])) {
     Add-Type -TypeDefinition $source -PassThru | Out-Null
 }
 
-$redirector = [TCAssemblyRedirector]::new()
+$redirector = [TCDbTools.TCAssemblyRedirector]::new()
 [System.AppDomain]::CurrentDomain.add_AssemblyResolve($redirector.AssemblyResolver)
 
 
